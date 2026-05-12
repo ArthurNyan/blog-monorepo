@@ -1,0 +1,22 @@
+{
+  "name": "blog-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.11.0",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x"
+  },
+  "scripts": {
+    "dev": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t dev --projects=cms,front --parallel",
+    "build": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t build --projects=cms,front --parallel",
+    "start:cms": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run cms:start",
+    "preview:front": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:preview",
+    "generate:api": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:generate:api",
+    "affected:build": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx affected -t build",
+    "affected:lint": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx affected -t lint",
+    "affected:test": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx affected -t test"
+  },
+  "devDependencies": {
+    "nx": "^20.0.0"
+  }
+}

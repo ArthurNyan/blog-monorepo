@@ -1,0 +1,48 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { getProjects, getProjectsId } from "@/shared/api/generated";
+import { DetailHero, createProjectHeroProps } from "@/shared/components/DetailHero";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+
+export const getStaticPaths = async () => {
+    const response = await getProjects();
+    if (!response.data) {
+        return [];
+    }
+    return response.data.data?.map((project) => ({
+        params: { slug: project.slug },
+        props: {
+            documentId: project.documentId,
+        },
+    }));
+};
+
+const { documentId } = Astro.props;
+const { data: project } = await getProjectsId({
+    path: {
+        id: documentId as unknown as number,
+    },
+});
+
+const projectData = project?.data;
+---
+
+<MainLayout
+    content={{ title: projectData?.name || "Проект" }}
+    className="flex flex-col"
+>
+    {
+        projectData && (
+            <>
+                <DetailHero {...createProjectHeroProps(projectData)} />
+                <article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
+                    <div class="max-w-4xl mx-auto">
+                        {projectData.content && (
+                            <MarkdownContent content={projectData.content} />
+                        )}
+                    </div>
+                </article>
+            </>
+        )
+    }
+</MainLayout>

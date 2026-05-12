@@ -1,0 +1,45 @@
+{
+  "name": "cms",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "root": "apps/cms",
+  "sourceRoot": "apps/cms/src",
+  "targets": {
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm dev",
+        "cwd": "apps/cms"
+      }
+    },
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm build",
+        "cwd": "apps/cms"
+      },
+      "outputs": ["{projectRoot}/dist", "{projectRoot}/build"]
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "pnpm start",
+        "cwd": "apps/cms"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No lint configured for cms yet'",
+        "cwd": "apps/cms"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "echo 'No tests configured for cms yet'",
+        "cwd": "apps/cms"
+      }
+    }
+  }
+}

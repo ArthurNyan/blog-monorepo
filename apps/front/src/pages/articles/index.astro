@@ -1,0 +1,37 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { getArticles } from "@/shared/api/generated";
+import { ArticleCard } from "@/widgets/ArticleCard";
+import { EmptyState } from "@/shared/components/EmptyState";
+
+const { data: articles } = await getArticles({ query: { populate: "*" } });
+---
+
+<MainLayout content={{ title: "Статьи" }} className="flex flex-col">
+	<div class="container mx-auto px-4 py-12 md:py-16">
+		<div class="mb-8 md:mb-12">
+			<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">
+				Статьи
+			</h1>
+			<p class="text-base md:text-lg text-muted-foreground">
+				Все публикации о технологиях, разработке и лучших практиках
+			</p>
+		</div>
+
+		{
+			articles?.data && articles.data.length > 0 ? (
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+					{articles.data.map((article) => (
+						<ArticleCard article={article} client:load />
+					))}
+				</div>
+			) : (
+				<EmptyState
+					title="Статьи пока не опубликованы"
+					description="Следите за обновлениями, скоро здесь появятся интересные материалы"
+					client:load
+				/>
+			)
+		}
+	</div>
+</MainLayout>

@@ -1,0 +1,23 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { FeatureTabs } from "@/widgets/FeatureTabs";
+import { BentoGridWidget } from "@/widgets/BentoGrid";
+import HeroSection from "@/widgets/HeroSection/HeroSection.astro";
+// import { TimelinePanel } from "@/widgets/TimelinePanel";
+import { FeatureHighlighter } from "@/widgets/FeatureHighlighter";
+import { TestimonialsPanel } from "@/widgets/TestimonialsPanel";
+import { LogoPanel } from "@/widgets/LogoPanel/ui/LogoPanel";
+---
+
+<MainLayout
+	content={{ title: "Astro + TailwindCSS" }}
+	className="flex flex-col gap-32"
+>
+	<HeroSection />
+	<LogoPanel client:visible />
+	<FeatureTabs client:idle />
+	<!-- <TimelinePanel client:idle /> -->
+	<TestimonialsPanel client:idle />
+	<BentoGridWidget client:visible />
+	<FeatureHighlighter client:visible />
+</MainLayout>
