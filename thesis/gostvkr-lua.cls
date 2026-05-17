@@ -104,38 +104,18 @@
 
 \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
 
-% Локальный шрифтовой контракт: текстовый слой всегда PT Astra Serif.
-\newcommand{\gostvkr@fontsdir}{fonts/}
-\newcommand{\gostvkr@mainfontselected}{PT Astra Serif}
-
-\newcommand{\gostvkr@requirefontfile}[1]{%
-  \IfFileExists{\gostvkr@fontsdir#1}{}{%
-    \gostvkr@fatal{Не найден обязательный файл шрифта: \gostvkr@fontsdir#1}{Скопируйте файлы PT Astra Serif в локальную папку fonts/.}%
-  }%
+% Основной шрифт по методическим требованиям.
+\newcommand{\gostvkr@mainfontselected}{Times New Roman}
+\IfFontExistsTF{Times New Roman}{
+  \setmainfont{Times New Roman}
+  \setsansfont{Times New Roman}
+  \setmonofont{Times New Roman}
+  \newfontfamily\cyrillicfont{Times New Roman}
+  \newfontfamily\cyrillicfontsf{Times New Roman}
+  \newfontfamily\cyrillicfonttt{Times New Roman}
+}{
+  \gostvkr@fatal{Не найден шрифт Times New Roman}{Установите Times New Roman в системе и повторите сборку.}
 }
-
-\gostvkr@requirefontfile{pt-astra-serif_regular.ttf}
-\gostvkr@requirefontfile{pt-astra-serif_bold.ttf}
-\gostvkr@requirefontfile{pt-astra-serif_italic.ttf}
-\gostvkr@requirefontfile{pt-astra-serif_bold-italic.ttf}
-
-\newcommand{\gostvkr@fontbasename}{pt-astra-serif_regular}
-\newcommand{\gostvkr@fontsetupoptions}{%
-  Path=\gostvkr@fontsdir,
-  Extension=.ttf,
-  UprightFont=pt-astra-serif_regular,
-  BoldFont=pt-astra-serif_bold,
-  ItalicFont=pt-astra-serif_italic,
-  BoldItalicFont=pt-astra-serif_bold-italic
-}
-
-\setmainfont[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
-\setsansfont[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
-\setmonofont[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
-
-\newfontfamily\cyrillicfont[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
-\newfontfamily\cyrillicfontsf[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
-\newfontfamily\cyrillicfonttt[\gostvkr@fontsetupoptions]{\gostvkr@fontbasename}
 
 % Языковая схема: русский основной, английский опциональный.
 \newcommand{\gostvkr@setuplanguage}{%
