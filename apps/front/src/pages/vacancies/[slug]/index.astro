@@ -73,7 +73,7 @@ const salary = (() => {
 					<p class="text-muted-foreground">Проверьте ссылку или вернитесь к списку вакансий.</p>
 				</div>
 			) : (
-				<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-8">
+				<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_460px] gap-8">
 			<article class="space-y-6">
 				<div class="space-y-4">
 					<div class="flex flex-wrap gap-2">
@@ -125,7 +125,7 @@ const salary = (() => {
 				}
 			</article>
 
-			<aside class="rounded-2xl border border-border bg-card/50 p-5 h-max xl:sticky xl:top-24">
+			<aside class="rounded-2xl border border-border bg-card/50 p-6 h-max xl:sticky xl:top-24">
 				<VacancyApplicationForm
 					vacancyId={vacancy?.documentId || vacancy?.id || ""}
 					vacancyTitle={vacancy?.title || ""}

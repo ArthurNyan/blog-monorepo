@@ -179,9 +179,17 @@ export const fetchVacancies = async (
 	url.searchParams.set("filters[isActive][$eq]", "true");
 
 	const searchQuery = params.q?.trim();
+	let andIndex = 0;
 	if (searchQuery) {
-		url.searchParams.set("filters[$or][0][title][$containsi]", searchQuery);
-		url.searchParams.set("filters[$or][1][description][$containsi]", searchQuery);
+		url.searchParams.set(
+			`filters[$and][${andIndex}][$or][0][title][$containsi]`,
+			searchQuery
+		);
+		url.searchParams.set(
+			`filters[$and][${andIndex}][$or][1][description][$containsi]`,
+			searchQuery
+		);
+		andIndex += 1;
 	}
 	if (params.industry) {
 		url.searchParams.set("filters[industry][slug][$eq]", params.industry);
