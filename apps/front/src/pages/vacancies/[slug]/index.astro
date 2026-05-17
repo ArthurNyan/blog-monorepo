@@ -1,0 +1,140 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { Badge } from "@/shared/components/ui/badge";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { fetchVacancies, fetchVacancyBySlug } from "@/shared/api/vacancies";
+import { VacancyApplicationForm } from "@/widgets/VacancyApplicationForm";
+
+export const getStaticPaths = async () => {
+	try {
+		const response = await fetchVacancies({
+			page: 1,
+			pageSize: 1000,
+			sort: "publishedAt:desc",
+		});
+
+		return response.items.map((vacancy) => ({
+			params: { slug: vacancy.slug },
+		}));
+	} catch {
+		return [];
+	}
+};
+
+const WORK_FORMAT_LABELS: Record<string, string> = {
+	remote: "Удаленно",
+	hybrid: "Гибрид",
+	office: "Офис",
+};
+
+const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
+	full_time: "Полная занятость",
+	part_time: "Частичная занятость",
+	contract: "Контракт",
+	internship: "Стажировка",
+};
+
+const LEVEL_LABELS: Record<string, string> = {
+	intern: "Intern",
+	junior: "Junior",
+	middle: "Middle",
+	senior: "Senior",
+	lead: "Lead",
+};
+
+const slug = Astro.params.slug as string;
+const vacancy = await fetchVacancyBySlug(slug).catch(() => null);
+const isNotFound = !vacancy;
+
+const salary = (() => {
+	if (!vacancy) return "По договоренности";
+	if (!vacancy.salaryFrom && !vacancy.salaryTo) return "По договоренности";
+
+	const formatter = new Intl.NumberFormat("ru-RU");
+	const from = vacancy.salaryFrom ? formatter.format(vacancy.salaryFrom) : null;
+	const to = vacancy.salaryTo ? formatter.format(vacancy.salaryTo) : null;
+	const currency = vacancy.currency || "RUB";
+
+	if (from && to) return `${from} - ${to} ${currency}`;
+	if (from) return `от ${from} ${currency}`;
+	return `до ${to} ${currency}`;
+})();
+---
+
+<MainLayout content={{ title: vacancy?.title || "Вакансия" }} className="flex flex-col">
+	<section class="container mx-auto px-4 py-10 md:py-14">
+		<a href="/vacancies" class="inline-flex text-sm text-primary mb-6 hover:underline">
+			← Все вакансии
+		</a>
+
+		{
+			isNotFound ? (
+				<div class="rounded-xl border border-border bg-card/40 p-8">
+					<h1 class="text-2xl font-semibold mb-2">Вакансия не найдена</h1>
+					<p class="text-muted-foreground">Проверьте ссылку или вернитесь к списку вакансий.</p>
+				</div>
+			) : (
+				<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_420px] gap-8">
+			<article class="space-y-6">
+				<div class="space-y-4">
+					<div class="flex flex-wrap gap-2">
+						{
+							vacancy?.industry?.name && (
+								<Badge variant="secondary">{vacancy.industry.name}</Badge>
+							)
+						}
+						{
+							vacancy?.role?.name && (
+								<Badge variant="outline">{vacancy.role.name}</Badge>
+							)
+						}
+					</div>
+					<h1 class="text-3xl md:text-5xl font-semibold leading-tight">{vacancy?.title}</h1>
+					<p class="text-lg text-muted-foreground">{vacancy?.location}</p>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">Формат</div>
+						<div class="font-medium">
+							{WORK_FORMAT_LABELS[vacancy?.workFormat || ""] || vacancy?.workFormat}
+						</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">Занятость</div>
+						<div class="font-medium">
+							{EMPLOYMENT_TYPE_LABELS[vacancy?.employmentType || ""] || vacancy?.employmentType}
+						</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">Уровень</div>
+						<div class="font-medium">{LEVEL_LABELS[vacancy?.level || ""] || vacancy?.level}</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">Зарплата</div>
+						<div class="font-medium">{salary}</div>
+					</div>
+				</div>
+
+				{
+					vacancy?.description && (
+						<div class="rounded-2xl border border-border bg-card/40 p-6">
+							<h2 class="text-2xl font-semibold mb-4">Описание вакансии</h2>
+							<MarkdownContent content={vacancy?.description} />
+						</div>
+					)
+				}
+			</article>
+
+			<aside class="rounded-2xl border border-border bg-card/50 p-5 h-max xl:sticky xl:top-24">
+				<VacancyApplicationForm
+					vacancyId={vacancy?.documentId || vacancy?.id || ""}
+					vacancyTitle={vacancy?.title || ""}
+					client:load
+				/>
+			</aside>
+		</div>
+			)
+		}
+	</section>
+</MainLayout>

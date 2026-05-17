@@ -1121,6 +1121,710 @@ export type HomePageResponse = {
     };
 };
 
+export type IndustryListResponse = {
+    data?: Array<Industry>;
+    meta?: {
+        pagination?: {
+            page?: number;
+            pageSize?: number;
+            pageCount?: number;
+            total?: number;
+        };
+    };
+};
+
+export type Industry = {
+    id?: string | number;
+    documentId?: string;
+    name: string;
+    slug: string;
+    vacancies?: Array<{
+        id?: string | number;
+        documentId?: string;
+        title?: string;
+        slug?: string;
+        industry?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+                firstname?: string;
+                lastname?: string;
+                username?: string;
+                email?: string;
+                resetPasswordToken?: string;
+                registrationToken?: string;
+                isActive?: boolean;
+                roles?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    code?: string;
+                    description?: string;
+                    users?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    permissions?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        action?: string;
+                        actionParameters?: unknown;
+                        subject?: string;
+                        properties?: unknown;
+                        conditions?: unknown;
+                        role?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                }>;
+                blocked?: boolean;
+                preferedLanguage?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        role?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        location?: string;
+        workFormat?: 'remote' | 'hybrid' | 'office';
+        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+        salaryFrom?: number;
+        salaryTo?: number;
+        currency?: 'RUB' | 'USD' | 'EUR';
+        description?: string;
+        isActive?: boolean;
+        applications?: Array<{
+            id?: string | number;
+            documentId?: string;
+            vacancy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            fullName?: string;
+            email?: string;
+            phone?: string;
+            city?: string;
+            coverLetter?: string;
+            resumeFile?: {
+                id?: string | number;
+                documentId?: string;
+                name?: string;
+                alternativeText?: string;
+                caption?: string;
+                width?: number;
+                height?: number;
+                formats?: unknown;
+                hash?: string;
+                ext?: string;
+                mime?: string;
+                size?: number;
+                url?: string;
+                previewUrl?: string;
+                provider?: string;
+                provider_metadata?: unknown;
+                related?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+                folder?: {
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    pathId?: number;
+                    parent?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    children?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    files?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        name?: string;
+                        alternativeText?: string;
+                        caption?: string;
+                        width?: number;
+                        height?: number;
+                        formats?: unknown;
+                        hash?: string;
+                        ext?: string;
+                        mime?: string;
+                        size?: number;
+                        url?: string;
+                        previewUrl?: string;
+                        provider?: string;
+                        provider_metadata?: unknown;
+                        related?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                        folder?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        folderPath?: string;
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    path?: string;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                };
+                folderPath?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            consent?: boolean;
+            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            submittedAt?: string;
+            source?: string;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        }>;
+        createdAt?: string;
+        updatedAt?: string;
+        publishedAt?: string;
+        createdBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        updatedBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        locale?: string;
+        localizations?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+    }>;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    createdBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    updatedBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    locale?: string;
+    localizations?: Array<{
+        id?: string | number;
+        documentId?: string;
+    }>;
+};
+
+export type IndustryResponse = {
+    data?: Industry;
+    meta?: {
+        [key: string]: unknown;
+    };
+};
+
+export type JobRoleListResponse = {
+    data?: Array<JobRole>;
+    meta?: {
+        pagination?: {
+            page?: number;
+            pageSize?: number;
+            pageCount?: number;
+            total?: number;
+        };
+    };
+};
+
+export type JobRole = {
+    id?: string | number;
+    documentId?: string;
+    name: string;
+    slug: string;
+    vacancies?: Array<{
+        id?: string | number;
+        documentId?: string;
+        title?: string;
+        slug?: string;
+        industry?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+                firstname?: string;
+                lastname?: string;
+                username?: string;
+                email?: string;
+                resetPasswordToken?: string;
+                registrationToken?: string;
+                isActive?: boolean;
+                roles?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    code?: string;
+                    description?: string;
+                    users?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    permissions?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        action?: string;
+                        actionParameters?: unknown;
+                        subject?: string;
+                        properties?: unknown;
+                        conditions?: unknown;
+                        role?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                }>;
+                blocked?: boolean;
+                preferedLanguage?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        role?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        location?: string;
+        workFormat?: 'remote' | 'hybrid' | 'office';
+        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+        salaryFrom?: number;
+        salaryTo?: number;
+        currency?: 'RUB' | 'USD' | 'EUR';
+        description?: string;
+        isActive?: boolean;
+        applications?: Array<{
+            id?: string | number;
+            documentId?: string;
+            vacancy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            fullName?: string;
+            email?: string;
+            phone?: string;
+            city?: string;
+            coverLetter?: string;
+            resumeFile?: {
+                id?: string | number;
+                documentId?: string;
+                name?: string;
+                alternativeText?: string;
+                caption?: string;
+                width?: number;
+                height?: number;
+                formats?: unknown;
+                hash?: string;
+                ext?: string;
+                mime?: string;
+                size?: number;
+                url?: string;
+                previewUrl?: string;
+                provider?: string;
+                provider_metadata?: unknown;
+                related?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+                folder?: {
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    pathId?: number;
+                    parent?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    children?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    files?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        name?: string;
+                        alternativeText?: string;
+                        caption?: string;
+                        width?: number;
+                        height?: number;
+                        formats?: unknown;
+                        hash?: string;
+                        ext?: string;
+                        mime?: string;
+                        size?: number;
+                        url?: string;
+                        previewUrl?: string;
+                        provider?: string;
+                        provider_metadata?: unknown;
+                        related?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                        folder?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        folderPath?: string;
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    path?: string;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                };
+                folderPath?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            consent?: boolean;
+            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            submittedAt?: string;
+            source?: string;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        }>;
+        createdAt?: string;
+        updatedAt?: string;
+        publishedAt?: string;
+        createdBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        updatedBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        locale?: string;
+        localizations?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+    }>;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    createdBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    updatedBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    locale?: string;
+    localizations?: Array<{
+        id?: string | number;
+        documentId?: string;
+    }>;
+};
+
+export type JobRoleResponse = {
+    data?: JobRole;
+    meta?: {
+        [key: string]: unknown;
+    };
+};
+
 export type ProjectRequest = {
     data: {
         name: string;
@@ -1519,6 +2223,783 @@ export type Project = {
 
 export type ProjectResponse = {
     data?: Project;
+    meta?: {
+        [key: string]: unknown;
+    };
+};
+
+export type VacancyListResponse = {
+    data?: Array<Vacancy>;
+    meta?: {
+        pagination?: {
+            page?: number;
+            pageSize?: number;
+            pageCount?: number;
+            total?: number;
+        };
+    };
+};
+
+export type Vacancy = {
+    id?: string | number;
+    documentId?: string;
+    title: string;
+    slug: string;
+    industry?: {
+        id?: string | number;
+        documentId?: string;
+        name?: string;
+        slug?: string;
+        vacancies?: Array<{
+            id?: string | number;
+            documentId?: string;
+            title?: string;
+            slug?: string;
+            industry?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            role?: {
+                id?: string | number;
+                documentId?: string;
+                name?: string;
+                slug?: string;
+                vacancies?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                    firstname?: string;
+                    lastname?: string;
+                    username?: string;
+                    email?: string;
+                    resetPasswordToken?: string;
+                    registrationToken?: string;
+                    isActive?: boolean;
+                    roles?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        name?: string;
+                        code?: string;
+                        description?: string;
+                        users?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                        permissions?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                            action?: string;
+                            actionParameters?: unknown;
+                            subject?: string;
+                            properties?: unknown;
+                            conditions?: unknown;
+                            role?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            createdAt?: string;
+                            updatedAt?: string;
+                            publishedAt?: string;
+                            createdBy?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            updatedBy?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            locale?: string;
+                            localizations?: Array<{
+                                id?: string | number;
+                                documentId?: string;
+                            }>;
+                        }>;
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    blocked?: boolean;
+                    preferedLanguage?: string;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            location?: string;
+            workFormat?: 'remote' | 'hybrid' | 'office';
+            employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+            level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+            salaryFrom?: number;
+            salaryTo?: number;
+            currency?: 'RUB' | 'USD' | 'EUR';
+            description?: string;
+            isActive?: boolean;
+            applications?: Array<{
+                id?: string | number;
+                documentId?: string;
+                vacancy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                fullName?: string;
+                email?: string;
+                phone?: string;
+                city?: string;
+                coverLetter?: string;
+                resumeFile?: {
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    alternativeText?: string;
+                    caption?: string;
+                    width?: number;
+                    height?: number;
+                    formats?: unknown;
+                    hash?: string;
+                    ext?: string;
+                    mime?: string;
+                    size?: number;
+                    url?: string;
+                    previewUrl?: string;
+                    provider?: string;
+                    provider_metadata?: unknown;
+                    related?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    folder?: {
+                        id?: string | number;
+                        documentId?: string;
+                        name?: string;
+                        pathId?: number;
+                        parent?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        children?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                        files?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                            name?: string;
+                            alternativeText?: string;
+                            caption?: string;
+                            width?: number;
+                            height?: number;
+                            formats?: unknown;
+                            hash?: string;
+                            ext?: string;
+                            mime?: string;
+                            size?: number;
+                            url?: string;
+                            previewUrl?: string;
+                            provider?: string;
+                            provider_metadata?: unknown;
+                            related?: Array<{
+                                id?: string | number;
+                                documentId?: string;
+                            }>;
+                            folder?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            folderPath?: string;
+                            createdAt?: string;
+                            updatedAt?: string;
+                            publishedAt?: string;
+                            createdBy?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            updatedBy?: {
+                                id?: string | number;
+                                documentId?: string;
+                            };
+                            locale?: string;
+                            localizations?: Array<{
+                                id?: string | number;
+                                documentId?: string;
+                            }>;
+                        }>;
+                        path?: string;
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    };
+                    folderPath?: string;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                };
+                consent?: boolean;
+                status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+                submittedAt?: string;
+                source?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        }>;
+        createdAt?: string;
+        updatedAt?: string;
+        publishedAt?: string;
+        createdBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        updatedBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        locale?: string;
+        localizations?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+    };
+    role?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    location: string;
+    workFormat?: 'remote' | 'hybrid' | 'office';
+    employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+    level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+    salaryFrom?: number;
+    salaryTo?: number;
+    currency?: 'RUB' | 'USD' | 'EUR';
+    description?: string;
+    isActive?: boolean;
+    applications?: Array<{
+        id?: string | number;
+        documentId?: string;
+    }>;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    createdBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    updatedBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    locale?: string;
+    localizations?: Array<{
+        id?: string | number;
+        documentId?: string;
+    }>;
+};
+
+export type VacancyResponse = {
+    data?: Vacancy;
+    meta?: {
+        [key: string]: unknown;
+    };
+};
+
+export type VacancyApplicationRequest = {
+    data: {
+        vacancy: number | string;
+        fullName: string;
+        email: string;
+        phone: string;
+        city?: string;
+        coverLetter?: string;
+        resumeFile: number | string;
+        consent: boolean;
+        status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+        submittedAt?: string;
+        source?: string;
+        locale?: string;
+        localizations?: Array<number | string>;
+    };
+};
+
+export type VacancyApplication = {
+    id?: string | number;
+    documentId?: string;
+    vacancy: {
+        id?: string | number;
+        documentId?: string;
+        title?: string;
+        slug?: string;
+        industry?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+                firstname?: string;
+                lastname?: string;
+                username?: string;
+                email?: string;
+                resetPasswordToken?: string;
+                registrationToken?: string;
+                isActive?: boolean;
+                roles?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    code?: string;
+                    description?: string;
+                    users?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    permissions?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        action?: string;
+                        actionParameters?: unknown;
+                        subject?: string;
+                        properties?: unknown;
+                        conditions?: unknown;
+                        role?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                }>;
+                blocked?: boolean;
+                preferedLanguage?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        role?: {
+            id?: string | number;
+            documentId?: string;
+            name?: string;
+            slug?: string;
+            vacancies?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        };
+        location?: string;
+        workFormat?: 'remote' | 'hybrid' | 'office';
+        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+        salaryFrom?: number;
+        salaryTo?: number;
+        currency?: 'RUB' | 'USD' | 'EUR';
+        description?: string;
+        isActive?: boolean;
+        applications?: Array<{
+            id?: string | number;
+            documentId?: string;
+            vacancy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            fullName?: string;
+            email?: string;
+            phone?: string;
+            city?: string;
+            coverLetter?: string;
+            resumeFile?: {
+                id?: string | number;
+                documentId?: string;
+                name?: string;
+                alternativeText?: string;
+                caption?: string;
+                width?: number;
+                height?: number;
+                formats?: unknown;
+                hash?: string;
+                ext?: string;
+                mime?: string;
+                size?: number;
+                url?: string;
+                previewUrl?: string;
+                provider?: string;
+                provider_metadata?: unknown;
+                related?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+                folder?: {
+                    id?: string | number;
+                    documentId?: string;
+                    name?: string;
+                    pathId?: number;
+                    parent?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    children?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                    files?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                        name?: string;
+                        alternativeText?: string;
+                        caption?: string;
+                        width?: number;
+                        height?: number;
+                        formats?: unknown;
+                        hash?: string;
+                        ext?: string;
+                        mime?: string;
+                        size?: number;
+                        url?: string;
+                        previewUrl?: string;
+                        provider?: string;
+                        provider_metadata?: unknown;
+                        related?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                        folder?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        folderPath?: string;
+                        createdAt?: string;
+                        updatedAt?: string;
+                        publishedAt?: string;
+                        createdBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        updatedBy?: {
+                            id?: string | number;
+                            documentId?: string;
+                        };
+                        locale?: string;
+                        localizations?: Array<{
+                            id?: string | number;
+                            documentId?: string;
+                        }>;
+                    }>;
+                    path?: string;
+                    createdAt?: string;
+                    updatedAt?: string;
+                    publishedAt?: string;
+                    createdBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    updatedBy?: {
+                        id?: string | number;
+                        documentId?: string;
+                    };
+                    locale?: string;
+                    localizations?: Array<{
+                        id?: string | number;
+                        documentId?: string;
+                    }>;
+                };
+                folderPath?: string;
+                createdAt?: string;
+                updatedAt?: string;
+                publishedAt?: string;
+                createdBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                updatedBy?: {
+                    id?: string | number;
+                    documentId?: string;
+                };
+                locale?: string;
+                localizations?: Array<{
+                    id?: string | number;
+                    documentId?: string;
+                }>;
+            };
+            consent?: boolean;
+            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            submittedAt?: string;
+            source?: string;
+            createdAt?: string;
+            updatedAt?: string;
+            publishedAt?: string;
+            createdBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            updatedBy?: {
+                id?: string | number;
+                documentId?: string;
+            };
+            locale?: string;
+            localizations?: Array<{
+                id?: string | number;
+                documentId?: string;
+            }>;
+        }>;
+        createdAt?: string;
+        updatedAt?: string;
+        publishedAt?: string;
+        createdBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        updatedBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        locale?: string;
+        localizations?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+    };
+    fullName: string;
+    email: string;
+    phone: string;
+    city?: string;
+    coverLetter?: string;
+    resumeFile: {
+        id?: string | number;
+        documentId?: string;
+        name?: string;
+        alternativeText?: string;
+        caption?: string;
+        width?: number;
+        height?: number;
+        formats?: unknown;
+        hash?: string;
+        ext?: string;
+        mime?: string;
+        size?: number;
+        url?: string;
+        previewUrl?: string;
+        provider?: string;
+        provider_metadata?: unknown;
+        related?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+        folder?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        folderPath?: string;
+        createdAt?: string;
+        updatedAt?: string;
+        publishedAt?: string;
+        createdBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        updatedBy?: {
+            id?: string | number;
+            documentId?: string;
+        };
+        locale?: string;
+        localizations?: Array<{
+            id?: string | number;
+            documentId?: string;
+        }>;
+    };
+    consent: boolean;
+    status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+    submittedAt?: string;
+    source?: string;
+    createdAt?: string;
+    updatedAt?: string;
+    publishedAt?: string;
+    createdBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    updatedBy?: {
+        id?: string | number;
+        documentId?: string;
+    };
+    locale?: string;
+    localizations?: Array<{
+        id?: string | number;
+        documentId?: string;
+    }>;
+};
+
+export type VacancyApplicationResponse = {
+    data?: VacancyApplication;
     meta?: {
         [key: string]: unknown;
     };
@@ -2434,6 +3915,260 @@ export type PutHomePageResponses = {
 
 export type PutHomePageResponse = PutHomePageResponses[keyof PutHomePageResponses];
 
+export type GetIndustriesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Sort by attributes ascending (asc) or descending (desc)
+         */
+        sort?: string;
+        /**
+         * Return page/pageSize (default: true)
+         */
+        'pagination[withCount]'?: boolean;
+        /**
+         * Page number (default: 0)
+         */
+        'pagination[page]'?: number;
+        /**
+         * Page size (default: 25)
+         */
+        'pagination[pageSize]'?: number;
+        /**
+         * Offset value (default: 0)
+         */
+        'pagination[start]'?: number;
+        /**
+         * Number of entities to return (default: 25)
+         */
+        'pagination[limit]'?: number;
+        /**
+         * Fields to return (ex: title,author)
+         */
+        fields?: string;
+        /**
+         * Relations to return
+         */
+        populate?: string;
+        /**
+         * Filters to apply
+         */
+        filters?: {
+            [key: string]: unknown;
+        };
+        /**
+         * Locale to apply
+         */
+        locale?: string;
+    };
+    url: '/industries';
+};
+
+export type GetIndustriesErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetIndustriesError = GetIndustriesErrors[keyof GetIndustriesErrors];
+
+export type GetIndustriesResponses = {
+    /**
+     * OK
+     */
+    200: IndustryListResponse;
+};
+
+export type GetIndustriesResponse = GetIndustriesResponses[keyof GetIndustriesResponses];
+
+export type GetIndustriesIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/industries/{id}';
+};
+
+export type GetIndustriesIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetIndustriesIdError = GetIndustriesIdErrors[keyof GetIndustriesIdErrors];
+
+export type GetIndustriesIdResponses = {
+    /**
+     * OK
+     */
+    200: IndustryResponse;
+};
+
+export type GetIndustriesIdResponse = GetIndustriesIdResponses[keyof GetIndustriesIdResponses];
+
+export type GetJobRolesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Sort by attributes ascending (asc) or descending (desc)
+         */
+        sort?: string;
+        /**
+         * Return page/pageSize (default: true)
+         */
+        'pagination[withCount]'?: boolean;
+        /**
+         * Page number (default: 0)
+         */
+        'pagination[page]'?: number;
+        /**
+         * Page size (default: 25)
+         */
+        'pagination[pageSize]'?: number;
+        /**
+         * Offset value (default: 0)
+         */
+        'pagination[start]'?: number;
+        /**
+         * Number of entities to return (default: 25)
+         */
+        'pagination[limit]'?: number;
+        /**
+         * Fields to return (ex: title,author)
+         */
+        fields?: string;
+        /**
+         * Relations to return
+         */
+        populate?: string;
+        /**
+         * Filters to apply
+         */
+        filters?: {
+            [key: string]: unknown;
+        };
+        /**
+         * Locale to apply
+         */
+        locale?: string;
+    };
+    url: '/job-roles';
+};
+
+export type GetJobRolesErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetJobRolesError = GetJobRolesErrors[keyof GetJobRolesErrors];
+
+export type GetJobRolesResponses = {
+    /**
+     * OK
+     */
+    200: JobRoleListResponse;
+};
+
+export type GetJobRolesResponse = GetJobRolesResponses[keyof GetJobRolesResponses];
+
+export type GetJobRolesIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/job-roles/{id}';
+};
+
+export type GetJobRolesIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetJobRolesIdError = GetJobRolesIdErrors[keyof GetJobRolesIdErrors];
+
+export type GetJobRolesIdResponses = {
+    /**
+     * OK
+     */
+    200: JobRoleResponse;
+};
+
+export type GetJobRolesIdResponse = GetJobRolesIdResponses[keyof GetJobRolesIdResponses];
+
 export type GetProjectsData = {
     body?: never;
     path?: never;
@@ -2687,6 +4422,174 @@ export type PutProjectsIdResponses = {
 };
 
 export type PutProjectsIdResponse = PutProjectsIdResponses[keyof PutProjectsIdResponses];
+
+export type GetVacanciesData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Sort by attributes ascending (asc) or descending (desc)
+         */
+        sort?: string;
+        /**
+         * Return page/pageSize (default: true)
+         */
+        'pagination[withCount]'?: boolean;
+        /**
+         * Page number (default: 0)
+         */
+        'pagination[page]'?: number;
+        /**
+         * Page size (default: 25)
+         */
+        'pagination[pageSize]'?: number;
+        /**
+         * Offset value (default: 0)
+         */
+        'pagination[start]'?: number;
+        /**
+         * Number of entities to return (default: 25)
+         */
+        'pagination[limit]'?: number;
+        /**
+         * Fields to return (ex: title,author)
+         */
+        fields?: string;
+        /**
+         * Relations to return
+         */
+        populate?: string;
+        /**
+         * Filters to apply
+         */
+        filters?: {
+            [key: string]: unknown;
+        };
+        /**
+         * Locale to apply
+         */
+        locale?: string;
+    };
+    url: '/vacancies';
+};
+
+export type GetVacanciesErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetVacanciesError = GetVacanciesErrors[keyof GetVacanciesErrors];
+
+export type GetVacanciesResponses = {
+    /**
+     * OK
+     */
+    200: VacancyListResponse;
+};
+
+export type GetVacanciesResponse = GetVacanciesResponses[keyof GetVacanciesResponses];
+
+export type GetVacanciesIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancies/{id}';
+};
+
+export type GetVacanciesIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetVacanciesIdError = GetVacanciesIdErrors[keyof GetVacanciesIdErrors];
+
+export type GetVacanciesIdResponses = {
+    /**
+     * OK
+     */
+    200: VacancyResponse;
+};
+
+export type GetVacanciesIdResponse = GetVacanciesIdResponses[keyof GetVacanciesIdResponses];
+
+export type PostVacancyApplicationsData = {
+    body: VacancyApplicationRequest;
+    path?: never;
+    query?: never;
+    url: '/vacancy-applications';
+};
+
+export type PostVacancyApplicationsErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type PostVacancyApplicationsError = PostVacancyApplicationsErrors[keyof PostVacancyApplicationsErrors];
+
+export type PostVacancyApplicationsResponses = {
+    /**
+     * OK
+     */
+    200: VacancyApplicationResponse;
+};
+
+export type PostVacancyApplicationsResponse = PostVacancyApplicationsResponses[keyof PostVacancyApplicationsResponses];
 
 export type PostUploadData = {
     /**

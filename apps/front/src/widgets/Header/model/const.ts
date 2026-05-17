@@ -62,4 +62,8 @@ export const DEFAULT_NAVIGATION: NavigationItem[] = [
 		label: 'Cases',
 		href: '/projects',
 	},
+	{
+		label: 'Вакансии',
+		href: '/vacancies',
+	},
 ];

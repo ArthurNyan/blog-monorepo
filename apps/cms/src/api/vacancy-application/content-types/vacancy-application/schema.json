@@ -1,0 +1,74 @@
+{
+  "kind": "collectionType",
+  "collectionName": "vacancy_applications",
+  "info": {
+    "singularName": "vacancy-application",
+    "pluralName": "vacancy-applications",
+    "displayName": "Vacancy application"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "vacancy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::vacancy.vacancy",
+      "inversedBy": "vacancy_applications"
+    },
+    "fullName": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": false
+    },
+    "phone": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string"
+    },
+    "coverLetter": {
+      "type": "text",
+      "required": false
+    },
+    "resumeFile": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "consent": {
+      "type": "boolean",
+      "required": true
+    },
+    "hrStatus": {
+      "type": "enumeration",
+      "required": true,
+      "default": "New",
+      "enum": [
+        "New",
+        "Reviewed",
+        "Interview",
+        "Rejected",
+        "Accepted"
+      ]
+    },
+    "submittedAt": {
+      "type": "datetime"
+    },
+    "source": {
+      "type": "string"
+    }
+  }
+}
