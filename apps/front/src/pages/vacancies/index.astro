@@ -1,0 +1,40 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { VacancyExplorer } from "@/widgets/VacancyExplorer";
+
+const initialFilters = {
+	q: Astro.url.searchParams.get("q") ?? "",
+	industry: Astro.url.searchParams.get("industry") ?? "",
+	role: Astro.url.searchParams.get("role") ?? "",
+	location: Astro.url.searchParams.get("location") ?? "",
+	workFormat: Astro.url.searchParams.get("workFormat") ?? "",
+	employmentType: Astro.url.searchParams.get("employmentType") ?? "",
+	level: Astro.url.searchParams.get("level") ?? "",
+};
+
+const initialPage = Math.max(1, Number(Astro.url.searchParams.get("page") ?? 1));
+---
+
+<MainLayout content={{ title: "Вакансии" }} className="flex flex-col">
+	<section class="container mx-auto px-4 py-12 md:py-16">
+		<div class="relative overflow-hidden rounded-3xl border border-border bg-card/40 p-8 md:p-10 mb-8">
+			<div class="absolute -top-20 -right-12 h-56 w-56 rounded-full bg-primary/20 blur-3xl" />
+			<div class="absolute -bottom-24 -left-10 h-52 w-52 rounded-full bg-chart-2/20 blur-3xl" />
+
+			<div class="relative z-10 max-w-3xl space-y-4">
+				<span class="inline-flex rounded-full border border-border bg-background/70 px-3 py-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
+					Карьера
+				</span>
+				<h1 class="text-3xl md:text-5xl font-semibold leading-tight">
+					Вакансии в IT и других сферах бизнеса
+				</h1>
+				<p class="text-base md:text-lg text-muted-foreground">
+					Подбирайте подходящие роли по отрасли, формату работы и уровню.
+					Отклик отправляется напрямую в HR-команду через единый процесс.
+				</p>
+			</div>
+		</div>
+
+		<VacancyExplorer client:load initialFilters={initialFilters} initialPage={initialPage} />
+	</section>
+</MainLayout>
