@@ -82,7 +82,7 @@
 \LoadClass[a4paper,14pt,oneside,openany]{extbook}
 
 % Пакеты типографики и структуры документа.
-\RequirePackage[left=25mm,right=10mm,top=20mm,bottom=20mm,headheight=17pt,headsep=5mm]{geometry}
+\RequirePackage[left=30mm,right=15mm,top=20mm,bottom=20mm,headheight=17pt,headsep=5mm]{geometry}
 \RequirePackage{setspace}
 \RequirePackage{indentfirst}
 \RequirePackage{fontspec}
@@ -142,7 +142,7 @@
 % Переопределяем headings и повторно фиксируем fancy после всех пакетов документа.
 \fancypagestyle{headings}{%
   \fancyhf{}%
-  \fancyfoot[R]{\thepage}%
+  \fancyhead[C]{\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
 }
 \AtBeginDocument{%
@@ -205,7 +205,7 @@
 % Подписи объектов и гиперссылки.
 \captionsetup{font=normalfont,labelfont=normalfont,singlelinecheck=false}
 \captionsetup[figure]{name=Рисунок,labelsep=endash,justification=centering}
-\captionsetup[table]{name=Таблица,labelsep=endash,justification=centering}
+\captionsetup[table]{name=Таблица,labelsep=endash,justification=raggedright,singlelinecheck=false,position=top}
 
 \hypersetup{
   unicode=true,
@@ -388,6 +388,25 @@
 \NewDocumentCommand{\printgostbibliography}{}{%
   \gostvkr@unnumberedchapter{Список литературы}
   \printbibliography[heading=none]
+}
+
+\NewDocumentCommand{\makeabbreviationslist}{m}{%
+  \gostvkr@unnumberedchapter{Список сокращений и условных обозначений}
+  #1
+}
+
+\NewDocumentCommand{\makeglossaryterms}{m}{%
+  \gostvkr@unnumberedchapter{Словарь терминов}
+  #1
+}
+
+\NewDocumentCommand{\makeillustrationslist}{}{%
+  \gostvkr@unnumberedchapter{Список иллюстративного материала}
+  \begingroup
+  \let\clearpage\relax
+  \listoffigures
+  \listoftables
+  \endgroup
 }
 
 % Публичные команды для блока приложений.
