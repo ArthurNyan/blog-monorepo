@@ -191,6 +191,12 @@
 }
 \renewcommand{\cfttoctitlefont}{\centering\bfseries\normalsize}
 \renewcommand{\cftaftertoctitle}{\par}
+\renewcommand{\listfigurename}{Список иллюстраций}
+\renewcommand{\listtablename}{Список таблиц}
+\renewcommand{\cftloftitlefont}{\centering\bfseries\normalsize}
+\renewcommand{\cftafterloftitle}{\par}
+\renewcommand{\cftlottitlefont}{\centering\bfseries\normalsize}
+\renewcommand{\cftafterlottitle}{\par}
 \renewcommand{\cftchapfont}{\normalfont}
 \renewcommand{\cftchappagefont}{\normalfont}
 \renewcommand{\cftsecfont}{\normalfont}
