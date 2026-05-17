@@ -93,7 +93,7 @@
 
 - `webhook -> rebuild`;
 - деплой на `Vercel`;
-- деплой `Strapi` в `Strapi Cloud`;
+- запуск и деплой `Strapi` в `Docker`;
 - генерация `sitemap`;
 - управление переменными окружения.
 

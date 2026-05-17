@@ -40,7 +40,7 @@
 - Рассматривать `Strapi` как CMS-ядро и центр управления контентом.
 - Рассматривать `Astro` как frontend-витрину и слой рендеринга.
 - Описывать `pages` через `Dynamic Zone` и библиотеку переиспользуемых блоков.
-- Обязательно учитывать `ru/en`, `preview mode`, `SEO`, `Open Graph`, `sitemap`, `roles/permissions`, `webhook -> rebuild`, `Vercel`, `Strapi Cloud`.
+- Обязательно учитывать `ru/en`, `preview mode`, `SEO`, `Open Graph`, `sitemap`, `roles/permissions`, `webhook -> rebuild`, `Vercel` и запуск CMS в `Docker`.
 - Полноценной частью системы считать модули страниц, статей, кейсов, вакансий и откликов.
 
 ## Правила для фронтенд-части и блоков

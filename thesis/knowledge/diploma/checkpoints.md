@@ -51,7 +51,7 @@
 
 ## 8. Деплой
 
-- Подготовить production-конфигурацию для `Strapi Cloud`.
+- Подготовить production-конфигурацию для запуска `Strapi` в `Docker`.
 - Подготовить production-конфигурацию для `Vercel`.
 - Проверить переменные окружения, preview и webhooks в production-среде.
 

@@ -12,3 +12,5 @@ apps/*/.astro
 apps/*/.strapi
 apps/*/.cache
 apps/*/build
+DIPLOMA_WORK_PLAN.md
+DIPLOMA_THREAD_PROMPT.md
