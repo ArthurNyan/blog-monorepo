@@ -1,5 +1,6 @@
 const cmsBaseUrl = import.meta.env.PUBLIC_CMS_URL ?? "http://localhost:1337";
 const apiBaseUrl = `${cmsBaseUrl}/api`;
+const defaultLocale = "ru-RU";
 
 type StrapiEntity<T> = {
 	id?: string | number;
@@ -18,17 +19,13 @@ type StrapiListResponse<T> = {
 	};
 };
 
-type StrapiSingleResponse<T> = {
-	data?: StrapiEntity<T>;
-};
-
 type VacancyRaw = {
 	title?: string;
 	slug?: string;
 	location?: string;
-	workFormat?: string;
-	employmentType?: string;
-	level?: string;
+	workFormat?: WorkFormat;
+	employmentType?: EmploymentType;
+	level?: VacancyLevel;
 	salaryFrom?: number;
 	salaryTo?: number;
 	currency?: string;
@@ -60,9 +57,9 @@ export type Vacancy = {
 	title: string;
 	slug: string;
 	location: string;
-	workFormat: string;
-	employmentType: string;
-	level: string;
+	workFormat: WorkFormat | "";
+	employmentType: EmploymentType | "";
+	level: VacancyLevel | "";
 	salaryFrom?: number;
 	salaryTo?: number;
 	currency?: string;
@@ -77,9 +74,9 @@ export type VacancySearchParams = {
 	industry?: string;
 	role?: string;
 	location?: string;
-	workFormat?: string;
-	employmentType?: string;
-	level?: string;
+	workFormat?: WorkFormat;
+	employmentType?: EmploymentType;
+	level?: VacancyLevel;
 	page?: number;
 	pageSize?: number;
 	sort?: string;
@@ -107,6 +104,10 @@ export type VacancyApplicationPayload = {
 	resumeFile: File;
 	honeypot?: string;
 };
+
+export type WorkFormat = "remote" | "office" | "hybrid";
+export type EmploymentType = "full_time" | "contract" | "internship";
+export type VacancyLevel = "intern" | "junior" | "middle" | "senior" | "lead";
 
 const mapTaxonomy = (item?: TaxonomyRaw | null): TaxonomyItem | null => {
 	if (!item?.name || !item?.slug) {
@@ -170,36 +171,35 @@ export const fetchVacancies = async (
 ): Promise<VacancyListResult> => {
 	const url = buildUrl("/vacancies");
 	url.searchParams.set("sort", params.sort || "publishedAt:desc");
-	url.searchParams.set("populate", "*");
+	url.searchParams.set("populate[0]", "industry");
+	url.searchParams.set("populate[1]", "role");
 	url.searchParams.set("pagination[page]", String(params.page || 1));
 	url.searchParams.set("pagination[pageSize]", String(params.pageSize || 9));
-	url.searchParams.set("locale", params.locale || "en");
+	url.searchParams.set("locale", params.locale || defaultLocale);
+	url.searchParams.set("filters[isActive][$eq]", "true");
 
-	const queryParams: Record<string, string> = {};
-	if (params.q?.trim()) {
-		queryParams.q = params.q.trim();
+	const searchQuery = params.q?.trim();
+	if (searchQuery) {
+		url.searchParams.set("filters[$or][0][title][$containsi]", searchQuery);
+		url.searchParams.set("filters[$or][1][description][$containsi]", searchQuery);
 	}
 	if (params.industry) {
-		queryParams.industry = params.industry;
+		url.searchParams.set("filters[industry][slug][$eq]", params.industry);
 	}
 	if (params.role) {
-		queryParams.role = params.role;
+		url.searchParams.set("filters[role][slug][$eq]", params.role);
 	}
 	if (params.location) {
-		queryParams.location = params.location;
+		url.searchParams.set("filters[location][$containsi]", params.location.trim());
 	}
 	if (params.workFormat) {
-		queryParams.workFormat = params.workFormat;
+		url.searchParams.set("filters[workFormat][$eq]", params.workFormat);
 	}
 	if (params.employmentType) {
-		queryParams.employmentType = params.employmentType;
+		url.searchParams.set("filters[employmentType][$eq]", params.employmentType);
 	}
 	if (params.level) {
-		queryParams.level = params.level;
-	}
-
-	for (const [key, value] of Object.entries(queryParams)) {
-		url.searchParams.set(key, value);
+		url.searchParams.set("filters[level][$eq]", params.level);
 	}
 
 	const response = await fetch(url.toString());
@@ -220,23 +220,23 @@ export const fetchVacancies = async (
 };
 
 export const fetchVacancyBySlug = async (slug: string): Promise<Vacancy | null> => {
-	const response = await fetch(
-		buildUrl(`/vacancies/${slug}`, {
-			populate: "*",
-			locale: "en",
-		}).toString()
-	);
-
-	if (response.status === 404) {
-		return null;
-	}
+	const url = buildUrl("/vacancies");
+	url.searchParams.set("populate[0]", "industry");
+	url.searchParams.set("populate[1]", "role");
+	url.searchParams.set("locale", defaultLocale);
+	url.searchParams.set("filters[slug][$eq]", slug);
+	url.searchParams.set("filters[isActive][$eq]", "true");
+	url.searchParams.set("pagination[page]", "1");
+	url.searchParams.set("pagination[pageSize]", "1");
+	const response = await fetch(url.toString());
 
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));
 	}
 
-	const json = (await response.json()) as StrapiSingleResponse<VacancyRaw>;
-	return json.data ? mapVacancy(json.data) : null;
+	const json = (await response.json()) as StrapiListResponse<VacancyRaw>;
+	const vacancy = json.data?.[0];
+	return vacancy ? mapVacancy(vacancy) : null;
 };
 
 export const fetchIndustries = async (): Promise<TaxonomyItem[]> => {
@@ -244,7 +244,7 @@ export const fetchIndustries = async (): Promise<TaxonomyItem[]> => {
 		buildUrl("/industries", {
 			sort: "name:asc",
 			"pagination[pageSize]": "100",
-			locale: "en",
+			locale: defaultLocale,
 		}).toString()
 	);
 
@@ -263,7 +263,7 @@ export const fetchJobRoles = async (): Promise<TaxonomyItem[]> => {
 		buildUrl("/job-roles", {
 			sort: "name:asc",
 			"pagination[pageSize]": "100",
-			locale: "en",
+			locale: defaultLocale,
 		}).toString()
 	);
 
@@ -280,20 +280,20 @@ export const fetchJobRoles = async (): Promise<TaxonomyItem[]> => {
 export const submitVacancyApplication = async (
 	payload: VacancyApplicationPayload
 ): Promise<void> => {
+	if (payload.honeypot?.trim()) {
+		return;
+	}
+
 	const formData = new FormData();
-	formData.append(
-		"data",
-		JSON.stringify({
-			vacancy: payload.vacancyId,
-			fullName: payload.fullName,
-			email: payload.email,
-			phone: payload.phone,
-			city: payload.city || "",
-			coverLetter: payload.coverLetter || "",
-			consent: payload.consent,
-			website: payload.honeypot || "",
-		})
-	);
+	formData.append("data[vacancy]", String(payload.vacancyId));
+	formData.append("data[fullName]", payload.fullName);
+	formData.append("data[email]", payload.email);
+	formData.append("data[phone]", payload.phone);
+	formData.append("data[city]", payload.city || "");
+	formData.append("data[coverLetter]", payload.coverLetter || "");
+	formData.append("data[consent]", String(payload.consent));
+	formData.append("data[source]", "frontend");
+	formData.append("data[submittedAt]", new Date().toISOString());
 	formData.append("files.resumeFile", payload.resumeFile);
 
 	const response = await fetch(`${apiBaseUrl}/vacancy-applications`, {

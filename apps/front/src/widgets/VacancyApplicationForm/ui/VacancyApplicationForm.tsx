@@ -14,7 +14,7 @@ type FormState = {
 	city: string;
 	coverLetter: string;
 	consent: boolean;
-	website: string;
+	honeypot: string;
 	resumeFile: File | null;
 };
 
@@ -25,7 +25,7 @@ const initialState: FormState = {
 	city: "",
 	coverLetter: "",
 	consent: false,
-	website: "",
+	honeypot: "",
 	resumeFile: null,
 };
 
@@ -56,6 +56,11 @@ export const VacancyApplicationForm = ({
 			setError(validationMessage || "Проверьте заполнение формы");
 			return;
 		}
+		if (state.honeypot.trim()) {
+			setSuccess("Отклик отправлен. Спасибо! Мы свяжемся с вами после рассмотрения.");
+			setState(initialState);
+			return;
+		}
 
 		try {
 			setIsSubmitting(true);
@@ -68,7 +73,7 @@ export const VacancyApplicationForm = ({
 				coverLetter: state.coverLetter.trim(),
 				consent: state.consent,
 				resumeFile: state.resumeFile,
-				honeypot: state.website,
+				honeypot: state.honeypot,
 			});
 
 			setSuccess("Отклик отправлен. Спасибо! Мы свяжемся с вами после рассмотрения.");
@@ -177,9 +182,9 @@ export const VacancyApplicationForm = ({
 				type="text"
 				tabIndex={-1}
 				autoComplete="off"
-				value={state.website}
+				value={state.honeypot}
 				onChange={(event) =>
-					setState((prev) => ({ ...prev, website: event.target.value }))
+					setState((prev) => ({ ...prev, honeypot: event.target.value }))
 				}
 				className="hidden"
 				aria-hidden="true"

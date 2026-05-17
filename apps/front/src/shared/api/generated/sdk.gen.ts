@@ -2,7 +2,7 @@
 
 import { type Client, formDataBodySerializer, type Options as Options2, type TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteArticlesIdData, DeleteArticlesIdErrors, DeleteArticlesIdResponses, DeleteAuthorsIdData, DeleteAuthorsIdErrors, DeleteAuthorsIdResponses, DeleteGlobalData, DeleteGlobalErrors, DeleteGlobalResponses, DeleteHomePageData, DeleteHomePageErrors, DeleteHomePageResponses, DeleteProjectsIdData, DeleteProjectsIdErrors, DeleteProjectsIdResponses, DeleteUploadFilesByIdData, DeleteUploadFilesByIdResponses, DeleteUsersByIdData, DeleteUsersByIdErrors, DeleteUsersByIdResponses, DeleteUsersPermissionsRolesByRoleData, DeleteUsersPermissionsRolesByRoleErrors, DeleteUsersPermissionsRolesByRoleResponses, GetArticlesData, GetArticlesErrors, GetArticlesIdData, GetArticlesIdErrors, GetArticlesIdResponses, GetArticlesResponses, GetAuthByProviderCallbackData, GetAuthByProviderCallbackErrors, GetAuthByProviderCallbackResponses, GetAuthEmailConfirmationData, GetAuthEmailConfirmationErrors, GetAuthEmailConfirmationResponses, GetAuthorsData, GetAuthorsErrors, GetAuthorsIdData, GetAuthorsIdErrors, GetAuthorsIdResponses, GetAuthorsResponses, GetConnectByProviderData, GetConnectByProviderErrors, GetConnectByProviderResponses, GetGlobalData, GetGlobalErrors, GetGlobalResponses, GetHomePageData, GetHomePageErrors, GetHomePageResponses, GetIndustriesData, GetIndustriesErrors, GetIndustriesIdData, GetIndustriesIdErrors, GetIndustriesIdResponses, GetIndustriesResponses, GetJobRolesData, GetJobRolesErrors, GetJobRolesIdData, GetJobRolesIdErrors, GetJobRolesIdResponses, GetJobRolesResponses, GetProjectsData, GetProjectsErrors, GetProjectsIdData, GetProjectsIdErrors, GetProjectsIdResponses, GetProjectsResponses, GetUploadFilesByIdData, GetUploadFilesByIdResponses, GetUploadFilesData, GetUploadFilesResponses, GetUsersByIdData, GetUsersByIdErrors, GetUsersByIdResponses, GetUsersCountData, GetUsersCountErrors, GetUsersCountResponses, GetUsersData, GetUsersErrors, GetUsersMeData, GetUsersMeErrors, GetUsersMeResponses, GetUsersPermissionsPermissionsData, GetUsersPermissionsPermissionsErrors, GetUsersPermissionsPermissionsResponses, GetUsersPermissionsRolesByIdData, GetUsersPermissionsRolesByIdErrors, GetUsersPermissionsRolesByIdResponses, GetUsersPermissionsRolesData, GetUsersPermissionsRolesErrors, GetUsersPermissionsRolesResponses, GetUsersResponses, GetVacanciesData, GetVacanciesErrors, GetVacanciesIdData, GetVacanciesIdErrors, GetVacanciesIdResponses, GetVacanciesResponses, PostArticlesData, PostArticlesErrors, PostArticlesResponses, PostAuthChangePasswordData, PostAuthChangePasswordErrors, PostAuthChangePasswordResponses, PostAuthForgotPasswordData, PostAuthForgotPasswordErrors, PostAuthForgotPasswordResponses, PostAuthLocalData, PostAuthLocalErrors, PostAuthLocalRegisterData, PostAuthLocalRegisterErrors, PostAuthLocalRegisterResponses, PostAuthLocalResponses, PostAuthorsData, PostAuthorsErrors, PostAuthorsResponses, PostAuthResetPasswordData, PostAuthResetPasswordErrors, PostAuthResetPasswordResponses, PostAuthSendEmailConfirmationData, PostAuthSendEmailConfirmationErrors, PostAuthSendEmailConfirmationResponses, PostProjectsData, PostProjectsErrors, PostProjectsResponses, PostUpload_id_byIdData, PostUpload_id_byIdResponses, PostUploadData, PostUploadResponses, PostUsersData, PostUsersErrors, PostUsersPermissionsRolesData, PostUsersPermissionsRolesErrors, PostUsersPermissionsRolesResponses, PostUsersResponses, PostVacancyApplicationsData, PostVacancyApplicationsErrors, PostVacancyApplicationsResponses, PutArticlesIdData, PutArticlesIdErrors, PutArticlesIdResponses, PutAuthorsIdData, PutAuthorsIdErrors, PutAuthorsIdResponses, PutGlobalData, PutGlobalErrors, PutGlobalResponses, PutHomePageData, PutHomePageErrors, PutHomePageResponses, PutProjectsIdData, PutProjectsIdErrors, PutProjectsIdResponses, PutUsersByIdData, PutUsersByIdErrors, PutUsersByIdResponses, PutUsersPermissionsRolesByRoleData, PutUsersPermissionsRolesByRoleErrors, PutUsersPermissionsRolesByRoleResponses } from './types.gen';
+import type { DeleteArticlesIdData, DeleteArticlesIdErrors, DeleteArticlesIdResponses, DeleteAuthorsIdData, DeleteAuthorsIdErrors, DeleteAuthorsIdResponses, DeleteGlobalData, DeleteGlobalErrors, DeleteGlobalResponses, DeleteHomePageData, DeleteHomePageErrors, DeleteHomePageResponses, DeleteProjectsIdData, DeleteProjectsIdErrors, DeleteProjectsIdResponses, DeleteUploadFilesByIdData, DeleteUploadFilesByIdResponses, DeleteUsersByIdData, DeleteUsersByIdErrors, DeleteUsersByIdResponses, DeleteUsersPermissionsRolesByRoleData, DeleteUsersPermissionsRolesByRoleErrors, DeleteUsersPermissionsRolesByRoleResponses, DeleteVacanciesIdData, DeleteVacanciesIdErrors, DeleteVacanciesIdResponses, DeleteVacancyApplicationsIdData, DeleteVacancyApplicationsIdErrors, DeleteVacancyApplicationsIdResponses, GetArticlesData, GetArticlesErrors, GetArticlesIdData, GetArticlesIdErrors, GetArticlesIdResponses, GetArticlesResponses, GetAuthByProviderCallbackData, GetAuthByProviderCallbackErrors, GetAuthByProviderCallbackResponses, GetAuthEmailConfirmationData, GetAuthEmailConfirmationErrors, GetAuthEmailConfirmationResponses, GetAuthorsData, GetAuthorsErrors, GetAuthorsIdData, GetAuthorsIdErrors, GetAuthorsIdResponses, GetAuthorsResponses, GetConnectByProviderData, GetConnectByProviderErrors, GetConnectByProviderResponses, GetGlobalData, GetGlobalErrors, GetGlobalResponses, GetHomePageData, GetHomePageErrors, GetHomePageResponses, GetIndustriesData, GetIndustriesErrors, GetIndustriesIdData, GetIndustriesIdErrors, GetIndustriesIdResponses, GetIndustriesResponses, GetJobRolesData, GetJobRolesErrors, GetJobRolesIdData, GetJobRolesIdErrors, GetJobRolesIdResponses, GetJobRolesResponses, GetProjectsData, GetProjectsErrors, GetProjectsIdData, GetProjectsIdErrors, GetProjectsIdResponses, GetProjectsResponses, GetUploadFilesByIdData, GetUploadFilesByIdResponses, GetUploadFilesData, GetUploadFilesResponses, GetUsersByIdData, GetUsersByIdErrors, GetUsersByIdResponses, GetUsersCountData, GetUsersCountErrors, GetUsersCountResponses, GetUsersData, GetUsersErrors, GetUsersMeData, GetUsersMeErrors, GetUsersMeResponses, GetUsersPermissionsPermissionsData, GetUsersPermissionsPermissionsErrors, GetUsersPermissionsPermissionsResponses, GetUsersPermissionsRolesByIdData, GetUsersPermissionsRolesByIdErrors, GetUsersPermissionsRolesByIdResponses, GetUsersPermissionsRolesData, GetUsersPermissionsRolesErrors, GetUsersPermissionsRolesResponses, GetUsersResponses, GetVacanciesData, GetVacanciesErrors, GetVacanciesIdData, GetVacanciesIdErrors, GetVacanciesIdResponses, GetVacanciesResponses, GetVacancyApplicationsData, GetVacancyApplicationsErrors, GetVacancyApplicationsIdData, GetVacancyApplicationsIdErrors, GetVacancyApplicationsIdResponses, GetVacancyApplicationsResponses, PostArticlesData, PostArticlesErrors, PostArticlesResponses, PostAuthChangePasswordData, PostAuthChangePasswordErrors, PostAuthChangePasswordResponses, PostAuthForgotPasswordData, PostAuthForgotPasswordErrors, PostAuthForgotPasswordResponses, PostAuthLocalData, PostAuthLocalErrors, PostAuthLocalRegisterData, PostAuthLocalRegisterErrors, PostAuthLocalRegisterResponses, PostAuthLocalResponses, PostAuthorsData, PostAuthorsErrors, PostAuthorsResponses, PostAuthResetPasswordData, PostAuthResetPasswordErrors, PostAuthResetPasswordResponses, PostAuthSendEmailConfirmationData, PostAuthSendEmailConfirmationErrors, PostAuthSendEmailConfirmationResponses, PostProjectsData, PostProjectsErrors, PostProjectsResponses, PostUpload_id_byIdData, PostUpload_id_byIdResponses, PostUploadData, PostUploadResponses, PostUsersData, PostUsersErrors, PostUsersPermissionsRolesData, PostUsersPermissionsRolesErrors, PostUsersPermissionsRolesResponses, PostUsersResponses, PostVacanciesData, PostVacanciesErrors, PostVacanciesResponses, PostVacancyApplicationsData, PostVacancyApplicationsErrors, PostVacancyApplicationsResponses, PutArticlesIdData, PutArticlesIdErrors, PutArticlesIdResponses, PutAuthorsIdData, PutAuthorsIdErrors, PutAuthorsIdResponses, PutGlobalData, PutGlobalErrors, PutGlobalResponses, PutHomePageData, PutHomePageErrors, PutHomePageResponses, PutProjectsIdData, PutProjectsIdErrors, PutProjectsIdResponses, PutUsersByIdData, PutUsersByIdErrors, PutUsersByIdResponses, PutUsersPermissionsRolesByRoleData, PutUsersPermissionsRolesByRoleErrors, PutUsersPermissionsRolesByRoleResponses, PutVacanciesIdData, PutVacanciesIdErrors, PutVacanciesIdResponses, PutVacancyApplicationsIdData, PutVacancyApplicationsIdErrors, PutVacancyApplicationsIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -232,6 +232,24 @@ export const getVacancies = <ThrowOnError extends boolean = false>(options?: Opt
     ...options
 });
 
+export const postVacancies = <ThrowOnError extends boolean = false>(options: Options<PostVacanciesData, ThrowOnError>) => (options.client ?? client).post<PostVacanciesResponses, PostVacanciesErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancies',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const deleteVacanciesId = <ThrowOnError extends boolean = false>(options: Options<DeleteVacanciesIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteVacanciesIdResponses, DeleteVacanciesIdErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancies/{id}',
+    ...options
+});
+
 export const getVacanciesId = <ThrowOnError extends boolean = false>(options: Options<GetVacanciesIdData, ThrowOnError>) => (options.client ?? client).get<GetVacanciesIdResponses, GetVacanciesIdErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
@@ -239,10 +257,53 @@ export const getVacanciesId = <ThrowOnError extends boolean = false>(options: Op
     ...options
 });
 
+export const putVacanciesId = <ThrowOnError extends boolean = false>(options: Options<PutVacanciesIdData, ThrowOnError>) => (options.client ?? client).put<PutVacanciesIdResponses, PutVacanciesIdErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancies/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const getVacancyApplications = <ThrowOnError extends boolean = false>(options?: Options<GetVacancyApplicationsData, ThrowOnError>) => (options?.client ?? client).get<GetVacancyApplicationsResponses, GetVacancyApplicationsErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancy-applications',
+    ...options
+});
+
 export const postVacancyApplications = <ThrowOnError extends boolean = false>(options: Options<PostVacancyApplicationsData, ThrowOnError>) => (options.client ?? client).post<PostVacancyApplicationsResponses, PostVacancyApplicationsErrors, ThrowOnError>({
     responseType: 'json',
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/vacancy-applications',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+export const deleteVacancyApplicationsId = <ThrowOnError extends boolean = false>(options: Options<DeleteVacancyApplicationsIdData, ThrowOnError>) => (options.client ?? client).delete<DeleteVacancyApplicationsIdResponses, DeleteVacancyApplicationsIdErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancy-applications/{id}',
+    ...options
+});
+
+export const getVacancyApplicationsId = <ThrowOnError extends boolean = false>(options: Options<GetVacancyApplicationsIdData, ThrowOnError>) => (options.client ?? client).get<GetVacancyApplicationsIdResponses, GetVacancyApplicationsIdErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancy-applications/{id}',
+    ...options
+});
+
+export const putVacancyApplicationsId = <ThrowOnError extends boolean = false>(options: Options<PutVacancyApplicationsIdData, ThrowOnError>) => (options.client ?? client).put<PutVacancyApplicationsIdResponses, PutVacancyApplicationsIdErrors, ThrowOnError>({
+    responseType: 'json',
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/vacancy-applications/{id}',
     ...options,
     headers: {
         'Content-Type': 'application/json',

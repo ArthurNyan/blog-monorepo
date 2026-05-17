@@ -6,8 +6,11 @@ import {
 	fetchIndustries,
 	fetchJobRoles,
 	fetchVacancies,
+	type EmploymentType,
 	type TaxonomyItem,
 	type Vacancy,
+	type VacancyLevel,
+	type WorkFormat,
 } from "@/shared/api/vacancies";
 import { VacancyCard } from "@/widgets/VacancyCard";
 
@@ -16,9 +19,9 @@ type Filters = {
 	industry: string;
 	role: string;
 	location: string;
-	workFormat: string;
-	employmentType: string;
-	level: string;
+	workFormat: WorkFormat | "";
+	employmentType: EmploymentType | "";
+	level: VacancyLevel | "";
 };
 
 type PaginationState = {
@@ -52,7 +55,6 @@ const WORK_FORMAT_OPTIONS = [
 const EMPLOYMENT_TYPE_OPTIONS = [
 	{ value: "", label: "Любой тип" },
 	{ value: "full_time", label: "Полная занятость" },
-	{ value: "part_time", label: "Частичная занятость" },
 	{ value: "contract", label: "Контракт" },
 	{ value: "internship", label: "Стажировка" },
 ];

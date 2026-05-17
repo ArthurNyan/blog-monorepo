@@ -21,7 +21,6 @@ const WORK_FORMAT_LABELS: Record<string, string> = {
 
 const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
 	full_time: "Полная занятость",
-	part_time: "Частичная занятость",
 	contract: "Контракт",
 	internship: "Стажировка",
 };

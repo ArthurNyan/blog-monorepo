@@ -1277,15 +1277,15 @@ export type Industry = {
             }>;
         };
         location?: string;
-        workFormat?: 'remote' | 'hybrid' | 'office';
-        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        workFormat?: 'remote' | 'office' | 'hybrid';
+        employmentType?: 'full_time' | 'contract' | 'internship';
         level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
         salaryFrom?: number;
         salaryTo?: number;
         currency?: 'RUB' | 'USD' | 'EUR';
         description?: string;
         isActive?: boolean;
-        applications?: Array<{
+        vacancy_applications?: Array<{
             id?: string | number;
             documentId?: string;
             vacancy?: {
@@ -1411,7 +1411,7 @@ export type Industry = {
                 }>;
             };
             consent?: boolean;
-            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            hrStatus?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
             submittedAt?: string;
             source?: string;
             createdAt?: string;
@@ -1629,15 +1629,15 @@ export type JobRole = {
             }>;
         };
         location?: string;
-        workFormat?: 'remote' | 'hybrid' | 'office';
-        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        workFormat?: 'remote' | 'office' | 'hybrid';
+        employmentType?: 'full_time' | 'contract' | 'internship';
         level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
         salaryFrom?: number;
         salaryTo?: number;
         currency?: 'RUB' | 'USD' | 'EUR';
         description?: string;
         isActive?: boolean;
-        applications?: Array<{
+        vacancy_applications?: Array<{
             id?: string | number;
             documentId?: string;
             vacancy?: {
@@ -1763,7 +1763,7 @@ export type JobRole = {
                 }>;
             };
             consent?: boolean;
-            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            hrStatus?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
             submittedAt?: string;
             source?: string;
             createdAt?: string;
@@ -2228,6 +2228,27 @@ export type ProjectResponse = {
     };
 };
 
+export type VacancyRequest = {
+    data: {
+        title: string;
+        slug: string;
+        industry?: number | string;
+        role?: number | string;
+        location?: string;
+        workFormat: 'remote' | 'office' | 'hybrid';
+        employmentType?: 'full_time' | 'contract' | 'internship';
+        level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
+        salaryFrom?: number;
+        salaryTo?: number;
+        currency?: 'RUB' | 'USD' | 'EUR';
+        description?: string;
+        isActive?: boolean;
+        vacancy_applications?: Array<number | string>;
+        locale?: string;
+        localizations?: Array<number | string>;
+    };
+};
+
 export type VacancyListResponse = {
     data?: Array<Vacancy>;
     meta?: {
@@ -2367,15 +2388,15 @@ export type Vacancy = {
                 }>;
             };
             location?: string;
-            workFormat?: 'remote' | 'hybrid' | 'office';
-            employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+            workFormat?: 'remote' | 'office' | 'hybrid';
+            employmentType?: 'full_time' | 'contract' | 'internship';
             level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
             salaryFrom?: number;
             salaryTo?: number;
             currency?: 'RUB' | 'USD' | 'EUR';
             description?: string;
             isActive?: boolean;
-            applications?: Array<{
+            vacancy_applications?: Array<{
                 id?: string | number;
                 documentId?: string;
                 vacancy?: {
@@ -2501,7 +2522,7 @@ export type Vacancy = {
                     }>;
                 };
                 consent?: boolean;
-                status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+                hrStatus?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
                 submittedAt?: string;
                 source?: string;
                 createdAt?: string;
@@ -2559,16 +2580,16 @@ export type Vacancy = {
         id?: string | number;
         documentId?: string;
     };
-    location: string;
-    workFormat?: 'remote' | 'hybrid' | 'office';
-    employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+    location?: string;
+    workFormat: 'remote' | 'office' | 'hybrid';
+    employmentType?: 'full_time' | 'contract' | 'internship';
     level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
     salaryFrom?: number;
     salaryTo?: number;
     currency?: 'RUB' | 'USD' | 'EUR';
     description?: string;
     isActive?: boolean;
-    applications?: Array<{
+    vacancy_applications?: Array<{
         id?: string | number;
         documentId?: string;
     }>;
@@ -2599,7 +2620,7 @@ export type VacancyResponse = {
 
 export type VacancyApplicationRequest = {
     data: {
-        vacancy: number | string;
+        vacancy?: number | string;
         fullName: string;
         email: string;
         phone: string;
@@ -2607,7 +2628,7 @@ export type VacancyApplicationRequest = {
         coverLetter?: string;
         resumeFile: number | string;
         consent: boolean;
-        status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+        hrStatus: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
         submittedAt?: string;
         source?: string;
         locale?: string;
@@ -2615,10 +2636,22 @@ export type VacancyApplicationRequest = {
     };
 };
 
+export type VacancyApplicationListResponse = {
+    data?: Array<VacancyApplication>;
+    meta?: {
+        pagination?: {
+            page?: number;
+            pageSize?: number;
+            pageCount?: number;
+            total?: number;
+        };
+    };
+};
+
 export type VacancyApplication = {
     id?: string | number;
     documentId?: string;
-    vacancy: {
+    vacancy?: {
         id?: string | number;
         documentId?: string;
         title?: string;
@@ -2757,15 +2790,15 @@ export type VacancyApplication = {
             }>;
         };
         location?: string;
-        workFormat?: 'remote' | 'hybrid' | 'office';
-        employmentType?: 'full_time' | 'part_time' | 'contract' | 'internship';
+        workFormat?: 'remote' | 'office' | 'hybrid';
+        employmentType?: 'full_time' | 'contract' | 'internship';
         level?: 'intern' | 'junior' | 'middle' | 'senior' | 'lead';
         salaryFrom?: number;
         salaryTo?: number;
         currency?: 'RUB' | 'USD' | 'EUR';
         description?: string;
         isActive?: boolean;
-        applications?: Array<{
+        vacancy_applications?: Array<{
             id?: string | number;
             documentId?: string;
             vacancy?: {
@@ -2891,7 +2924,7 @@ export type VacancyApplication = {
                 }>;
             };
             consent?: boolean;
-            status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+            hrStatus?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
             submittedAt?: string;
             source?: string;
             createdAt?: string;
@@ -2977,7 +3010,7 @@ export type VacancyApplication = {
         }>;
     };
     consent: boolean;
-    status?: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
+    hrStatus: 'New' | 'Reviewed' | 'Interview' | 'Rejected' | 'Accepted';
     submittedAt?: string;
     source?: string;
     createdAt?: string;
@@ -4507,6 +4540,90 @@ export type GetVacanciesResponses = {
 
 export type GetVacanciesResponse = GetVacanciesResponses[keyof GetVacanciesResponses];
 
+export type PostVacanciesData = {
+    body: VacancyRequest;
+    path?: never;
+    query?: never;
+    url: '/vacancies';
+};
+
+export type PostVacanciesErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type PostVacanciesError = PostVacanciesErrors[keyof PostVacanciesErrors];
+
+export type PostVacanciesResponses = {
+    /**
+     * OK
+     */
+    200: VacancyResponse;
+};
+
+export type PostVacanciesResponse = PostVacanciesResponses[keyof PostVacanciesResponses];
+
+export type DeleteVacanciesIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancies/{id}';
+};
+
+export type DeleteVacanciesIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type DeleteVacanciesIdError = DeleteVacanciesIdErrors[keyof DeleteVacanciesIdErrors];
+
+export type DeleteVacanciesIdResponses = {
+    /**
+     * OK
+     */
+    200: number;
+};
+
+export type DeleteVacanciesIdResponse = DeleteVacanciesIdResponses[keyof DeleteVacanciesIdResponses];
+
 export type GetVacanciesIdData = {
     body?: never;
     path: {
@@ -4550,6 +4667,133 @@ export type GetVacanciesIdResponses = {
 
 export type GetVacanciesIdResponse = GetVacanciesIdResponses[keyof GetVacanciesIdResponses];
 
+export type PutVacanciesIdData = {
+    body: VacancyRequest;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancies/{id}';
+};
+
+export type PutVacanciesIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type PutVacanciesIdError = PutVacanciesIdErrors[keyof PutVacanciesIdErrors];
+
+export type PutVacanciesIdResponses = {
+    /**
+     * OK
+     */
+    200: VacancyResponse;
+};
+
+export type PutVacanciesIdResponse = PutVacanciesIdResponses[keyof PutVacanciesIdResponses];
+
+export type GetVacancyApplicationsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        /**
+         * Sort by attributes ascending (asc) or descending (desc)
+         */
+        sort?: string;
+        /**
+         * Return page/pageSize (default: true)
+         */
+        'pagination[withCount]'?: boolean;
+        /**
+         * Page number (default: 0)
+         */
+        'pagination[page]'?: number;
+        /**
+         * Page size (default: 25)
+         */
+        'pagination[pageSize]'?: number;
+        /**
+         * Offset value (default: 0)
+         */
+        'pagination[start]'?: number;
+        /**
+         * Number of entities to return (default: 25)
+         */
+        'pagination[limit]'?: number;
+        /**
+         * Fields to return (ex: title,author)
+         */
+        fields?: string;
+        /**
+         * Relations to return
+         */
+        populate?: string;
+        /**
+         * Filters to apply
+         */
+        filters?: {
+            [key: string]: unknown;
+        };
+        /**
+         * Locale to apply
+         */
+        locale?: string;
+    };
+    url: '/vacancy-applications';
+};
+
+export type GetVacancyApplicationsErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetVacancyApplicationsError = GetVacancyApplicationsErrors[keyof GetVacancyApplicationsErrors];
+
+export type GetVacancyApplicationsResponses = {
+    /**
+     * OK
+     */
+    200: VacancyApplicationListResponse;
+};
+
+export type GetVacancyApplicationsResponse = GetVacancyApplicationsResponses[keyof GetVacancyApplicationsResponses];
+
 export type PostVacancyApplicationsData = {
     body: VacancyApplicationRequest;
     path?: never;
@@ -4590,6 +4834,135 @@ export type PostVacancyApplicationsResponses = {
 };
 
 export type PostVacancyApplicationsResponse = PostVacancyApplicationsResponses[keyof PostVacancyApplicationsResponses];
+
+export type DeleteVacancyApplicationsIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancy-applications/{id}';
+};
+
+export type DeleteVacancyApplicationsIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type DeleteVacancyApplicationsIdError = DeleteVacancyApplicationsIdErrors[keyof DeleteVacancyApplicationsIdErrors];
+
+export type DeleteVacancyApplicationsIdResponses = {
+    /**
+     * OK
+     */
+    200: number;
+};
+
+export type DeleteVacancyApplicationsIdResponse = DeleteVacancyApplicationsIdResponses[keyof DeleteVacancyApplicationsIdResponses];
+
+export type GetVacancyApplicationsIdData = {
+    body?: never;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancy-applications/{id}';
+};
+
+export type GetVacancyApplicationsIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type GetVacancyApplicationsIdError = GetVacancyApplicationsIdErrors[keyof GetVacancyApplicationsIdErrors];
+
+export type GetVacancyApplicationsIdResponses = {
+    /**
+     * OK
+     */
+    200: VacancyApplicationResponse;
+};
+
+export type GetVacancyApplicationsIdResponse = GetVacancyApplicationsIdResponses[keyof GetVacancyApplicationsIdResponses];
+
+export type PutVacancyApplicationsIdData = {
+    body: VacancyApplicationRequest;
+    path: {
+        id: number;
+    };
+    query?: never;
+    url: '/vacancy-applications/{id}';
+};
+
+export type PutVacancyApplicationsIdErrors = {
+    /**
+     * Bad Request
+     */
+    400: Error;
+    /**
+     * Unauthorized
+     */
+    401: Error;
+    /**
+     * Forbidden
+     */
+    403: Error;
+    /**
+     * Not Found
+     */
+    404: Error;
+    /**
+     * Internal Server Error
+     */
+    500: Error;
+};
+
+export type PutVacancyApplicationsIdError = PutVacancyApplicationsIdErrors[keyof PutVacancyApplicationsIdErrors];
+
+export type PutVacancyApplicationsIdResponses = {
+    /**
+     * OK
+     */
+    200: VacancyApplicationResponse;
+};
+
+export type PutVacancyApplicationsIdResponse = PutVacancyApplicationsIdResponses[keyof PutVacancyApplicationsIdResponses];
 
 export type PostUploadData = {
     /**
