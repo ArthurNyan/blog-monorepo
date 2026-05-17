@@ -70,6 +70,8 @@
 
 ## Команды Makefile
 - `make help` — справка по целям.
+- `make diagrams` — генерация `Mermaid/PlantUML` диаграмм в `SVG + PDF`.
+- `make diagrams-clean` — очистка сгенерированных диаграмм.
 - `make build` — сборка `main.pdf`.
 - `make rebuild` — полная пересборка.
 - `make watch` — непрерывная сборка.
@@ -97,3 +99,23 @@
 4. `make ci`
 
 Если все команды проходят, техническая часть шаблона готова.
+
+## Диаграммы Mermaid и PlantUML
+
+Для архитектурных схем и pipeline-диаграмм в дипломе поддерживается отдельный текстовый
+контур диаграмм:
+
+- исходники `Mermaid` лежат в `diagrams/src/mermaid/*.mmd`;
+- исходники `PlantUML` лежат в `diagrams/src/plantuml/*.puml`;
+- `SVG` для `Markdown` генерируются в `assets/diagrams/.../svg/`;
+- `PDF` для `LaTeX` генерируются в `assets/diagrams/.../pdf/`.
+
+Базовый сценарий:
+
+```bash
+cd thesis
+make diagrams
+make build
+```
+
+Подробные правила и примеры вставки описаны в `docs/diagrams-guide.md`.
