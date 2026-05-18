@@ -2,6 +2,13 @@ export const cmsBaseUrl = import.meta.env.PUBLIC_CMS_URL ?? "http://localhost:13
 export const apiBaseUrl = `${cmsBaseUrl}/api`;
 export const defaultCmsLocale = "ru-RU";
 
+export type CmsStatus = "published" | "draft";
+
+export type CmsRequestOptions = {
+	status?: CmsStatus;
+	headers?: HeadersInit;
+};
+
 export const resolveCmsMediaUrl = (url?: string | null) => {
 	if (!url) return undefined;
 	return url.startsWith("http://") || url.startsWith("https://")
@@ -18,6 +25,17 @@ export const buildCmsUrl = (path: string, params?: Record<string, string>) => {
 		if (value) {
 			url.searchParams.set(key, value);
 		}
+	}
+
+	return url;
+};
+
+export const applyCmsRequestOptions = (
+	url: URL,
+	options?: CmsRequestOptions
+) => {
+	if (options?.status) {
+		url.searchParams.set("status", options.status);
 	}
 
 	return url;

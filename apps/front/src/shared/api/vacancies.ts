@@ -1,3 +1,5 @@
+import type { CmsRequestOptions } from "@/shared/api/cms";
+
 const cmsBaseUrl = import.meta.env.PUBLIC_CMS_URL ?? "http://localhost:1337";
 const apiBaseUrl = `${cmsBaseUrl}/api`;
 const defaultLocale = "ru-RU";
@@ -108,6 +110,10 @@ export type VacancyApplicationPayload = {
 export type WorkFormat = "remote" | "office" | "hybrid";
 export type EmploymentType = "full_time" | "contract" | "internship";
 export type VacancyLevel = "intern" | "junior" | "middle" | "senior" | "lead";
+export type VacancyBySlugOptions = CmsRequestOptions & {
+	locale?: string;
+	includeInactive?: boolean;
+};
 
 const mapTaxonomy = (item?: TaxonomyRaw | null): TaxonomyItem | null => {
 	if (!item?.name || !item?.slug) {
@@ -227,16 +233,29 @@ export const fetchVacancies = async (
 	};
 };
 
-export const fetchVacancyBySlug = async (slug: string): Promise<Vacancy | null> => {
+export const fetchVacancyBySlug = async (
+	slug: string,
+	options: VacancyBySlugOptions = {}
+): Promise<Vacancy | null> => {
 	const url = buildUrl("/vacancies");
 	url.searchParams.set("populate[0]", "industry");
 	url.searchParams.set("populate[1]", "role");
-	url.searchParams.set("locale", defaultLocale);
+	url.searchParams.set("locale", options.locale || defaultLocale);
 	url.searchParams.set("filters[slug][$eq]", slug);
-	url.searchParams.set("filters[isActive][$eq]", "true");
 	url.searchParams.set("pagination[page]", "1");
 	url.searchParams.set("pagination[pageSize]", "1");
-	const response = await fetch(url.toString());
+
+	if (!options.includeInactive) {
+		url.searchParams.set("filters[isActive][$eq]", "true");
+	}
+
+	if (options.status) {
+		url.searchParams.set("status", options.status);
+	}
+
+	const response = await fetch(url.toString(), {
+		headers: options.headers,
+	});
 
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));

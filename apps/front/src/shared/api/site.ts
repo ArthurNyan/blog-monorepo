@@ -1,5 +1,7 @@
 import {
+	applyCmsRequestOptions,
 	buildCmsUrl,
+	type CmsRequestOptions,
 	parseCmsErrorMessage,
 	resolveCmsMediaUrl,
 } from "@/shared/api/cms";
@@ -104,8 +106,13 @@ export type SiteHomePage = {
 	seo?: PageSeo | null;
 };
 
-const fetchCmsSingle = async <T>(url: URL): Promise<StrapiEntity<T> | null> => {
-	const response = await fetch(url.toString());
+const fetchCmsSingle = async <T>(
+	url: URL,
+	options?: CmsRequestOptions
+): Promise<StrapiEntity<T> | null> => {
+	const response = await fetch(url.toString(), {
+		headers: options?.headers,
+	});
 	if (!response.ok) {
 		throw new Error(await parseCmsErrorMessage(response));
 	}
@@ -161,9 +168,10 @@ const appendPageBuilderPopulateParams = (url: URL) => {
 };
 
 export const fetchGlobalContent = async (
-	locale: SiteLocale = defaultSiteLocale
+	locale: SiteLocale = defaultSiteLocale,
+	options?: CmsRequestOptions
 ): Promise<SiteGlobalContent> => {
-	const url = buildCmsUrl("/global");
+	const url = applyCmsRequestOptions(buildCmsUrl("/global"), options);
 	url.searchParams.set("locale", toCmsLocale(locale));
 	url.searchParams.set("populate[logo]", "true");
 	url.searchParams.set("populate[navigationItems][populate][featured]", "true");
@@ -172,7 +180,7 @@ export const fetchGlobalContent = async (
 	url.searchParams.set("populate[headerSecondaryCta]", "true");
 	url.searchParams.set("populate[footerColumns][populate][links]", "true");
 
-	const global = await fetchCmsSingle<GlobalRaw>(url);
+	const global = await fetchCmsSingle<GlobalRaw>(url, options);
 	const logoUrl = resolveCmsMediaUrl(
 		global?.logo?.formats?.small?.url ||
 			global?.logo?.formats?.thumbnail?.url ||
@@ -242,13 +250,14 @@ export const fetchGlobalContent = async (
 };
 
 export const fetchHomePage = async (
-	locale: SiteLocale = defaultSiteLocale
+	locale: SiteLocale = defaultSiteLocale,
+	options?: CmsRequestOptions
 ): Promise<SiteHomePage | null> => {
-	const url = buildCmsUrl("/home-page");
+	const url = applyCmsRequestOptions(buildCmsUrl("/home-page"), options);
 	url.searchParams.set("locale", toCmsLocale(locale));
 	appendPageBuilderPopulateParams(url);
 
-	const page = await fetchCmsSingle<HomePageRaw>(url);
+	const page = await fetchCmsSingle<HomePageRaw>(url, options);
 
 	if (!page) {
 		return null;

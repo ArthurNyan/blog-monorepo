@@ -1,0 +1,180 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { Badge } from "@/shared/components/ui/badge";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { fetchVacancyBySlug } from "@/shared/api/vacancies";
+import {
+	buildPublicCollectionPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import { isSiteLocale, toCmsLocale } from "@/shared/i18n/config";
+import { VacancyApplicationForm } from "@/widgets/VacancyApplicationForm";
+
+export const prerender = false;
+
+const WORK_FORMAT_LABELS: Record<string, string> = {
+	remote: "Удаленно",
+	hybrid: "Гибрид",
+	office: "Офис",
+};
+
+const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
+	full_time: "Полная занятость",
+	contract: "Контракт",
+	internship: "Стажировка",
+};
+
+const LEVEL_LABELS: Record<string, string> = {
+	intern: "Intern",
+	junior: "Junior",
+	middle: "Middle",
+	senior: "Senior",
+	lead: "Lead",
+};
+
+const locale = Astro.params.locale;
+const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	return Astro.redirect(buildPublicCollectionPath("vacancy"));
+}
+
+if (!slug) {
+	return new Response("Preview vacancy slug is required.", { status: 400 });
+}
+
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicCollectionPath("vacancy", slug));
+}
+
+const pathname = buildPublicCollectionPath("vacancy", slug);
+const vacancy = await fetchVacancyBySlug(slug, {
+	...getPreviewCmsRequestOptions(),
+	locale: toCmsLocale(locale),
+	includeInactive: true,
+});
+
+if (!vacancy) {
+	return new Response("Preview vacancy not found.", { status: 404 });
+}
+
+const seo = buildSeoMetadata({
+	title: vacancy.title,
+	description: vacancy.description || vacancy.location,
+	pathname,
+	noIndex: true,
+	status: "draft",
+});
+
+const salary = (() => {
+	if (!vacancy.salaryFrom && !vacancy.salaryTo) return "По договоренности";
+
+	const formatter = new Intl.NumberFormat("ru-RU");
+	const from = vacancy.salaryFrom ? formatter.format(vacancy.salaryFrom) : null;
+	const to = vacancy.salaryTo ? formatter.format(vacancy.salaryTo) : null;
+	const currency = vacancy.currency || "RUB";
+
+	if (from && to) return `${from} - ${to} ${currency}`;
+	if (from) return `от ${from} ${currency}`;
+	return `до ${to} ${currency}`;
+})();
+---
+
+<MainLayout
+	content={{
+		title: vacancy.title,
+		description: vacancy.description || vacancy.location,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		previewMode: true,
+		cmsStatus: "draft",
+	}}
+	className="flex flex-col"
+>
+	<section class="container mx-auto px-4 py-10 md:py-14">
+		<a
+			href="/vacancies"
+			class="inline-flex text-sm text-primary mb-6 hover:underline"
+		>
+			← Все вакансии
+		</a>
+
+		<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_460px] gap-8">
+			<article class="space-y-6">
+				<div class="space-y-4">
+					<div class="flex flex-wrap gap-2">
+						{
+							vacancy.industry?.name && (
+								<Badge variant="secondary">{vacancy.industry.name}</Badge>
+							)
+						}
+						{
+							vacancy.role?.name && (
+								<Badge variant="outline">{vacancy.role.name}</Badge>
+							)
+						}
+					</div>
+					<h1 class="text-3xl md:text-5xl font-semibold leading-tight">
+						{vacancy.title}
+					</h1>
+					<p class="text-lg text-muted-foreground">{vacancy.location}</p>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+							Формат
+						</div>
+						<div class="font-medium">
+							{WORK_FORMAT_LABELS[vacancy.workFormat || ""] || vacancy.workFormat}
+						</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+							Занятость
+						</div>
+						<div class="font-medium">
+							{EMPLOYMENT_TYPE_LABELS[vacancy.employmentType || ""] ||
+								vacancy.employmentType}
+						</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+							Уровень
+						</div>
+						<div class="font-medium">
+							{LEVEL_LABELS[vacancy.level || ""] || vacancy.level}
+						</div>
+					</div>
+					<div class="rounded-xl border border-border bg-card/40 p-4">
+						<div class="text-xs uppercase tracking-wide text-muted-foreground mb-1">
+							Зарплата
+						</div>
+						<div class="font-medium">{salary}</div>
+					</div>
+				</div>
+
+				{
+					vacancy.description && (
+						<div class="rounded-2xl border border-border bg-card/40 p-6">
+							<h2 class="text-2xl font-semibold mb-4">Описание вакансии</h2>
+							<MarkdownContent content={vacancy.description} />
+						</div>
+					)
+				}
+			</article>
+
+			<aside class="rounded-2xl border border-border bg-card/50 p-6 h-max xl:sticky xl:top-24">
+				<VacancyApplicationForm
+					vacancyId={vacancy.documentId || vacancy.id || ""}
+					vacancyTitle={vacancy.title}
+					client:load
+				/>
+			</aside>
+		</div>
+	</section>
+</MainLayout>

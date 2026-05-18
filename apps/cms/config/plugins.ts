@@ -1,4 +1,4 @@
-export default () => ({
+export default ({ env }) => ({
   documentation: {
     enabled: true,
     config: {
@@ -18,8 +18,8 @@ export default () => ({
       },
       servers: [
         {
-          url: 'http://localhost:1337/api',
-          description: 'Development server',
+          url: `${env('PUBLIC_URL', 'http://localhost:1337')}/api`,
+          description: 'Configured CMS server',
         },
       ],
     },

@@ -2,36 +2,42 @@
 import MainLayout from "@/layouts/main.astro";
 import { fetchHomePage } from "@/shared/api/site";
 import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import {
+	buildPublicPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
 import { buildSeoMetadata } from "@/shared/seo/metadata";
 import {
-	buildLocalizedPath,
 	isSiteLocale,
-	siteLocales,
 } from "@/shared/i18n/config";
 
-export const getStaticPaths = async () =>
-	siteLocales.map((locale) => ({
-		params: { locale },
-	}));
+export const prerender = false;
 
 const locale = Astro.params.locale;
 
 if (!isSiteLocale(locale)) {
-	throw new Error(`Unsupported locale: ${locale}`);
+	return Astro.redirect(buildPublicPath("ru"));
 }
 
-const homePage = await fetchHomePage(locale);
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicPath(locale));
+}
+
+const pathname = buildPublicPath(locale);
+const homePage = await fetchHomePage(locale, getPreviewCmsRequestOptions());
 
 if (!homePage) {
-	throw new Error(`Home page not found for locale: ${locale}`);
+	return new Response("Preview home page not found.", { status: 404 });
 }
 
-const pathname = buildLocalizedPath(locale);
 const seo = buildSeoMetadata({
 	seo: homePage.seo,
 	title: homePage.title,
 	description: homePage.description,
 	pathname,
+	noIndex: true,
+	status: "draft",
 });
 ---
 
@@ -43,7 +49,8 @@ const seo = buildSeoMetadata({
 		pathname,
 		locale,
 		lang: locale,
-		cmsStatus: "published",
+		previewMode: true,
+		cmsStatus: "draft",
 	}}
 	className="flex flex-col"
 >

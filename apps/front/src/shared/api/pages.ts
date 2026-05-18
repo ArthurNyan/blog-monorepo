@@ -1,4 +1,11 @@
-import { buildCmsUrl, defaultCmsLocale, parseCmsErrorMessage } from "@/shared/api/cms";
+import {
+	applyCmsRequestOptions,
+	buildCmsUrl,
+	type CmsRequestOptions,
+	defaultCmsLocale,
+	parseCmsErrorMessage,
+	resolveCmsMediaUrl,
+} from "@/shared/api/cms";
 import { fetchVacancies, type Vacancy } from "@/shared/api/vacancies";
 
 type StrapiEntity<T> = {
@@ -263,11 +270,63 @@ export type ProjectPreview = {
 	cover?: CmsMedia | null;
 };
 
+export type CmsAuthor = {
+	id?: string | number;
+	firstName?: string;
+	lastName?: string;
+};
+
+export type ArticleDetail = {
+	id?: string | number;
+	documentId?: string;
+	locale?: string;
+	name: string;
+	description: string;
+	slug: string;
+	date?: string;
+	cover?: CmsMedia | null;
+	authors?: CmsAuthor[];
+	content?: string;
+};
+
+export type ProjectDetail = {
+	id?: string | number;
+	documentId?: string;
+	locale?: string;
+	name: string;
+	description: string;
+	slug: string;
+	date?: string;
+	cover?: CmsMedia | null;
+	logo?: CmsMedia | null;
+	content?: string;
+};
+
 type PageRaw = {
 	title?: string;
 	slug?: string;
 	blocks?: PageBlock[];
 	seo?: PageSeo;
+};
+
+type ArticleRaw = {
+	name?: string;
+	description?: string;
+	slug?: string;
+	date?: string;
+	cover?: CmsMedia | null;
+	authors?: CmsAuthor[];
+	content?: string;
+};
+
+type ProjectRaw = {
+	name?: string;
+	description?: string;
+	slug?: string;
+	date?: string;
+	cover?: CmsMedia | null;
+	logo?: CmsMedia | null;
+	content?: string;
 };
 
 type PreviewEntity = {
@@ -277,8 +336,46 @@ type PreviewEntity = {
 	cover?: CmsMedia | null;
 };
 
-const fetchCmsList = async <T>(url: URL): Promise<StrapiEntity<T>[]> => {
-	const response = await fetch(url.toString());
+const resolveCmsMedia = (media?: CmsMedia | null): CmsMedia | null => {
+	if (!media) {
+		return null;
+	}
+
+	return {
+		...media,
+		url: resolveCmsMediaUrl(media.url),
+		formats: {
+			thumbnail: media.formats?.thumbnail
+				? {
+						url: resolveCmsMediaUrl(media.formats.thumbnail.url),
+					}
+				: undefined,
+			small: media.formats?.small
+				? {
+						url: resolveCmsMediaUrl(media.formats.small.url),
+					}
+				: undefined,
+			medium: media.formats?.medium
+				? {
+						url: resolveCmsMediaUrl(media.formats.medium.url),
+					}
+				: undefined,
+			large: media.formats?.large
+				? {
+						url: resolveCmsMediaUrl(media.formats.large.url),
+					}
+				: undefined,
+		},
+	};
+};
+
+const fetchCmsList = async <T>(
+	url: URL,
+	options?: CmsRequestOptions
+): Promise<StrapiEntity<T>[]> => {
+	const response = await fetch(url.toString(), {
+		headers: options?.headers,
+	});
 	if (!response.ok) {
 		throw new Error(await parseCmsErrorMessage(response));
 	}
@@ -287,41 +384,64 @@ const fetchCmsList = async <T>(url: URL): Promise<StrapiEntity<T>[]> => {
 	return json.data ?? [];
 };
 
-export const fetchPageSlugs = async (locale = defaultCmsLocale) => {
-	const url = buildCmsUrl("/pages");
-	url.searchParams.set("locale", locale);
-	url.searchParams.set("fields[0]", "slug");
-	url.searchParams.set("pagination[pageSize]", "100");
-	url.searchParams.set("sort[0]", "slug:asc");
-
-	const pages = await fetchCmsList<{ slug?: string }>(url);
-	return pages.map((page) => page.slug).filter(Boolean) as string[];
-};
-
-export const fetchPageBySlug = async (
-	slug: string,
-	locale = defaultCmsLocale
-): Promise<CmsPage | null> => {
-	const url = buildCmsUrl("/pages");
-	url.searchParams.set("locale", locale);
-	url.searchParams.set("filters[slug][$eq]", slug);
-	url.searchParams.set("pagination[page]", "1");
-	url.searchParams.set("pagination[pageSize]", "1");
+const appendPageBuilderPopulateParams = (url: URL) => {
 	url.searchParams.set("populate[seo][populate][ogImage]", "true");
 	url.searchParams.set("populate[blocks][on][blocks.hero][populate][media]", "true");
 	url.searchParams.set("populate[blocks][on][blocks.feature-cards][populate][items]", "true");
 	url.searchParams.set("populate[blocks][on][blocks.feature-highlight][populate][media]", "true");
 	url.searchParams.set("populate[blocks][on][blocks.feature-highlight][populate][items]", "true");
-	url.searchParams.set("populate[blocks][on][blocks.logo-cloud][populate][items][populate][logo]", "true");
-	url.searchParams.set("populate[blocks][on][blocks.testimonials][populate][items][populate][avatar]", "true");
+	url.searchParams.set(
+		"populate[blocks][on][blocks.logo-cloud][populate][items][populate][logo]",
+		"true"
+	);
+	url.searchParams.set(
+		"populate[blocks][on][blocks.testimonials][populate][items][populate][avatar]",
+		"true"
+	);
 	url.searchParams.set("populate[blocks][on][blocks.stats][populate][items]", "true");
 	url.searchParams.set("populate[blocks][on][blocks.faq][populate][items]", "true");
-	url.searchParams.set("populate[blocks][on][blocks.process-timeline][populate][items]", "true");
+	url.searchParams.set(
+		"populate[blocks][on][blocks.process-timeline][populate][items]",
+		"true"
+	);
 	url.searchParams.set("populate[blocks][on][blocks.checklist][populate][items]", "true");
-	url.searchParams.set("populate[blocks][on][blocks.content-columns][populate][columns]", "true");
-	url.searchParams.set("populate[blocks][on][blocks.numbered-points][populate][items]", "true");
+	url.searchParams.set(
+		"populate[blocks][on][blocks.content-columns][populate][columns]",
+		"true"
+	);
+	url.searchParams.set(
+		"populate[blocks][on][blocks.numbered-points][populate][items]",
+		"true"
+	);
+};
 
-	const pages = await fetchCmsList<PageRaw>(url);
+export const fetchPageSlugs = async (
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+) => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/pages"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("fields[0]", "slug");
+	url.searchParams.set("pagination[pageSize]", "100");
+	url.searchParams.set("sort[0]", "slug:asc");
+
+	const pages = await fetchCmsList<{ slug?: string }>(url, options);
+	return pages.map((page) => page.slug).filter(Boolean) as string[];
+};
+
+export const fetchPageBySlug = async (
+	slug: string,
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+): Promise<CmsPage | null> => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/pages"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("filters[slug][$eq]", slug);
+	url.searchParams.set("pagination[page]", "1");
+	url.searchParams.set("pagination[pageSize]", "1");
+	appendPageBuilderPopulateParams(url);
+
+	const pages = await fetchCmsList<PageRaw>(url, options);
 	const page = pages[0];
 
 	if (!page?.slug || !page.title || !page.seo) {
@@ -391,6 +511,74 @@ export const fetchProjectPreviews = async (
 			slug: item.slug || "",
 			cover: item.cover,
 		}));
+};
+
+export const fetchArticleBySlug = async (
+	slug: string,
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+): Promise<ArticleDetail | null> => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/articles"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("filters[slug][$eq]", slug);
+	url.searchParams.set("pagination[page]", "1");
+	url.searchParams.set("pagination[pageSize]", "1");
+	url.searchParams.set("populate[cover]", "true");
+	url.searchParams.set("populate[authors]", "true");
+
+	const items = await fetchCmsList<ArticleRaw>(url, options);
+	const article = items[0];
+
+	if (!article?.slug || !article.name || !article.description) {
+		return null;
+	}
+
+	return {
+		id: article.id,
+		documentId: article.documentId,
+		locale: article.locale,
+		name: article.name,
+		description: article.description,
+		slug: article.slug,
+		date: article.date,
+		cover: resolveCmsMedia(article.cover),
+		authors: Array.isArray(article.authors) ? article.authors : [],
+		content: article.content,
+	};
+};
+
+export const fetchProjectBySlug = async (
+	slug: string,
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+): Promise<ProjectDetail | null> => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/projects"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("filters[slug][$eq]", slug);
+	url.searchParams.set("pagination[page]", "1");
+	url.searchParams.set("pagination[pageSize]", "1");
+	url.searchParams.set("populate[cover]", "true");
+	url.searchParams.set("populate[logo]", "true");
+
+	const items = await fetchCmsList<ProjectRaw>(url, options);
+	const project = items[0];
+
+	if (!project?.slug || !project.name || !project.description) {
+		return null;
+	}
+
+	return {
+		id: project.id,
+		documentId: project.documentId,
+		locale: project.locale,
+		name: project.name,
+		description: project.description,
+		slug: project.slug,
+		date: project.date,
+		cover: resolveCmsMedia(project.cover),
+		logo: resolveCmsMedia(project.logo),
+		content: project.content,
+	};
 };
 
 export const fetchVacancyPreviews = async (

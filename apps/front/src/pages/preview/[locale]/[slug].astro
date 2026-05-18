@@ -1,55 +1,53 @@
 ---
 import MainLayout from "@/layouts/main.astro";
-import { fetchPageBySlug, fetchPageSlugs } from "@/shared/api/pages";
+import { fetchPageBySlug } from "@/shared/api/pages";
 import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import {
+	buildPublicPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
 import { buildSeoMetadata } from "@/shared/seo/metadata";
 import {
-	buildLocalizedPath,
 	isSiteLocale,
-	siteLocales,
 	toCmsLocale,
 } from "@/shared/i18n/config";
 
-export const getStaticPaths = async () => {
-	const localizedPaths = await Promise.all(
-		siteLocales.map(async (locale) => {
-			const slugs = await fetchPageSlugs(toCmsLocale(locale));
-
-			return slugs.map((slug) => ({
-				params: {
-					locale,
-					slug,
-				},
-			}));
-		})
-	);
-
-	return localizedPaths.flat();
-};
+export const prerender = false;
 
 const locale = Astro.params.locale;
 const { slug } = Astro.params;
 
 if (!isSiteLocale(locale)) {
-	throw new Error(`Unsupported locale: ${locale}`);
+	return Astro.redirect(buildPublicPath("ru"));
 }
 
 if (!slug) {
-	throw new Error("Page slug is required");
+	return new Response("Preview page slug is required.", { status: 400 });
 }
 
-const page = await fetchPageBySlug(slug, toCmsLocale(locale));
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicPath(locale, slug));
+}
+
+const pathname = buildPublicPath(locale, slug);
+const page = await fetchPageBySlug(
+	slug,
+	toCmsLocale(locale),
+	getPreviewCmsRequestOptions()
+);
 
 if (!page) {
-	throw new Error(`Page not found for locale ${locale}: ${slug}`);
+	return new Response("Preview page not found.", { status: 404 });
 }
 
-const pathname = buildLocalizedPath(locale, slug);
 const seo = buildSeoMetadata({
 	seo: page.seo,
 	title: page.title,
 	description: page.seo.metaDescription,
 	pathname,
+	noIndex: true,
+	status: "draft",
 });
 ---
 
@@ -61,7 +59,8 @@ const seo = buildSeoMetadata({
 		pathname,
 		locale,
 		lang: locale,
-		cmsStatus: "published",
+		previewMode: true,
+		cmsStatus: "draft",
 	}}
 	className="flex flex-col"
 >
