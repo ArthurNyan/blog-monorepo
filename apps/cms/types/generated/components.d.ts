@@ -199,6 +199,33 @@ export interface BlocksTestimonials extends Struct.ComponentSchema {
   };
 }
 
+export interface NavigationFooterColumn extends Struct.ComponentSchema {
+  collectionName: 'components_navigation_footer_columns';
+  info: {
+    description: 'Footer column with heading and links';
+    displayName: 'Footer column';
+  };
+  attributes: {
+    heading: Schema.Attribute.String & Schema.Attribute.Required;
+    links: Schema.Attribute.Component<'shared.link', true> &
+      Schema.Attribute.Required;
+  };
+}
+
+export interface NavigationNavigationItem extends Struct.ComponentSchema {
+  collectionName: 'components_navigation_navigation_items';
+  info: {
+    description: 'Top-level navigation item with optional submenu';
+    displayName: 'Navigation item';
+  };
+  attributes: {
+    featured: Schema.Attribute.Component<'shared.link', false>;
+    href: Schema.Attribute.String;
+    items: Schema.Attribute.Component<'shared.link', true>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedChecklistItem extends Struct.ComponentSchema {
   collectionName: 'components_shared_checklist_items';
   info: {
@@ -241,6 +268,19 @@ export interface SharedFeatureCardItem extends Struct.ComponentSchema {
     description: Schema.Attribute.Text;
     icon: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedLink extends Struct.ComponentSchema {
+  collectionName: 'components_shared_links';
+  info: {
+    description: 'Reusable CTA, navigation and footer link';
+    displayName: 'Link';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    href: Schema.Attribute.String & Schema.Attribute.Required;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -340,10 +380,13 @@ declare module '@strapi/strapi' {
       'blocks.rich-text': BlocksRichText;
       'blocks.stats': BlocksStats;
       'blocks.testimonials': BlocksTestimonials;
+      'navigation.footer-column': NavigationFooterColumn;
+      'navigation.navigation-item': NavigationNavigationItem;
       'shared.checklist-item': SharedChecklistItem;
       'shared.content-column': SharedContentColumn;
       'shared.faq-item': SharedFaqItem;
       'shared.feature-card-item': SharedFeatureCardItem;
+      'shared.link': SharedLink;
       'shared.logo-item': SharedLogoItem;
       'shared.numbered-point': SharedNumberedPoint;
       'shared.process-step': SharedProcessStep;

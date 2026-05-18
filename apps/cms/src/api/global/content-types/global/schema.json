@@ -46,6 +46,54 @@
         "images",
         "files"
       ]
+    },
+    "navigationItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.navigation-item",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "headerPrimaryCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "headerSecondaryCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "footerColumns": {
+      "type": "component",
+      "repeatable": true,
+      "component": "navigation.footer-column",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "footerCopyright": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

@@ -11,6 +11,7 @@
     "develop": "strapi develop",
     "start": "strapi start",
     "strapi": "strapi",
+    "seed:storefront": "node scripts/seed-storefront.js",
     "seed:vacancies": "node scripts/seed-vacancies.js",
     "seed:pages": "node scripts/seed-pages.js",
     "upgrade": "npx @strapi/upgrade latest",

@@ -31,6 +31,41 @@
         }
       },
       "required": true
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": [
+        "blocks.hero",
+        "blocks.rich-text",
+        "blocks.feature-cards",
+        "blocks.cta",
+        "blocks.preview-list",
+        "blocks.logo-cloud",
+        "blocks.testimonials",
+        "blocks.stats",
+        "blocks.feature-highlight",
+        "blocks.faq",
+        "blocks.process-timeline",
+        "blocks.quote",
+        "blocks.checklist",
+        "blocks.content-columns",
+        "blocks.numbered-points"
+      ],
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
     }
   }
 }

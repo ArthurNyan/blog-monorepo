@@ -50,3 +50,5 @@ export const DEFAULT_FOOTER_COLUMNS: FooterColumn[] = [
 		],
 	},
 ];
+
+export const DEFAULT_FOOTER_COPYRIGHT = 'Built for UI excellence.';

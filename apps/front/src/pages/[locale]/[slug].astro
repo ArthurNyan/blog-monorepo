@@ -1,27 +1,46 @@
 ---
 import MainLayout from "@/layouts/main.astro";
+import { resolveCmsMediaUrl } from "@/shared/api/cms";
 import { fetchPageBySlug, fetchPageSlugs } from "@/shared/api/pages";
 import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
-import { resolveCmsMediaUrl } from "@/shared/api/cms";
+import {
+	isSiteLocale,
+	siteLocales,
+	toCmsLocale,
+} from "@/shared/i18n/config";
 
 export const getStaticPaths = async () => {
-	const slugs = await fetchPageSlugs();
+	const localizedPaths = await Promise.all(
+		siteLocales.map(async (locale) => {
+			const slugs = await fetchPageSlugs(toCmsLocale(locale));
 
-	return slugs.map((slug) => ({
-		params: { slug },
-	}));
+			return slugs.map((slug) => ({
+				params: {
+					locale,
+					slug,
+				},
+			}));
+		})
+	);
+
+	return localizedPaths.flat();
 };
 
+const locale = Astro.params.locale;
 const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	throw new Error(`Unsupported locale: ${locale}`);
+}
 
 if (!slug) {
 	throw new Error("Page slug is required");
 }
 
-const page = await fetchPageBySlug(slug);
+const page = await fetchPageBySlug(slug, toCmsLocale(locale));
 
 if (!page) {
-	throw new Error(`Page not found for slug: ${slug}`);
+	throw new Error(`Page not found for locale ${locale}: ${slug}`);
 }
 
 const seo = {
@@ -37,7 +56,8 @@ const seo = {
 		title: page.seo.metaTitle || page.title,
 		description: page.seo.metaDescription,
 		seo,
-		lang: page.locale === "ru-RU" ? "ru" : page.locale || "en",
+		locale,
+		lang: locale,
 	}}
 	className="flex flex-col"
 >

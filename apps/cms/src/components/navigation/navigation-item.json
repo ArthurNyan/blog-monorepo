@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_navigation_navigation_items",
+  "info": {
+    "displayName": "Navigation item",
+    "description": "Top-level navigation item with optional submenu"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string"
+    },
+    "featured": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.link"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.link"
+    }
+  }
+}

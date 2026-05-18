@@ -62,6 +62,7 @@
 | `job-role` | `collectionType` | `src/api/job-role/content-types/job-role/schema.json` | роли/категории вакансий |
 | `global` | `singleType` | `src/api/global/content-types/global/schema.json` | глобальные данные сайта |
 | `home-page` | `singleType` | `src/api/home-page/content-types/home-page/schema.json` | данные для главной страницы |
+| `page` | `collectionType` | `src/api/page/content-types/page/schema.json` | локализуемые CMS-страницы с `slug`, `seo` и `Dynamic Zone` |
 
 Подтвержденные свойства модели:
 
@@ -82,8 +83,8 @@
 Вывод для главы 2:
 
 - в CMS уже существует содержательная модель для статей, проектов, вакансий и откликов;
-- модель еще не покрывает обязательную для диплома коллекцию `pages`;
-- в коде не обнаружены собственные `components` и `Dynamic Zone`.
+- в CMS уже реализованы `pages`, переиспользуемые `components` и `Dynamic Zone`;
+- `global` хранит структуру навигации, CTA и футера, а `home-page` использует тот же page-builder-контур, что и `pages`.
 
 ### 1.3. Реализованные API и сервисные сценарии
 
@@ -144,27 +145,28 @@
 
 | Маршрут | Файл | Источник данных | Статус |
 |---|---|---|---|
-| `/` | `src/pages/index.astro` | локальные widget-компоненты | реализован, но не CMS-first |
+| `/` | `src/pages/index.astro` | редирект на `/ru/` | реализован как вход в локализованную витрину |
+| `/[locale]` | `src/pages/[locale]/index.astro` | `fetchHomePage()` и `DynamicZoneRenderer` | реализован для главной витрины `ru/en` |
+| `/[locale]/[slug]` | `src/pages/[locale]/[slug].astro` | `fetchPageSlugs()`, `fetchPageBySlug()` и `DynamicZoneRenderer` | реализован для локализованных CMS-страниц `pages` |
 | `/articles` | `src/pages/articles/index.astro` | `getArticles()` из generated API | реализован |
 | `/articles/[slug]` | `src/pages/articles/[slug]/index.astro` | `getArticles()`, `getArticlesId()` | реализован |
 | `/projects` | `src/pages/projects/index.astro` | `getProjects()` из generated API | реализован |
 | `/projects/[slug]` | `src/pages/projects/[slug]/index.astro` | `getProjects()`, `getProjectsId()` | реализован |
 | `/vacancies` | `src/pages/vacancies/index.astro` | клиентский `VacancyExplorer` | реализован |
 | `/vacancies/[slug]` | `src/pages/vacancies/[slug]/index.astro` | `fetchVacancies()`, `fetchVacancyBySlug()` | реализован |
-| `/[slug]` | `src/pages/[slug].astro` | `fetchPageSlugs()`, `fetchPageBySlug()` и `DynamicZoneRenderer` | реализован для CMS-страниц коллекции `pages` |
 
 Что это реально подтверждает:
 
+- frontend уже публикует локализованную главную витрину через `home-page` из `Strapi`;
+- frontend уже умеет генерировать локализованные CMS-страницы `pages` по маршруту `/:locale/:slug/`;
 - frontend уже публикует статьи, проекты и вакансии;
-- frontend уже умеет генерировать отдельные CMS-страницы коллекции `pages` по `slug`;
 - детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
 
 Ограничения:
 
-- главная страница `/` по-прежнему не получает структуру из CMS и не использует
-  `home-page` как полнофункциональный page builder-источник;
-- контур `pages` уже работает, но пока не покрывает всю публичную витрину;
+- locale-prefixed маршрутный контур пока покрывает только главную витрину и CMS-страницы `pages`;
+- разделы `articles`, `projects` и `vacancies` пока остаются вне полной публичной маршрутной локализации;
 - в коде не обнаружены отдельные preview-маршруты.
 
 ### 2.3. Реально используемые сценарии frontend
@@ -227,32 +229,31 @@
 - текущий сценарий вакансий использует рукописный API-слой, а не generated client, то есть
   в проекте пока сосуществуют два подхода к интеграции с CMS.
 
-### 2.4. Непереведенные в CMS части frontend
+### 2.4. Части frontend вне полного CMS/i18n-контура
 
 Подтвержденные факты:
 
-- Главная страница в [apps/front/src/pages/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/index.astro)
-  собирается из локальных секций `HeroSection`, `LogoPanel`, `FeatureTabs`,
-  `TestimonialsPanel`, `BentoGridWidget`, `FeatureHighlighter`.
-- В [apps/front/src/pages/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[slug].astro)
-  реализован маршрут для `pages`, который получает `blocks` из CMS и рендерит их через
-  `DynamicZoneRenderer`, без хардкода структуры страницы в самом route-файле.
-- В [apps/front/src/widgets/Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts)
-  используется `DEFAULT_NAVIGATION` с демо-ориентированными пунктами `Getting Started`,
-  `Components`, `Blog`, `Cases`.
-- В [apps/front/src/widgets/Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts)
-  используется `DEFAULT_COMPANY_INFO` и `DEFAULT_FOOTER_COLUMNS` с демо-брендом `Ruixen`.
 - В [apps/front/src/layouts/main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro)
-  уже добавлена поддержка `description`, `canonical`, `Open Graph`, `noindex` и
-  динамического `lang`, но шапка и футер все еще питаются от локальных констант.
+  layout загружает `global` из `Strapi` и передает CMS-данные в `Header` и `Footer`.
+- В [apps/front/src/shared/api/site.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/api/site.ts)
+  реализован отдельный data-layer для `global` и `home-page`, включая маппинг локалей,
+  CTA, навигации, футера и `Dynamic Zone`.
+- В [apps/front/src/pages/[locale]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/index.astro)
+  главная страница строится по данным `home-page` из `Strapi`.
+- В [apps/front/src/pages/[locale]/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/[slug].astro)
+  `pages` переведены на локализованный маршрут `/:locale/:slug/`.
+- В [apps/front/src/widgets/Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts)
+  и [apps/front/src/widgets/Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts)
+  локальные константы сохранены как fallback, но больше не являются основным источником данных для витрины первой очереди.
+- Списки и детальные страницы `articles`, `projects`, `vacancies` по-прежнему содержат
+  локальные UI-тексты и не переведены на locale-prefixed public routes.
 
 Что это означает:
 
-- значимая часть интерфейсных текстов и структуры витрины все еще зашита во frontend;
-- `pages` как отдельный CMS-first контур уже работают, но `global` и `home-page` пока не
-  доведены до фактического использования в публичной витрине;
-- текущий frontend содержит следы шаблонного/демо-контента и нуждается в предметной
-  адаптации под тему диплома.
+- ключевые тексты навигации, футера и основной витрины уже вынесены в `Strapi`;
+- `global`, `home-page` и `pages` образуют рабочий CMS-first контур публичной витрины первой очереди;
+- неполнота проекта теперь связана не с отсутствием CMS-интеграции как таковой, а с ее
+  неполным охватом остальных публичных разделов и эксплуатационных сценариев.
 
 ## 3. Уже реализованные части системы
 
@@ -260,8 +261,12 @@
 
 - monorepo `Nx + pnpm` с двумя приложениями `apps/cms` и `apps/front`;
 - CMS на `Strapi 5` с сущностями `article`, `project`, `vacancy`,
-  `vacancy-application`, `author`, `industry`, `job-role`, `global`, `home-page`;
+  `vacancy-application`, `author`, `industry`, `job-role`, `global`, `home-page`, `page`;
+- компоненты `Strapi` для page builder, навигации, CTA и футера;
 - OpenAPI-документацию backend и генерацию типизированного frontend-клиента;
+- локализованную главную витрину `/:locale/`, строящуюся по `home-page` из `Strapi`;
+- локализованные CMS-страницы `/:locale/:slug/`, строящиеся по `pages` и `Dynamic Zone`;
+- вынос ключевых текстов header/footer/main showcase из frontend в `global` и `home-page`;
 - публичные разделы статей и проектов с детальными страницами;
 - модуль вакансий с фильтрацией, пагинацией, карточками и детальной страницей;
 - форму отклика на вакансию с валидацией, `honeypot`, consent и загрузкой резюме;
@@ -272,12 +277,7 @@
 На основании текущего кода нельзя считать уже реализованными следующие обязательные для
 диплома элементы:
 
-- коллекцию `pages`;
-- конструктор страниц на основе `Dynamic Zone`;
-- полный перевод главной страницы и общих секций в CMS;
-- полноценную публичную локализацию `ru/en`;
-- корректную установку `lang` по локали;
-- централизованное управление `SEO` и `Open Graph`;
+- полную публичную локализацию всех разделов сайта, а не только витрины первой очереди;
 - генерацию `sitemap`;
 - frontend `preview mode`;
 - production-сценарий `webhook -> rebuild`;
@@ -290,36 +290,35 @@
 
 - отсутствует единый подход к frontend-интеграции с CMS: статьи и проекты используют
   generated SDK, вакансии используют рукописный API-слой;
-- в публичной витрине остаются демо-элементы навигации и футера;
+- публичный locale-prefixed контур пока ограничен маршрутами `/:locale/` и `/:locale/:slug/`;
+- списковые и детальные маршруты `articles`, `projects` и `vacancies` пока не встроены в ту же
+  схему `ru/en`;
+- полная статическая сборка frontend зависит от доступности `Strapi` во время prerender;
 - значительная часть проектной главы пока не может быть написана как описание завершенной
   реализации, но уже может быть написана как описание существующей архитектурной базы и
   конкретных точек доработки.
 
 ## 5. Минимальный практический набор доработок для усиления главы 2
 
-На основании текущего кода и зафиксированных требований диплома минимальный практический
+На основании текущего кода и уже выполненной первой очереди следующий минимальный
 контур доработок должен быть следующим.
 
 | Доработка первой очереди | Почему это критично именно для главы 2 | Что уже есть в коде | Что нужно довести |
 |---|---|---|---|
-| `pages` как отдельная сущность | без рабочей CMS-модели страниц проект остается набором отдельных разделов, а не page builder-ориентированной маркетинговой CMS | `page` уже имеет поля `title`, `slug`, `blocks`, `seo`, а frontend уже строит маршрут [src/pages/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[slug].astro) по данным CMS | перевести в тот же контур главную страницу `/` и связанные глобальные тексты |
-| Базовый `Dynamic Zone` | именно он переводит страницы из frontend-шаблона в редакторский сценарий и делает тезис про `CMS-first` доказуемым | в `apps/cms` уже есть собственные `components`, а во frontend уже есть `DynamicZoneRenderer` и маппинг на sourced-компоненты и существующие секции | расширять и доочищать блоки только по мере перевода оставшихся hardcoded частей витрины; ближайшее рациональное расширение — информационные блоки `quote`, `checklist`, `content-columns`, `numbered-points` |
-| Вынос ключевых текстов из frontend в `Strapi` | пока шапка, футер и главная страница содержат демо- и шаблонный контент, трудно утверждать, что витрина реально управляется через CMS | в CMS уже есть `global` и `home-page`; во frontend зашиты [Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts) и [Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts) | перевести в `Strapi` навигацию, данные компании, ключевые hero- и summary-тексты витрины, затем подключить их в layout и на главной странице |
-| `ru/en` для основной витрины и части CMS-контента | мультиязычность уже заявлена как обязательный результат, но сейчас она видна в данных сильнее, чем в публичной витрине | `i18n` включен для основных сущностей `Strapi`, а [vacancies.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/api/vacancies.ts) использует `ru-RU`; в [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro) язык жестко задан как `en` | добавить локализованные маршруты и переключение `ru/en` хотя бы для главной страницы, страниц `pages` и части контента `articles/projects`; корректно выставлять `lang`, `slug` и метаданные по локали |
-| `SEO` и `Open Graph` | без них проектная глава не закрывает важную часть маркетинговой CMS и не подтверждает управляемость discoverability-слоя | сейчас в [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro) задается только `title`; отдельной SEO-модели в `Strapi` нет | выделить переиспользуемую SEO-структуру в CMS и централизованный рендер `title`, `description`, canonical, `og:title`, `og:description`, `og:image` |
-| `preview mode` | без предпросмотра не завершен редакторский сценарий `черновик -> проверка -> публикация` | основа в виде `draftAndPublish` уже есть для ключевых сущностей | добавить защищенный preview-маршрут и получение неопубликованных данных для `pages` и хотя бы части контентных сущностей |
+| Расширение `ru/en` за пределы витрины первой очереди | без этого мультиязычность пока демонстрируется только на главной и `pages`, а не на всех ключевых публичных разделах | уже работают `/:locale/`, `/:locale/:slug/`, корректный `lang` и locale-aware fetchers для `global`/`home-page`/`pages` | перевести в ту же схему `articles`, `projects` и при необходимости `vacancies`, а также унифицировать ссылки и fallback-локали |
+| `sitemap` | после появления locale-prefixed маршрутов появляется практический смысл автоматически публиковать карту сайта по локалям | есть локализованные страницы первой очереди и централизованный маршрутный контур для них | подключить `site`, `@astrojs/sitemap` и включить локализованные маршруты витрины и контентных разделов |
+| `preview mode` | без предпросмотра не завершен редакторский сценарий `черновик -> проверка -> публикация` | основа в виде `draftAndPublish`, `home-page`, `pages` и locale-aware data-layer уже есть | добавить защищенный preview-маршрут и получение draft-данных хотя бы для `home-page` и `pages` |
 | `webhook -> rebuild` | именно этот шаг связывает CMS и статическую витрину в цельный публикационный контур | статическая сборка frontend уже есть, но вызов rebuild из CMS в коде не зафиксирован | настроить вызов deploy hook после публикации и проверить, что обновление контента не требует ручного вмешательства в frontend |
-| `sitemap` | без автоматической карты сайта тема discoverability раскрыта неполно, а проверка публикационного контура остается слабее | в конфигурации `Astro` нет интеграции `@astrojs/sitemap` и нет `site` | добавить конфигурацию `site`, генерацию `sitemap` и включить в нее ключевые публичные маршруты и локали первой очереди |
+| Публикационные и эксплуатационные настройки | для итоговой ВКР нужен не только редакторский контур, но и воспроизводимая эксплуатация | архитектурная база `Strapi -> Astro static build` уже доказана кодом | зафиксировать `roles/permissions`, frontend deployment на `Vercel`, CMS deployment в `Docker` и базовые environment contracts |
 
 Почему именно этот набор минимален:
 
-- он переводит проект из состояния "часть разделов уже читает контент из CMS" в состояние
-  "редактор управляет структурой страницы, метаданными и публикацией";
+- он переводит проект из состояния "витрина первой очереди локализована и CMS-first" в состояние
+  "весь ключевой публичный контур и публикационный пайплайн описаны как завершенная система";
 - каждый пункт можно непосредственно показать в архитектуре, модели данных, сценарии
   публикации и разделе тестирования главы 2;
-- без этих доработок вторая глава будет опираться главным образом на уже реализованные
-  статьи, проекты и вакансии, но недостаточно докажет именно маркетинговую `CMS-first`
-  природу системы.
+- без этих доработок вторая глава уже может описывать работающий `CMS-first` контур, но не
+  сможет честно заявлять полноту мультиязычности, публикационного пайплайна и production-эксплуатации.
 
 Что остается обязательным, но относится ко второй очереди относительно текущей задачи:
 
@@ -336,15 +335,19 @@
 - структуру monorepo и роли `apps/cms` и `apps/front`;
 - текущую архитектуру взаимодействия `Strapi -> OpenAPI -> Astro`;
 - существующую модель данных для `articles`, `projects`, `vacancies`,
-  `vacancy-applications`, `industry`, `job-role`, `global`, `home-page`;
-- публичные маршруты статей, проектов и вакансий;
+  `vacancy-applications`, `industry`, `job-role`, `global`, `home-page`, `page`;
+- использование `components` и `Dynamic Zone` для `pages` и `home-page`;
+- locale-prefixed маршруты `/:locale/` и `/:locale/:slug/`;
+- вынос ключевых текстов навигации, футера и основной витрины в `Strapi`;
+- централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `noindex`;
+- публичные маршруты статей, проектов и вакансий как уже существующие content sections;
 - пользовательский сценарий вакансий и откликов;
 - ограничения текущего состояния проекта и перечень обязательных доработок.
 
 Пока рано писать как реализованный результат:
 
-- `pages` и page builder;
 - `preview mode`;
-- `SEO` / `Open Graph` / `sitemap`;
+- полный `ru/en` по всем публичным разделам;
+- `sitemap`;
 - production deployment pipeline;
 - редакторские роли и публикационные ограничения как завершенный функционал.

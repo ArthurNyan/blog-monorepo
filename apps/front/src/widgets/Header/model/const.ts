@@ -67,3 +67,18 @@ export const DEFAULT_NAVIGATION: NavigationItem[] = [
 		href: '/vacancies',
 	},
 ];
+
+export const DEFAULT_BRAND = {
+	title: 'Ruixen',
+	href: '/',
+};
+
+export const DEFAULT_PRIMARY_ACTION = {
+	title: 'Get Started',
+	href: '#',
+};
+
+export const DEFAULT_SECONDARY_ACTION = {
+	title: 'Sign In',
+	href: '#',
+};

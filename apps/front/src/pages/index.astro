@@ -1,23 +1,19 @@
 ---
-import MainLayout from "@/layouts/main.astro";
-import { FeatureTabs } from "@/widgets/FeatureTabs";
-import { BentoGridWidget } from "@/widgets/BentoGrid";
-import HeroSection from "@/widgets/HeroSection/HeroSection.astro";
-// import { TimelinePanel } from "@/widgets/TimelinePanel";
-import { FeatureHighlighter } from "@/widgets/FeatureHighlighter";
-import { TestimonialsPanel } from "@/widgets/TestimonialsPanel";
-import { LogoPanel } from "@/widgets/LogoPanel/ui/LogoPanel";
+const redirectTo = "/ru/";
 ---
 
-<MainLayout
-	content={{ title: "Astro + TailwindCSS" }}
-	className="flex flex-col gap-32"
->
-	<HeroSection />
-	<LogoPanel client:visible />
-	<FeatureTabs client:idle />
-	<!-- <TimelinePanel client:idle /> -->
-	<TestimonialsPanel client:idle />
-	<BentoGridWidget client:visible />
-	<FeatureHighlighter client:visible />
-</MainLayout>
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0;url=${redirectTo}`} />
+		<link rel="canonical" href={redirectTo} />
+		<script is:inline>
+			window.location.replace("/ru/");
+		</script>
+		<title>Redirecting…</title>
+	</head>
+	<body>
+		<a href={redirectTo}>Перейти на русскую версию</a>
+	</body>
+</html>

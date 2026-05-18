@@ -578,10 +578,46 @@ export interface ApiGlobalGlobal extends Struct.SingleTypeSchema {
           localized: true;
         };
       }>;
+    footerColumns: Schema.Attribute.Component<
+      'navigation.footer-column',
+      true
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    footerCopyright: Schema.Attribute.String &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    headerPrimaryCta: Schema.Attribute.Component<'shared.link', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    headerSecondaryCta: Schema.Attribute.Component<'shared.link', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<'oneToMany', 'api::global.global'>;
     logo: Schema.Attribute.Media<'images' | 'files'> &
       Schema.Attribute.Required &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
+    navigationItems: Schema.Attribute.Component<
+      'navigation.navigation-item',
+      true
+    > &
       Schema.Attribute.SetPluginOptions<{
         i18n: {
           localized: true;
@@ -610,6 +646,30 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
     };
   };
   attributes: {
+    blocks: Schema.Attribute.DynamicZone<
+      [
+        'blocks.hero',
+        'blocks.rich-text',
+        'blocks.feature-cards',
+        'blocks.cta',
+        'blocks.preview-list',
+        'blocks.logo-cloud',
+        'blocks.testimonials',
+        'blocks.stats',
+        'blocks.feature-highlight',
+        'blocks.faq',
+        'blocks.process-timeline',
+        'blocks.quote',
+        'blocks.checklist',
+        'blocks.content-columns',
+        'blocks.numbered-points',
+      ]
+    > &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -626,6 +686,12 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
       'api::home-page.home-page'
     >;
     publishedAt: Schema.Attribute.DateTime;
+    seo: Schema.Attribute.Component<'shared.seo', false> &
+      Schema.Attribute.SetPluginOptions<{
+        i18n: {
+          localized: true;
+        };
+      }>;
     Title: Schema.Attribute.Text &
       Schema.Attribute.SetPluginOptions<{
         i18n: {

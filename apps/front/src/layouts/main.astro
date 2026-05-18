@@ -1,6 +1,8 @@
 ---
 import "@/shared/styles/__global.css";
 import stylesUrl from "@/shared/styles/__global.css?url";
+import { fetchGlobalContent } from "@/shared/api/site";
+import { buildLocalizedPath, toHtmlLang, toSiteLocale } from "@/shared/i18n/config";
 import { Header } from "@/widgets/Header";
 import { Footer } from "@/widgets/Footer";
 import { cn } from "@/shared/lib/utils";
@@ -13,7 +15,32 @@ const ogTitle = content?.seo?.ogTitle || title;
 const ogDescription = content?.seo?.ogDescription || description;
 const ogImageUrl = content?.seo?.ogImageUrl;
 const noIndex = content?.seo?.noIndex;
-const lang = content?.lang || "en";
+const siteLocale = toSiteLocale(content?.locale || content?.lang);
+const lang = toHtmlLang(content?.locale || content?.lang);
+
+let globalContent = undefined;
+
+try {
+	globalContent = await fetchGlobalContent(siteLocale);
+} catch (error) {
+	console.warn("Failed to load global content from CMS.", error);
+}
+
+const headerBrand = globalContent
+	? {
+			title: globalContent.companyName,
+			href: globalContent.homeHref || buildLocalizedPath(siteLocale),
+		}
+	: undefined;
+
+const footerCompanyInfo = globalContent
+	? {
+			name: globalContent.companyName,
+			description: globalContent.description,
+			logoDark: globalContent.logoUrl || "/logo_dark.png",
+			logoLight: globalContent.logoUrl || "/logo_light.png",
+		}
+	: undefined;
 ---
 
 <html lang={lang}>
@@ -33,11 +60,30 @@ const lang = content?.lang || "en";
 	</head>
 	<body class="dark">
 		<div class={"w-full min-h-screen"}>
-			<Header client:load />
+			<Header
+				client:load
+				navigationItems={
+					globalContent?.navigationItems.length
+						? globalContent.navigationItems
+						: undefined
+				}
+				brand={headerBrand}
+				primaryAction={globalContent?.headerPrimaryCta}
+				secondaryAction={globalContent?.headerSecondaryCta}
+			/>
 			<main class={cn("w-full", className)}>
 				<slot />
 			</main>
-			<Footer client:visible />
+			<Footer
+				client:visible
+				columns={
+					globalContent?.footerColumns.length
+						? globalContent.footerColumns
+						: undefined
+				}
+				companyInfo={footerCompanyInfo}
+				copyrightText={globalContent?.footerCopyright}
+			/>
 		</div>
 	</body>
 </html>

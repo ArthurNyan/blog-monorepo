@@ -1,0 +1,49 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { resolveCmsMediaUrl } from "@/shared/api/cms";
+import { fetchHomePage } from "@/shared/api/site";
+import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import {
+	isSiteLocale,
+	siteLocales,
+} from "@/shared/i18n/config";
+
+export const getStaticPaths = async () =>
+	siteLocales.map((locale) => ({
+		params: { locale },
+	}));
+
+const locale = Astro.params.locale;
+
+if (!isSiteLocale(locale)) {
+	throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const homePage = await fetchHomePage(locale);
+
+if (!homePage) {
+	throw new Error(`Home page not found for locale: ${locale}`);
+}
+
+const seo = homePage.seo
+	? {
+			...homePage.seo,
+			ogImageUrl: resolveCmsMediaUrl(
+				homePage.seo.ogImage?.formats?.medium?.url || homePage.seo.ogImage?.url
+			),
+		}
+	: undefined;
+---
+
+<MainLayout
+	content={{
+		title: homePage.seo?.metaTitle || homePage.title,
+		description: homePage.seo?.metaDescription || homePage.description,
+		seo,
+		locale,
+		lang: locale,
+	}}
+	className="flex flex-col"
+>
+	<DynamicZoneRenderer blocks={homePage.blocks} locale={homePage.locale} />
+</MainLayout>

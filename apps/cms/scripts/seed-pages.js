@@ -73,7 +73,7 @@ const pagesSeed = {
 				__component: "blocks.rich-text",
 				heading: "Зачем нужен отдельный маршрут pages",
 				body:
-					"Страница `pages` нужна для того, чтобы **маркетинговый контент** собирался в CMS как самостоятельная сущность, а не оставался набором жестко заданных Astro-страниц.\n\nВ этой реализации **Astro route не задает структуру страницы вручную**. Он получает массив `blocks` из Strapi и последовательно рендерит их через единый `DynamicZoneRenderer`.\n\nЭто еще не означает, что вся витрина переведена в CMS: главная `/`, шапка и футер пока остаются частично hardcoded.",
+					"Страница `pages` нужна для того, чтобы **маркетинговый контент** собирался в CMS как самостоятельная сущность, а не оставался набором жестко заданных Astro-страниц.\n\nВ этой реализации **Astro route не задает структуру страницы вручную**. Он получает массив `blocks` из Strapi и последовательно рендерит их через единый `DynamicZoneRenderer`.\n\nПервая очередь уже перевела главную, шапку и футер в CMS-контур, но полная locale-prefixed схема пока не доведена для всех публичных разделов.",
 			},
 			{
 				__component: "blocks.quote",
@@ -181,7 +181,7 @@ const pagesSeed = {
 					{
 						title: "Что еще не стоит считать завершенным",
 						body:
-							"- главная `/` пока hardcoded\n- `Header` и `Footer` не переведены в CMS\n- media seed для визуальных блоков пока не сделан\n- preview mode и rebuild pipeline остаются следующими шагами",
+							"- articles, projects и vacancies пока не переведены на locale-prefixed public routes\n- media seed для визуальных блоков пока минимален\n- preview mode и rebuild pipeline остаются следующими шагами\n- sitemap и production deployment еще не доведены",
 					},
 				],
 			},
@@ -233,7 +233,7 @@ const pagesSeed = {
 					{
 						question: "Главная страница уже переведена в CMS?",
 						answer:
-							"Нет. Маршрут / пока остается захардкоженным, а CMS-рендеринг сейчас покрывает отдельные страницы коллекции pages.",
+							"Да. Для первой очереди главная собирается из `home-page`, а layout получает шапку и футер из `global`.",
 					},
 					{
 						question: "Структура страницы задается в Astro?",
@@ -254,14 +254,14 @@ const pagesSeed = {
 					"Информационные блоки нужны не сами по себе, а как следующий слой управляемой маркетинговой структуры.",
 				items: [
 					{
-						title: "Перевести `/` на `home-page` или `pages`",
+						title: "Расширить locale-prefixed маршруты",
 						description:
-							"Главная должна перейти в тот же CMS-driven renderer, иначе витрина остается гибридной.",
+							"После главной и `pages` тот же ru/en-контур нужно довести до articles и projects.",
 					},
 					{
-						title: "Вынести глобальные тексты",
+						title: "Довести публичный i18n-контур",
 						description:
-							"Навигация, футер и компания-инфо должны уйти из локальных const в `Strapi`.",
+							"Нужно синхронизировать locale-aware ссылки, canonical и sitemap для всех публичных разделов.",
 					},
 					{
 						title: "Добавить preview flow",
@@ -303,7 +303,7 @@ const pagesSeed = {
 						stepLabel: "04",
 						title: "Статическая страница попадает в build output",
 						description:
-							"В сборке уже появляется отдельный route `/cms-first-platform` как реальная CMS-driven страница.",
+							"В сборке уже появляется locale-aware route `/ru/cms-first-platform/` как реальная CMS-driven страница.",
 					},
 				],
 			},
@@ -311,7 +311,7 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Следующий шаг",
 				description:
-					"Подключить home-page и глобальные тексты, чтобы перевести главную и layout в тот же CMS-контур.",
+					"Расширить этот же контур на articles и projects, затем довести preview mode, sitemap и rebuild-публикацию.",
 				primaryButtonLabel: "Перейти к проектам",
 				primaryButtonUrl: "/projects",
 				secondaryButtonLabel: "Читать статьи",
@@ -385,7 +385,7 @@ const pagesSeed = {
 				__component: "blocks.rich-text",
 				heading: "Why a dedicated pages route matters",
 				body:
-					"The `pages` collection is needed so that **marketing content** becomes a first-class CMS entity rather than a set of fixed Astro routes.\n\nIn this implementation, the **Astro route does not define the page structure manually**. It receives the `blocks` array from Strapi and renders it through a single `DynamicZoneRenderer`.\n\nThis still does not mean the whole storefront is CMS-driven: the homepage `/`, header, and footer remain partially hardcoded.",
+					"The `pages` collection is needed so that **marketing content** becomes a first-class CMS entity rather than a set of fixed Astro routes.\n\nIn this implementation, the **Astro route does not define the page structure manually**. It receives the `blocks` array from Strapi and renders it through a single `DynamicZoneRenderer`.\n\nThe first queue already moved the homepage, header, and footer into the CMS contour, but the full locale-prefixed scheme still does not cover every public section.",
 			},
 			{
 				__component: "blocks.quote",
@@ -493,7 +493,7 @@ const pagesSeed = {
 					{
 						title: "What should not be treated as finished yet",
 						body:
-							"- homepage `/` is still hardcoded\n- `Header` and `Footer` are not CMS-driven\n- media seed for visual blocks is still missing\n- preview mode and rebuild pipeline remain the next steps",
+							"- articles, projects, and vacancies are still outside full locale-prefixed public routes\n- media seed for visual blocks stays minimal\n- preview mode and rebuild pipeline remain the next steps\n- sitemap and production deployment are still pending",
 					},
 				],
 			},
@@ -545,7 +545,7 @@ const pagesSeed = {
 					{
 						question: "Is the homepage already CMS-driven?",
 						answer:
-							"No. The / route is still hardcoded, while CMS rendering currently covers separate pages from the pages collection.",
+							"Yes. In the first queue the homepage comes from `home-page`, while the layout receives header and footer data from `global`.",
 					},
 					{
 						question: "Is the page structure defined in Astro?",
@@ -566,14 +566,14 @@ const pagesSeed = {
 					"These informational blocks matter as the next layer of controlled marketing structure, not as decoration.",
 				items: [
 					{
-						title: "Move `/` into `home-page` or `pages`",
+						title: "Expand locale-prefixed routes",
 						description:
-							"The homepage needs to enter the same CMS-driven renderer, otherwise the storefront remains hybrid.",
+							"After the homepage and `pages`, the same ru/en contour should be extended to articles and projects.",
 					},
 					{
-						title: "Extract global texts",
+						title: "Finish the public i18n contour",
 						description:
-							"Navigation, footer, and company information should move from local constants into `Strapi`.",
+							"Locale-aware links, canonicals, and sitemap still need to be aligned across all public sections.",
 					},
 					{
 						title: "Add preview flow",
@@ -615,7 +615,7 @@ const pagesSeed = {
 						stepLabel: "04",
 						title: "The static page lands in build output",
 						description:
-							"The build already produces `/cms-first-platform` as a real CMS-driven page.",
+							"The build already produces `/en/cms-first-platform/` as a real locale-aware CMS-driven page.",
 					},
 				],
 			},
@@ -623,7 +623,7 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Next step",
 				description:
-					"Connect home-page and global texts so the homepage and layout move into the same CMS delivery flow.",
+					"Extend the same contour to articles and projects, then finish preview mode, sitemap, and rebuild publication.",
 				primaryButtonLabel: "Go to projects",
 				primaryButtonUrl: "/projects",
 				secondaryButtonLabel: "Read articles",
