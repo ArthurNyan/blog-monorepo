@@ -141,7 +141,17 @@ data-layer с явным управлением локалями, \texttt{popula
 \texttt{checklist}, \texttt{content-columns}, \texttt{numbered-points}. Блоки описаны
 как отдельные \texttt{Strapi}-компоненты и используют вложенные shared-компоненты для
 карточек, ссылок, FAQ-элементов, шагов процесса, статистики и других переиспользуемых
-элементов модели данных.
+элементов модели данных. Практически такой редакторский контур виден на
+рисунке~\ref{fig:chapter2-page-editor}: в одной сущности одновременно задаются
+\texttt{slug}, последовательность блоков, \texttt{SEO}-поля и точка входа в
+\texttt{preview}-сценарий.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/strapi-images/page.png}
+  \caption{Редактирование CMS-страницы в \texttt{Strapi}: \texttt{slug}, \texttt{Dynamic Zone}, \texttt{SEO} и доступ к \texttt{preview}}
+  \label{fig:chapter2-page-editor}
+\end{figure}
 
 \subsection{Связь CMS-блоков с frontend-рендерингом}
 
@@ -178,7 +188,17 @@ data-layer с явным управлением локалями, \texttt{popula
 \texttt{CMS-first} контур: адрес страницы зависит от локали и \texttt{slug}, а ее
 структура, контент и метаданные приходят из \texttt{Strapi}. В результате frontend
 используется не как хранилище макетов с зашитым контентом, а как слой публикации и
-рендеринга данных, полученных из CMS.
+рендеринга данных, полученных из CMS. На рисунке~\ref{fig:chapter2-home-en-route}
+показана английская версия главной страницы по маршруту \texttt{/en/}; тот же
+принцип locale-prefixed адресации используется и для управляемых CMS-страниц с
+маршрутами вида \texttt{/:locale/:slug/}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/front/home-en-with-url.png}
+  \caption{Публичная витрина в locale-prefixed маршруте \texttt{/en/}, опубликованная на основе данных из CMS}
+  \label{fig:chapter2-home-en-route}
+\end{figure}
 
 \subsection{Статьи, проекты и карьерный модуль}
 
@@ -194,7 +214,17 @@ data-layer с явным управлением локалями, \texttt{popula
 занятости и уровню, а детальная страница вакансии отображает атрибуты записи и подключает
 форму отклика. Тем самым frontend уже обрабатывает не только редакционные материалы, но и
 прикладной карьерный сценарий, в котором \texttt{Strapi} выступает источником данных как
-для самих вакансий, так и для связанных таксономий.
+для самих вакансий, так и для связанных таксономий. Соответствующая публичная точка
+взаимодействия показана на рисунке~\ref{fig:chapter2-vacancy-detail}: детальная
+страница одновременно отображает данные вакансии и форму, которая затем
+передает отклик в \texttt{vacancy-application}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/front/frontend-vacancy.png}
+  \caption{Детальная страница вакансии с подключенной формой отклика как прикладной публичный сценарий}
+  \label{fig:chapter2-vacancy-detail}
+\end{figure}
 
 \section{Мультиязычность}
 
@@ -260,6 +290,18 @@ API в публичном режиме.
   \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-preview-sequence.pdf}
   \caption{Сценарий защищенного предварительного просмотра чернового контента}
   \label{fig:chapter2-cms-preview-sequence}
+\end{figure}
+
+Практический результат этого потока показан на
+рисунке~\ref{fig:chapter2-preview-screen}: редактор получает доступ к черновой
+версии страницы прямо из интерфейса \texttt{Strapi}, а preview открывается как
+отдельный режим просмотра, связанный с текущей записью и ее draft-состоянием.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/strapi-images/page-preview-desktop.png}
+  \caption{Предпросмотр черновой версии CMS-страницы в интерфейсе \texttt{Strapi}}
+  \label{fig:chapter2-preview-screen}
 \end{figure}
 
 \subsection{Ограничение публичного API опубликованным контентом}
