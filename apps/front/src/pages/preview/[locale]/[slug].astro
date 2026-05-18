@@ -1,0 +1,68 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { fetchPageBySlug } from "@/shared/api/pages";
+import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import {
+	buildPublicPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import {
+	isSiteLocale,
+	toCmsLocale,
+} from "@/shared/i18n/config";
+
+export const prerender = false;
+
+const locale = Astro.params.locale;
+const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	return Astro.redirect(buildPublicPath("ru"));
+}
+
+if (!slug) {
+	return new Response("Preview page slug is required.", { status: 400 });
+}
+
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicPath(locale, slug));
+}
+
+const pathname = buildPublicPath(locale, slug);
+const page = await fetchPageBySlug(
+	slug,
+	toCmsLocale(locale),
+	getPreviewCmsRequestOptions()
+);
+
+if (!page) {
+	return new Response("Preview page not found.", { status: 404 });
+}
+
+const seo = buildSeoMetadata({
+	seo: page.seo,
+	title: page.title,
+	description: page.seo.metaDescription,
+	pathname,
+	noIndex: true,
+	status: "draft",
+});
+---
+
+<MainLayout
+	content={{
+		title: page.title,
+		description: page.seo.metaDescription,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		previewMode: true,
+		cmsStatus: "draft",
+	}}
+	className="flex flex-col"
+>
+	<DynamicZoneRenderer blocks={page.blocks} locale={page.locale} />
+</MainLayout>

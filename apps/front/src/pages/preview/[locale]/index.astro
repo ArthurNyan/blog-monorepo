@@ -1,0 +1,58 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { fetchHomePage } from "@/shared/api/site";
+import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import {
+	buildPublicPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import {
+	isSiteLocale,
+} from "@/shared/i18n/config";
+
+export const prerender = false;
+
+const locale = Astro.params.locale;
+
+if (!isSiteLocale(locale)) {
+	return Astro.redirect(buildPublicPath("ru"));
+}
+
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicPath(locale));
+}
+
+const pathname = buildPublicPath(locale);
+const homePage = await fetchHomePage(locale, getPreviewCmsRequestOptions());
+
+if (!homePage) {
+	return new Response("Preview home page not found.", { status: 404 });
+}
+
+const seo = buildSeoMetadata({
+	seo: homePage.seo,
+	title: homePage.title,
+	description: homePage.description,
+	pathname,
+	noIndex: true,
+	status: "draft",
+});
+---
+
+<MainLayout
+	content={{
+		title: homePage.title,
+		description: homePage.description,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		previewMode: true,
+		cmsStatus: "draft",
+	}}
+	className="flex flex-col"
+>
+	<DynamicZoneRenderer blocks={homePage.blocks} locale={homePage.locale} />
+</MainLayout>

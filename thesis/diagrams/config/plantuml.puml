@@ -1,0 +1,11 @@
+skinparam monochrome true
+skinparam shadowing false
+skinparam handwritten false
+skinparam defaultFontName Times New Roman
+skinparam ArrowColor #111827
+skinparam PackageBorderColor #111827
+skinparam PackageFontColor #111827
+skinparam ClassBorderColor #111827
+skinparam ClassFontColor #111827
+skinparam NoteBorderColor #111827
+skinparam NoteBackgroundColor #F9FAFB

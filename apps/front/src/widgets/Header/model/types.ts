@@ -15,6 +15,13 @@ export interface NavigationLinkItem {
 	description?: string;
 }
 
+export interface HeaderBrand {
+	/** Текст бренда в шапке */
+	title: string;
+	/** Ссылка на главную */
+	href: string;
+}
+
 /**
  * Главный элемент навигации
  */
@@ -37,4 +44,7 @@ export interface NavigationItem {
  */
 export interface HeaderProps {
 	navigationItems?: NavigationItem[];
+	brand?: HeaderBrand;
+	primaryAction?: NavigationLinkItem;
+	secondaryAction?: NavigationLinkItem;
 }

@@ -1,169 +1,433 @@
-Вторая глава показывает расширенные конструкции. Для удобства чтения сохраняется тот же
-принцип: от математического блока к табличному, затем к коду и алгоритмам. Такой порядок
-помогает новичку видеть, как сложные окружения собираются в единую структуру текста ВКР.
+Во второй главе рассматривается практическая реализация системы управления контентом на
+базе \texttt{Strapi} и \texttt{Astro}. Описание опирается только на те решения, которые
+подтверждаются текущей структурой репозитория, конфигурацией приложений, схемами
+контентных типов, маршрутами frontend-части и реализованными пользовательскими
+сценариями. Такой подход позволяет рассматривать проектную главу не как план развития
+системы, а как описание уже существующего \texttt{CMS-first} контура для управления
+маркетинговым контентом.
 
-\section{Многострочная математика и ограничения}
-\subsection{Целевая функция и ограничения}
-Для продвинутого примера рассматривается задача минимизации целевой функции
-с набором ограничений:
-\begin{align}
-  \min_{x_1,x_2,x_3}\; Z &= 4x_1 + 3x_2 + 2x_3,
-  \label{eq:ch2-objective} \\
-  x_1 + x_2 + x_3 &= 1, \label{eq:ch2-constraint-a} \\
-  2x_1 + x_2 &\ge 0.80, \label{eq:ch2-constraint-b} \\
-  x_i &\ge 0,\quad i=1,2,3. \label{eq:ch2-constraint-c}
-\end{align}
-Формулы~\eqref{eq:ch2-objective}--\eqref{eq:ch2-constraint-c} используются как единый
-связанный блок, где каждая строка имеет отдельную ссылку.
+\section{Общая архитектура системы}
 
-\subsection{Рекуррентная модель и режимы}
-Дополнительная рекуррентная модель записывается как
-\begin{gather}
-  F_0 = 1,\quad F_1 = 1, \label{eq:ch2-rec-a} \\
-  F_n = F_{n-1} + F_{n-2},\quad n \ge 2. \label{eq:ch2-rec-b}
-\end{gather}
+\subsection{Структура репозитория и роли приложений}
 
-Режим вычисления выбирается по условию:
-\begin{equation}
-  \operatorname{Mode}(u)=
-  \begin{cases}
-    \text{offline}, & u < 0.40, \\
-    \text{hybrid}, & 0.40 \le u < 0.75, \\
-    \text{online}, & u \ge 0.75.
-  \end{cases}
-  \label{eq:ch2-mode}
-\end{equation}
+Проект реализован как монорепозиторий \texttt{Nx + pnpm}, в котором backend и frontend
+развиваются в общей кодовой базе, но оформлены как отдельные приложения. В составе
+репозитория находятся \texttt{apps/cms} на \texttt{Strapi 5} и \texttt{apps/front} на
+\texttt{Astro 6}. Для \texttt{apps/cms} определены \texttt{Nx}-цели \texttt{dev},
+\texttt{build}, \texttt{start}, \texttt{lint} и \texttt{test}, а для \texttt{apps/front}
+--- \texttt{dev}, \texttt{build}, \texttt{preview}, \texttt{generate:api},
+\texttt{lint} и \texttt{test}. Такое разделение позволяет сопровождать CMS и публичную
+витрину в одном репозитории, не смешивая их роли на уровне приложений.
 
-\section{Демонстрация длинной таблицы}
-\subsection{Реестр контрольных прогонов}
-Длинная таблица~\ref{tab:ch2-long} иллюстрирует работу \texttt{longtable} при переносе
-на несколько страниц и аккуратное выравнивание чисел:
-\begin{longtable}{@{}c>{\raggedright\arraybackslash}p{0.48\linewidth}S[table-format=2.2]S[table-format=1.2]@{}}
-  \caption{Реестр контрольных прогонов по этапам проекта}\label{tab:ch2-long} \\
-  \toprule
-  № & Этап & {Длительность, ч} & {Индекс качества} \\
-  \midrule
-  \endfirsthead
-  \caption[]{Реестр контрольных прогонов по этапам проекта (продолжение)} \\
-  \toprule
-  № & Этап & {Длительность, ч} & {Индекс качества} \\
-  \midrule
-  \endhead
-  \midrule
-  \multicolumn{4}{r}{Продолжение на следующей странице} \\
-  \endfoot
-  \bottomrule
-  \endlastfoot
-  1  & Сбор требований                     & 12.50 & 0.78 \\
-  2  & Проектирование структуры            & 10.00 & 0.81 \\
-  3  & Подготовка титульного листа         & 5.50  & 0.88 \\
-  4  & Настройка шрифтов                   & 6.25  & 0.92 \\
-  5  & Разметка формул                     & 8.75  & 0.85 \\
-  6  & Разметка рисунков                   & 7.00  & 0.86 \\
-  7  & Разметка таблиц                     & 9.25  & 0.87 \\
-  8  & Реализация листингов                & 6.50  & 0.90 \\
-  9  & Реализация алгоритмов               & 7.40  & 0.91 \\
-  10 & Настройка перекрестных ссылок       & 4.80  & 0.95 \\
-  11 & Тестирование пайплайна              & 6.10  & 0.96 \\
-  12 & Корректировка методических пояснений & 5.70  & 0.89 \\
-  13 & Подготовка приложений               & 7.90  & 0.90 \\
-  14 & Финальный прогон сборки             & 3.60  & 0.98 \\
-  15 & Предзащитная валидация              & 4.20  & 0.97 \\
-\end{longtable}
+С архитектурной точки зрения \texttt{Strapi} выступает CMS-ядром системы. В нем
+определяются контентные типы, отношения между сущностями, локализуемые поля, режим
+\texttt{draft/publish} и REST API. Приложение \texttt{apps/front} выполняет роль
+публичной витрины: оно получает данные из CMS, формирует маршруты, рендерит контентные
+страницы и обслуживает сценарии предварительного просмотра. Тем самым контентный слой и
+слой отображения разведены, что соответствует выбранной \texttt{CMS-first} логике.
 
-\subsection{Архитектурная иллюстрация}
-Дополнительная архитектурная иллюстрация приведена на рисунке~\ref{fig:ch2-cache};
-она показывает роль кэш-уровня в снижении латентности запроса.
-Источник диаграммы: открытый репозиторий системного проектирования~\cite{sdp-cache}.
-\begin{figure}[tbp]
+Одним из интеграционных механизмов между двумя приложениями служит OpenAPI-контракт. В
+CMS включен плагин документации, который публикует JSON-описание API, а во frontend
+используется конфигурация генерации типизированного клиента. Такой подход уже применяется
+для части публичных разделов и снижает риск расхождения между backend-маршрутами и
+frontend-типами. Вместе с тем текущая реализация не сводится только к generated SDK: для
+\texttt{global}, \texttt{home-page}, \texttt{page} и карьерного модуля сохранен отдельный
+data-layer с явным управлением локалями, \texttt{populate}-параметрами и
+\texttt{preview}-режимом. Сводно текущая архитектура системы показана на
+рисунке~\ref{fig:chapter2-cms-first-architecture}.
+
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.64\linewidth]{assets/images/fig-04-query-cache-architecture.png}
-  \caption{Архитектура кэширования запросов в распределенном сервисе}\label{fig:ch2-cache}
+  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-first-architecture.pdf}
+  \caption{Контекстная схема текущей \texttt{CMS-first} системы на базе \texttt{Strapi} и \texttt{Astro}}
+  \label{fig:chapter2-cms-first-architecture}
 \end{figure}
 
-\section{Демонстрация листингов}
-\subsection{Python-листинг проверки структуры}
-Листинг~\ref{lst:ch2-validator} показывает рабочий пример кода, который
-обходит каталог контента и проверяет наличие ожидаемых файлов:
-\begin{lstlisting}[caption={Скрипт валидации структуры контента},label={lst:ch2-validator}]
-from pathlib import Path
+\subsection{Контур доставки контента}
 
-CONTENT_FILES = [
-    "01-introduction.tex",
-    "02-chapter-1.tex",
-    "03-chapter-2.tex",
-    "04-conclusion.tex",
-]
+Текущий delivery-контур построен по схеме \texttt{Strapi -> API -> Astro}. Контент
+создается и хранится в \texttt{Strapi}, после чего frontend запрашивает опубликованные
+данные через REST API и использует их для формирования публичных страниц. Для
+\texttt{home-page} и \texttt{pages} применяются locale-prefixed маршруты, а для статей,
+проектов и вакансий реализованы отдельные публичные разделы и детальные страницы.
 
-root = Path("content")
-missing = [name for name in CONTENT_FILES if not (root / name).exists()]
+В конфигурации frontend подключен адаптер \texttt{Vercel} и модуль \texttt{sitemap}, а
+абсолютный адрес сайта задается через \texttt{SITE\_URL}. При этом публичные маршруты
+сохраняют модель предварительной сборки, а server-side логика используется точечно для
+\texttt{preview}-сценариев. Таким образом, базовый режим работы витрины ориентирован на
+предварительно сформированный результат, а не на генерацию представления при каждом
+внешнем запросе.
 
-if missing:
-    print("Missing files:", ", ".join(missing))
-else:
-    print("Content structure is valid.")
-\end{lstlisting}
+\section{Проектирование модели данных CMS}
 
-\subsection{Bash-фрагмент сборочного сценария}
-Пример команды сборки приведен в листинге~\ref{lst:ch2-make-target}:
-\begin{lstlisting}[language=bash,caption={Пример цели Makefile для сборки},label={lst:ch2-make-target}]
-build:
-	latexmk -pdf -lualatex main.tex
-\end{lstlisting}
+\subsection{Сущности, атрибуты и связи}
 
-\subsection{LaTeX-листинги шаблонов}
-Листинги LaTeX оформляются с локальным указанием языка, чтобы новичкам было проще
-сопоставлять окружения, команды и метки:
-\begin{lstlisting}[language={[LaTeX]TeX},texcsstyle=*\color{lstKeyword},alsoletter={\\},morekeywords={begin,end,chapter,section,subsection,label,ref,eqref,caption,includegraphics},caption={Шаблон нумеруемой формулы с меткой},label={lst:ch2-latex-equation}]
-\begin{equation}
-  S = \sum_{i=1}^{n} w_i x_i,
-  \label{eq:weighted-score}
-\end{equation}
-\end{lstlisting}
+На стороне \texttt{Strapi} реализована предметно ориентированная модель данных,
+покрывающая ключевые типы маркетингового и прикладного контента. В системе определены
+коллекции \texttt{article}, \texttt{author}, \texttt{project}, \texttt{vacancy},
+\texttt{vacancy-application}, \texttt{industry}, \texttt{job-role} и \texttt{page}, а
+также single type-сущности \texttt{global} и \texttt{home-page}. Такой набор отражает
+не структуру конкретного шаблона витрины, а состав управляемой предметной области:
+редакционные материалы, кейсы, карьерный модуль, глобальные данные сайта и самостоятельные
+маркетинговые страницы.
 
-\begin{lstlisting}[language={[LaTeX]TeX},texcsstyle=*\color{lstKeyword},alsoletter={\\},morekeywords={begin,end,chapter,section,subsection,label,ref,eqref,caption,includegraphics},caption={Шаблон рисунка с подписью и ссылкой},label={lst:ch2-latex-figure}]
-\begin{figure}[tbp]
+Сущности \texttt{article} и \texttt{project} включают локализуемые поля \texttt{name},
+\texttt{description}, \texttt{slug}, media-атрибуты и rich text-контент. Для
+\texttt{vacancy} дополнительно зафиксированы прикладные атрибуты кадрового сценария:
+связи с отраслью и ролью, формат работы, тип занятости, уровень, зарплатные диапазоны,
+локализуемое описание и признак активности. Сущность \texttt{vacancy-application}
+используется как отдельная прикладная запись для отклика и хранит ссылку на вакансию,
+персональные данные кандидата, файл резюме, отметку согласия, момент отправки, источник
+и внутренний HR-статус.
+
+На уровне связей модель включает отношение \texttt{manyToMany} между статьями и
+авторами, отношение \texttt{manyToOne} от вакансии к отрасли и роли, а также отношение
+\texttt{manyToOne} от отклика к вакансии. Для \texttt{article}, \texttt{author},
+\texttt{project}, \texttt{vacancy}, \texttt{industry}, \texttt{job-role},
+\texttt{global}, \texttt{home-page} и \texttt{page} включены \texttt{draft/publish} и
+\texttt{i18n}, что обеспечивает раздельный жизненный цикл публикации и хранение контента
+в локалях \texttt{ru/en}. Исключение составляет \texttt{vacancy-application}, для
+которого локализация и режим черновика не требуются, так как эта сущность отражает
+факт отправки прикладной формы, а не редакционный контент. Сводная модель сущностей и
+их связей приведена на рисунке~\ref{fig:chapter2-cms-data-model}, а жизненный цикл
+локализуемой контентной единицы с режимом \texttt{draft/publish} --- на
+рисунке~\ref{fig:chapter2-cms-content-lifecycle}.
+
+\begin{figure}[htbp]
   \centering
-  \includegraphics[width=0.8\linewidth]{assets/images/fig-05-aws-scaling-architecture.png}
-  \caption{Схема масштабирования сервиса в облачной среде}
-  \label{fig:scaling-demo}
+  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-data-model.pdf}
+  \caption{Модель данных CMS с основными сущностями, связями и общими атрибутами публикации}
+  \label{fig:chapter2-cms-data-model}
 \end{figure}
-\end{lstlisting}
 
-\section{Демонстрация алгоритмов}
-\subsection{Псевдокод формирования отчета}
-Алгоритм~\ref{alg:ch2-report} демонстрирует псевдокод построения отчета качества:
-\begin{algorithm}[tbp]
-  \caption{Формирование отчета контроля сборки}\label{alg:ch2-report}
-  \begin{algorithmic}[1]
-    \Require Массив \texttt{checks}, содержащий статусы проверок
-    \Ensure Текстовый отчет \texttt{report}
-    \State \texttt{passed} $\gets$ 0
-    \State \texttt{report} $\gets$ пустой список
-    \ForAll{элемент \texttt{check} в \texttt{checks}}
-      \If{\texttt{check.status} = ``ok''}
-        \State \texttt{passed} $\gets$ \texttt{passed} + 1
-        \State добавить строку ``OK: check.name'' в \texttt{report}
-      \Else
-        \State добавить строку ``FAIL: check.name'' в \texttt{report}
-      \EndIf
-    \EndFor
-    \State добавить итог ``passed / |checks|'' в \texttt{report}
-    \State \Return \texttt{report}
-  \end{algorithmic}
-\end{algorithm}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.8\linewidth]{assets/diagrams/plantuml/pdf/cms-content-lifecycle.pdf}
+  \caption{Жизненный цикл локализуемой контентной единицы в контуре \texttt{draft/publish}}
+  \label{fig:chapter2-cms-content-lifecycle}
+\end{figure}
 
-\section{Композитный кейс 2: полный advanced-блок}
-\subsection{Интеграция сложных элементов}
-Для демонстрации сквозного сценария в одной связке используются:
-формула оптимизации~\eqref{eq:ch2-objective}, длинная таблица~\ref{tab:ch2-long},
-листинг валидации~\ref{lst:ch2-validator}, алгоритм~\ref{alg:ch2-report}
-и визуальные схемы~\ref{fig:ch1-subfig},~\ref{fig:ch2-cache}.
+\subsection{\texttt{SEO}-модель и глобальные сущности}
 
-\subsection{Практические ориентиры по оформлению}
-Кейс показывает, что даже при усложнении синтаксиса документ остается управляемым:
-каждый элемент имеет устойчивую ссылку, подпись и воспроизводимую сборку.
-Для практики рекомендуется опираться на официальные справочники пакетов
-\texttt{listings}, \texttt{algorithmicx} и \texttt{siunitx}~\cite{listings-doc,algpseudocode-doc,siunitx-doc},
-а также на общую методологию literate programming~\cite{knuth1984}
-и примеры архитектурных схем открытого сообщества~\cite{sdp-repo,sdp-aws}.
+Для управления витриной в системе выделены две отдельные single type-сущности:
+\texttt{global} и \texttt{home-page}. Сущность \texttt{global} хранит название компании,
+описание, логотип, элементы навигации, primary и secondary CTA, а также колонки и
+копирайт футера. Тем самым общие данные layout-уровня не остаются зашитыми во frontend, а
+переносятся в CMS как самостоятельный редактируемый слой.
+
+Сущность \texttt{home-page} используется как отдельная запись для главной страницы и
+содержит описание, набор блоков и вложенный \texttt{SEO}-компонент. Аналогичная схема
+используется в коллекции \texttt{page}. Компонент \texttt{shared.seo} задает
+\texttt{metaTitle}, \texttt{metaDescription}, \texttt{canonicalURL}, поля
+\texttt{Open Graph}, изображение для предпросмотра и признак \texttt{noIndex}. Таким
+образом, для главной и для CMS-страниц в модели данных уже реализован единый управляемый
+контур метаданных, который frontend использует при формировании HTML-документа.
+
+\section{Конструктор страниц на основе \texttt{Dynamic Zone}}
+
+\subsection{Сущность \texttt{page} и набор блоков}
+
+В системе реализована отдельная коллекция \texttt{page}, которая используется для
+локализуемых маркетинговых страниц со своими \texttt{slug}, набором блоков и
+\texttt{SEO}-метаданными. Структура страницы хранится не в route-файле frontend, а в
+\texttt{Dynamic Zone} на стороне CMS. Такой подход позволяет редактировать не только
+текстовое содержимое, но и последовательность секций, их тип и конфигурацию в рамках
+одной сущности.
+
+В \texttt{Dynamic Zone} для \texttt{page} и \texttt{home-page} подключен единый набор
+блоков: \texttt{hero}, \texttt{rich-text}, \texttt{feature-cards}, \texttt{cta},
+\texttt{preview-list}, \texttt{logo-cloud}, \texttt{testimonials}, \texttt{stats},
+\texttt{feature-highlight}, \texttt{faq}, \texttt{process-timeline}, \texttt{quote},
+\texttt{checklist}, \texttt{content-columns}, \texttt{numbered-points}. Блоки описаны
+как отдельные \texttt{Strapi}-компоненты и используют вложенные shared-компоненты для
+карточек, ссылок, FAQ-элементов, шагов процесса, статистики и других переиспользуемых
+элементов модели данных. Практически такой редакторский контур виден на
+рисунке~\ref{fig:chapter2-page-editor}: в одной сущности одновременно задаются
+\texttt{slug}, последовательность блоков, \texttt{SEO}-поля и точка входа в
+\texttt{preview}-сценарий.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/strapi-images/page.png}
+  \caption{Редактирование CMS-страницы в \texttt{Strapi}: \texttt{slug}, \texttt{Dynamic Zone}, \texttt{SEO} и доступ к \texttt{preview}}
+  \label{fig:chapter2-page-editor}
+\end{figure}
+
+\subsection{Связь CMS-блоков с frontend-рендерингом}
+
+На стороне frontend реализован общий renderer для \texttt{Dynamic Zone}, который
+принимает массив блоков и последовательно передает каждый элемент в слой отображения
+страницы. Для каждого типа блока используется отдельный компонент на \texttt{Astro} или
+\texttt{React}. В текущей версии поддерживаются блоки \texttt{hero},
+\texttt{rich-text}, \texttt{feature-cards}, \texttt{cta}, \texttt{preview-list},
+\texttt{logo-cloud}, \texttt{testimonials}, \texttt{stats},
+\texttt{feature-highlight}, \texttt{faq}, \texttt{process-timeline},
+\texttt{quote}, \texttt{checklist}, \texttt{content-columns} и
+\texttt{numbered-points}.
+
+Такой маппинг превращает CMS-модель в рабочий слой доставки представления: route-файлы не
+описывают структуру страницы вручную, а получают из \texttt{Strapi} массив блоков и
+рендерят его через общий механизм. Для блока \texttt{preview-list} дополнительно
+реализована связка с уже существующими разделами \texttt{articles}, \texttt{projects} и
+\texttt{vacancies}, благодаря чему CMS-страница может включать динамические анонсы этих
+сущностей без отдельной ручной раскладки в шаблоне.
+
+\section{Реализация frontend-части на \texttt{Astro}}
+
+\subsection{Локализованные маршруты главной и CMS-страниц}
+
+Во frontend реализованы locale-prefixed маршруты \texttt{/ru/} и \texttt{/en/} для
+главной страницы, а также \texttt{/:locale/:slug/} для CMS-страниц из коллекции
+\texttt{page}. Корневой маршрут \texttt{/} выполняет редирект на \texttt{/ru/}. Для
+главной страницы статические пути формируются по списку поддерживаемых локалей, а для
+маркетинговых страниц набор \texttt{slug} запрашивается из CMS отдельно для каждой
+локали. После получения данных route-файлы вычисляют локализованный путь, формируют
+\texttt{SEO}-метаданные и передают массив блоков в общий \texttt{Dynamic Zone} renderer.
+
+Такое решение переводит главную витрину и управляемые маркетинговые страницы в единый
+\texttt{CMS-first} контур: адрес страницы зависит от локали и \texttt{slug}, а ее
+структура, контент и метаданные приходят из \texttt{Strapi}. В результате frontend
+используется не как хранилище макетов с зашитым контентом, а как слой публикации и
+рендеринга данных, полученных из CMS. На рисунке~\ref{fig:chapter2-home-en-route}
+показана английская версия главной страницы по маршруту \texttt{/en/}; тот же
+принцип locale-prefixed адресации используется и для управляемых CMS-страниц с
+маршрутами вида \texttt{/:locale/:slug/}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/front/home-en-with-url.png}
+  \caption{Публичная витрина в locale-prefixed маршруте \texttt{/en/}, опубликованная на основе данных из CMS}
+  \label{fig:chapter2-home-en-route}
+\end{figure}
+
+\subsection{Статьи, проекты и карьерный модуль}
+
+Помимо CMS-страниц, витрина уже содержит отдельные публичные разделы \texttt{articles},
+\texttt{projects} и \texttt{vacancies}. Списковые страницы статей и проектов получают
+данные через generated SDK, а детальные страницы строятся по \texttt{slug} и затем
+загружают полную сущность через дополнительный API-запрос. Для этих разделов используется
+одна и та же логика: список материалов формируется из CMS, а детальная страница
+отображает обложку, краткое описание, дату и rich text-контент.
+
+Модуль вакансий реализован как отдельный прикладной контур. Страница каталога использует
+\texttt{VacancyExplorer} с фильтрацией по отрасли, роли, локации, формату работы, типу
+занятости и уровню, а детальная страница вакансии отображает атрибуты записи и подключает
+форму отклика. Тем самым frontend уже обрабатывает не только редакционные материалы, но и
+прикладной карьерный сценарий, в котором \texttt{Strapi} выступает источником данных как
+для самих вакансий, так и для связанных таксономий. Соответствующая публичная точка
+взаимодействия показана на рисунке~\ref{fig:chapter2-vacancy-detail}: детальная
+страница одновременно отображает данные вакансии и форму, которая затем
+передает отклик в \texttt{vacancy-application}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/front/frontend-vacancy.png}
+  \caption{Детальная страница вакансии с подключенной формой отклика как прикладной публичный сценарий}
+  \label{fig:chapter2-vacancy-detail}
+\end{figure}
+
+\section{Мультиязычность}
+
+\subsection{Локали в модели данных и в маршрутизации}
+
+Поддержка мультиязычности в проекте реализована как часть общей архитектуры данных и
+маршрутов. Во frontend зафиксированы две публичные локали: \texttt{ru} и \texttt{en}.
+Для них определено отображение в локали CMS: \texttt{ru -> ru-RU}, \texttt{en -> en}. На
+уровне \texttt{Strapi} локализация включена для ключевых контентных сущностей, включая
+\texttt{page}, \texttt{home-page}, \texttt{global}, \texttt{article}, \texttt{project},
+\texttt{vacancy}, \texttt{author}, \texttt{industry} и \texttt{job-role}. Это позволяет
+хранить локализованные значения контента, \texttt{slug} и связанных полей непосредственно
+в CMS.
+
+Витрина использует эти локали в двух местах. Во-первых, они участвуют в генерации
+маршрутов \texttt{/ru/}, \texttt{/en/} и \texttt{/:locale/:slug/}. Во-вторых, они
+передаются в layout, который вычисляет корректный \texttt{lang} атрибут HTML-документа,
+canonical URL и локаль для Open Graph. Таким образом, мультиязычность в текущей версии
+проекта уже проявляется не только как свойство контентных полей, но и как часть
+публичного route-контура для главной витрины и CMS-страниц.
+
+\subsection{CMS-управляемые глобальные данные}
+
+Дополнительным результатом текущей реализации является вынос ключевых UI-текстов витрины
+в \texttt{Strapi}. Layout запрашивает сущность \texttt{global} с учетом активной локали,
+после чего передает в компоненты \texttt{Header} и \texttt{Footer} навигацию, CTA,
+описание компании, колонки футера и другие общие данные сайта. Благодаря этому шапка,
+футер и базовые элементы навигации уже не зависят только от локальных frontend-констант и
+могут редактироваться из CMS отдельно для русской и английской версии витрины.
+
+\section{Preview и защищенный доступ к черновикам}
+
+\subsection{Server-side \texttt{preview} на стороне frontend}
+
+Предварительный просмотр реализован как отдельный server-side контур frontend. Маршрут
+\texttt{/api/preview} принимает тип сущности, локаль, \texttt{slug}, статус и секретный
+параметр, после чего проверяет корректность \texttt{PREVIEW\_SECRET}, выбирает нужный
+fetcher и перенаправляет пользователя на соответствующий preview-адрес. Для выхода из
+режима предпросмотра используется маршрут \texttt{/api/exit-preview}.
+
+Со стороны \texttt{Strapi Admin} этот сценарий дополнительно интегрирован в конфигурацию
+\texttt{preview}. При наличии \texttt{PREVIEW\_SECRET} CMS формирует допустимые preview-ссылки
+с учетом \texttt{SITE\_URL}, типа сущности, локали, статуса публикации и \texttt{slug}.
+Для \texttt{home-page} используется отдельная цель \texttt{home}, а для \texttt{page},
+\texttt{article}, \texttt{project} и \texttt{vacancy} CMS предварительно извлекает
+\texttt{slug} по \texttt{documentId} и строит ссылку на frontend-маршрут
+\texttt{/api/preview}. Тем самым предпросмотр оформлен как связанный контур
+\texttt{CMS -> frontend}, а не только как изолированный server-side механизм витрины.
+Последовательность этого сценария приведена на
+рисунке~\ref{fig:chapter2-cms-preview-sequence}.
+
+На стороне frontend preview-сессия хранится в \texttt{httpOnly} cookie. При успешной
+проверке секрета устанавливается служебная cookie \texttt{\_\_cms\_preview}, а дальнейшие
+preview-страницы разрешают доступ только при наличии корректного значения этой cookie.
+Для запросов к CMS используется специальный заголовок \texttt{x-preview-secret} и статус
+\texttt{draft}. Такой механизм реализован для \texttt{home-page}, \texttt{page},
+\texttt{article}, \texttt{project} и \texttt{vacancy}. В результате редактор может
+проверять черновую версию материала в отдельном server-side маршруте, не раскрывая draft
+API в публичном режиме.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-preview-sequence.pdf}
+  \caption{Сценарий защищенного предварительного просмотра чернового контента}
+  \label{fig:chapter2-cms-preview-sequence}
+\end{figure}
+
+Практический результат этого потока показан на
+рисунке~\ref{fig:chapter2-preview-screen}: редактор получает доступ к черновой
+версии страницы прямо из интерфейса \texttt{Strapi}, а preview открывается как
+отдельный режим просмотра, связанный с текущей записью и ее draft-состоянием.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/strapi-images/page-preview-desktop.png}
+  \caption{Предпросмотр черновой версии CMS-страницы в интерфейсе \texttt{Strapi}}
+  \label{fig:chapter2-preview-screen}
+\end{figure}
+
+\subsection{Ограничение публичного API опубликованным контентом}
+
+На стороне CMS дополнительный уровень защиты реализован через middleware
+\texttt{enforce-published}. Для всех публичных \texttt{GET /api/*} запросов, не относящихся
+к документации и не содержащих корректный \texttt{x-preview-secret}, middleware
+принудительно выставляет \texttt{status=published}. Тем самым обычный публичный запрос к
+контентным маршрутам получает только опубликованные данные, тогда как чтение черновиков
+разрешается лишь для preview-сценария на стороне frontend с общим секретом между
+frontend и CMS.
+
+\section{\texttt{SEO}, \texttt{Open Graph} и \texttt{sitemap}}
+
+\subsection{CMS-управляемые метаданные для \texttt{home-page} и \texttt{pages}}
+
+Для \texttt{home-page} и \texttt{pages} в системе реализован отдельный \texttt{SEO}-контур,
+основанный на компоненте \texttt{shared.seo}. При запросе данных frontend загружает
+\texttt{metaTitle}, \texttt{metaDescription}, \texttt{canonicalURL}, значения
+\texttt{Open Graph}, изображение \texttt{ogImage} и признак \texttt{noIndex}. Затем эти
+данные обрабатываются функцией \texttt{buildSeoMetadata}, которая формирует итоговый набор
+метаданных для layout и при необходимости дополняет его значениями по умолчанию.
+
+В layout-файле централизованно рендерятся \texttt{title}, \texttt{description},
+\texttt{canonical}, \texttt{og:title}, \texttt{og:description}, \texttt{og:type},
+\texttt{og:locale}, \texttt{og:site\_name}, \texttt{og:url}, \texttt{og:image},
+\texttt{twitter:*} и \texttt{robots}. Для preview-страниц дополнительно устанавливается
+\texttt{noindex}. Благодаря этому метаданные управляются из CMS и применяются в одной
+точке рендеринга, а не распределяются вручную по отдельным route-файлам витрины.
+
+\subsection{Текущий охват мета-контура}
+
+В текущей версии проекта полноценный CMS-управляемый \texttt{SEO}-контур применяется к
+\texttt{home-page} и к коллекции \texttt{page}. Для разделов \texttt{articles},
+\texttt{projects} и \texttt{vacancies} layout также формирует базовые метаданные, однако
+их значения выводятся преимущественно из самих контентных полей маршрута, а не из
+отдельного \texttt{SEO}-компонента на стороне CMS. Поэтому для этих разделов в системе уже
+существует единая точка рендеринга метатегов, но отдельная управляемая \texttt{SEO}-схема
+пока используется только для главной страницы и CMS-страниц.
+
+Конфигурация frontend дополнительно использует встроенную генерацию \texttt{sitemap}, а
+абсолютный адрес сайта задается через переменную \texttt{SITE\_URL}. Это позволяет
+формировать \texttt{canonical}-ссылки и \texttt{sitemap} на основе одного внешнего
+URL-контракта. Следовательно, для публичных prerendered маршрутов системы уже существует
+техническая база для автоматической генерации карты сайта и корректной публикации
+абсолютных метаданных.
+
+% TODO: Добавить подраздел о webhook -> rebuild и production deployment
+% после появления versioned-конфигурации Vercel/Docker и проверяемого публикационного контура.
+
+\section{Безопасность публичных сценариев}
+
+\subsection{Валидация отклика на вакансию}
+
+Наиболее прикладной публичный сценарий безопасности в текущей версии проекта связан с
+формой отклика на вакансию. Для нее реализована клиентская валидация через \texttt{zod} и
+\texttt{react-hook-form}. Пользователь обязан указать имя, email и телефон, подтвердить
+согласие на обработку персональных данных и прикрепить файл резюме. Для резюме
+разрешаются только расширения \texttt{.pdf}, \texttt{.doc} и \texttt{.docx}, а размер
+файла ограничен \texttt{10 MB}. Поле сопроводительного письма ограничено по длине.
+
+Дополнительным антиспам-механизмом служит \texttt{honeypot}-поле. При его заполнении
+форма не отправляет данные в CMS, а локально завершает сценарий как успешный, что
+позволяет отсеивать часть автоматизированных отправок без усложнения пользовательского
+пути. После прохождения валидации данные передаются в \texttt{POST /api/vacancy-applications}
+как \texttt{FormData} вместе с вложением и служебными полями \texttt{source} и
+\texttt{submittedAt}. Тем самым форма отклика уже защищается не только на уровне доступа к
+административной панели, но и на уровне публичной точки ввода.
+
+\subsection{Публичные справочники карьерного модуля}
+
+Для карьерного раздела в CMS отдельно зафиксированы публичные справочники
+\texttt{industry} и \texttt{job-role}. Их роуты ограничены операциями \texttt{find} и
+\texttt{findOne} без авторизации, что позволяет frontend загружать значения для фильтров и
+карточек вакансий без открытия лишних операций записи через публичный API. Такой подход
+сохраняет доступность прикладного сценария поиска вакансий и одновременно минимизирует
+поверхность публичного доступа к служебным сущностям.
+
+% TODO: Добавить publish-ready подраздел о ролях и правах редакторов
+% после фиксации воспроизводимой RBAC-конфигурации в коде или в versioned-приложении.
+
+\section{Тестирование}
+
+\subsection{Проверяемые пользовательские сценарии}
+
+Текущее состояние репозитория уже позволяет выполнять ручную сценарную проверку ряда
+ключевых контуров системы. К ним относятся получение и отображение главной витрины
+по данным \texttt{home-page}, открытие локализованных CMS-страниц \texttt{/:locale/:slug/},
+загрузка глобальных данных layout-уровня из \texttt{global}, получение и отображение
+статей и проектов, работа каталога вакансий с фильтрацией и пагинацией, открытие
+детальной вакансии и отправка отклика через публичную форму.
+
+Отдельно проверяемыми остаются технические сценарии конфигурационного и маршрутного
+уровня: генерация OpenAPI-документации в CMS, построение типизированного frontend-клиента
+и доступ к preview-маршрутам для \texttt{home-page}, \texttt{pages}, \texttt{articles},
+\texttt{projects} и \texttt{vacancies}. Таким образом, система уже содержит не только код,
+но и воспроизводимые пользовательские и инфраструктурные сценарии, по которым можно
+подтвердить работоспособность ее основных контентных и прикладных контуров.
+
+\subsection{Текущий характер проверки}
+
+Текущая проверка системы носит преимущественно ручной и интеграционный характер. Это
+связано с тем, что \texttt{lint}- и \texttt{test}-цели для обоих приложений пока
+оформлены как заглушки и не содержат полноценного набора автоматизированных тестов.
+Тем не менее сама архитектура и набор маршрутов уже допускают проверку редакторских и
+публичных пользовательских сценариев по реальному коду, а не по проектному описанию.
+
+\section{Выводы по проектной главе}
+
+Текущая реализация проекта уже образует рабочий \texttt{CMS-first} контур, в котором
+\texttt{Strapi} выступает ядром управления контентом, а \texttt{Astro} --- слоем
+публикации и рендеринга. В репозитории зафиксированы самостоятельные приложения CMS и
+витрины, предметно ориентированная модель данных для статей, проектов, вакансий,
+откликов, глобальных данных и маркетинговых страниц, а также единый OpenAPI-контур
+интеграции между backend и frontend.
+
+Практически значимым результатом текущей версии является перевод главной витрины и
+\texttt{pages}-маршрутов в управляемую CMS-модель. Главная страница и маркетинговые
+\texttt{slug}-страницы собираются из \texttt{Dynamic Zone}, используют локализованные
+маршруты \texttt{ru/en}, получают \texttt{SEO}/\texttt{Open Graph} метаданные из CMS и
+поддерживают защищенный \texttt{preview}-сценарий. Дополнительно в системе уже
+функционируют публичные разделы статей, проектов и вакансий, а карьерный модуль включает
+прикладной пользовательский путь от просмотра вакансии до отправки отклика.
+
+Таким образом, вторая глава уже описывает не абстрактный замысел, а реальную
+архитектуру и реализованные механизмы управления маркетинговым контентом: разделение CMS и
+витрины, предметную модель данных, page builder на основе \texttt{Dynamic Zone},
+locale-prefixed витрину первой очереди, управляемый мета-контур и безопасный доступ к
+черновому контенту через \texttt{preview}.

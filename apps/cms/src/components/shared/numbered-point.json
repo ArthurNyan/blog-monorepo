@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_shared_numbered_points",
+  "info": {
+    "displayName": "Numbered point"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

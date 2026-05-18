@@ -72,6 +72,8 @@ make build
 - `knowledge/requirements-herzen-vkr.md` — требования из документа РГПУ.
 - `knowledge/compliance-diff.md` — расхождения между требованиями и шаблоном.
 - `knowledge/project-basis.md` — краткая база по проекту, на котором пишется диплом.
+- `knowledge/diploma/index.md` — рабочая карта по теме, структуре, решениям и чекпоинтам диплома.
+- `knowledge/diploma/agent-rules.md` — дополнительные правила для агентной работы над текстом и проектом.
 
 ## Данные научного руководителя
 

@@ -1,7 +1,8 @@
 ---
 import MainLayout from "@/layouts/main.astro";
-import { getArticles, getArticlesId } from "@/shared/api/generated";
-import { DetailHero, createArticleHeroProps } from "@/shared/components/DetailHero";
+import { getArticles } from "@/shared/api/generated";
+import { fetchArticleBySlug } from "@/shared/api/pages";
+import { DetailHero } from "@/shared/components/DetailHero";
 import { MarkdownContent } from "@/shared/components/MarkdownContent";
 
 export const getStaticPaths = async () => {
@@ -11,38 +12,33 @@ export const getStaticPaths = async () => {
     }
     return response.data.data?.map((article) => ({
         params: { slug: article.slug },
-        props: {
-            documentId: article.documentId,
-        },
     }));
 };
 
-const { documentId } = Astro.props;
-const { data: article } = await getArticlesId({
-    path: {
-        id: documentId as unknown as number,
-    },
-});
+const slug = Astro.params.slug as string;
+const articleData = await fetchArticleBySlug(slug);
 
-const articleData = article?.data;
+if (!articleData) {
+	return new Response("Article not found.", { status: 404 });
+}
 ---
 
 <MainLayout
     content={{ title: articleData?.name || "Статья" }}
     className="flex flex-col"
 >
-    {
-        articleData && (
-            <>
-                <DetailHero {...createArticleHeroProps(articleData)} />
-                <article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
-                    <div class="max-w-4xl mx-auto">
-                        {articleData.content && (
-                            <MarkdownContent content={articleData.content} />
-                        )}
-                    </div>
-                </article>
-            </>
-        )
-    }
+	<>
+		<DetailHero
+			title={articleData.name}
+			description={articleData.description}
+			date={articleData.date}
+			cover={articleData.cover || undefined}
+			authors={articleData.authors}
+		/>
+		<article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
+			<div class="max-w-4xl mx-auto">
+				{articleData.content && <MarkdownContent content={articleData.content} />}
+			</div>
+		</article>
+	</>
 </MainLayout>

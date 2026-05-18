@@ -44,6 +44,8 @@ export interface FooterProps {
 	columns?: FooterColumn[];
 	/** Информация о компании */
 	companyInfo?: CompanyInfo;
+	/** Копирайт или короткая подпись внизу */
+	copyrightText?: string;
 }
 
 /**

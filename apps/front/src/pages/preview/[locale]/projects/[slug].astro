@@ -1,0 +1,80 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { fetchProjectBySlug } from "@/shared/api/pages";
+import { DetailHero } from "@/shared/components/DetailHero";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import {
+	buildPublicCollectionPath,
+	getPreviewCmsRequestOptions,
+	hasValidPreviewCookie,
+} from "@/shared/preview/session";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import { isSiteLocale, toCmsLocale } from "@/shared/i18n/config";
+
+export const prerender = false;
+
+const locale = Astro.params.locale;
+const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	return Astro.redirect(buildPublicCollectionPath("project"));
+}
+
+if (!slug) {
+	return new Response("Preview project slug is required.", { status: 400 });
+}
+
+if (!hasValidPreviewCookie(Astro.cookies)) {
+	return Astro.redirect(buildPublicCollectionPath("project", slug));
+}
+
+const pathname = buildPublicCollectionPath("project", slug);
+const project = await fetchProjectBySlug(
+	slug,
+	toCmsLocale(locale),
+	getPreviewCmsRequestOptions()
+);
+
+if (!project) {
+	return new Response("Preview project not found.", { status: 404 });
+}
+
+const seo = buildSeoMetadata({
+	title: project.name,
+	description: project.description,
+	pathname,
+	noIndex: true,
+	status: "draft",
+});
+---
+
+<MainLayout
+	content={{
+		title: project.name,
+		description: project.description,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		previewMode: true,
+		cmsStatus: "draft",
+	}}
+	className="flex flex-col"
+>
+	<DetailHero
+		title={project.name}
+		description={project.description}
+		date={project.date}
+		cover={project.cover || undefined}
+		logo={project.logo || undefined}
+	/>
+	{
+		project.content && (
+			<article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
+				<div class="max-w-4xl mx-auto">
+					<MarkdownContent content={project.content} />
+				</div>
+			</article>
+		)
+	}
+</MainLayout>

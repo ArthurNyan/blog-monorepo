@@ -1,12 +1,17 @@
 import type { FooterProps } from '../model';
-import { DEFAULT_COMPANY_INFO, DEFAULT_FOOTER_COLUMNS } from '../model';
+import {
+	DEFAULT_COMPANY_INFO,
+	DEFAULT_FOOTER_COLUMNS,
+	DEFAULT_FOOTER_COPYRIGHT,
+} from '../model';
 import { Container } from './Container';
 import { CompanySection } from './CompanySection';
 import { FooterColumn } from './FooterColumn';
 
-export const Footer = ({ columns, companyInfo }: FooterProps) => {
+export const Footer = ({ columns, companyInfo, copyrightText }: FooterProps) => {
 	const footerColumns = columns || DEFAULT_FOOTER_COLUMNS;
 	const company = companyInfo || DEFAULT_COMPANY_INFO;
+	const footerCopyright = copyrightText || DEFAULT_FOOTER_COPYRIGHT;
 
 	// Группируем колонки попарно для сетки
 	const columnPairs: Array<typeof footerColumns> = [];
@@ -44,7 +49,7 @@ export const Footer = ({ columns, companyInfo }: FooterProps) => {
 			<Container delay={0.5} className="w-full relative mt-12 lg:mt-20">
 				<div className="mt-8 md:flex md:items-center justify-center footer w-full">
 					<p className="text-sm text-gray-500 mt-8 md:mt-0">
-						&copy; {new Date().getFullYear()} {company.name}. Built for UI excellence.
+						&copy; {new Date().getFullYear()} {company.name}. {footerCopyright}
 					</p>
 				</div>
 			</Container>

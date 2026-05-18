@@ -5,17 +5,30 @@ import { MenuToggleIcon } from '@/shared/components/ui/menu-toggle-icon';
 import { useScroll } from '@/shared/hooks/use-scroll';
 import { useScrollDirection } from '@/shared/hooks/use-scroll-direction';
 import type { HeaderProps } from '../model';
-import { DEFAULT_NAVIGATION } from '../model';
+import {
+	DEFAULT_BRAND,
+	DEFAULT_NAVIGATION,
+	DEFAULT_PRIMARY_ACTION,
+	DEFAULT_SECONDARY_ACTION,
+} from '../model';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
 
-export const Header = ({ navigationItems }: HeaderProps) => {
+export const Header = ({
+	navigationItems,
+	brand,
+	primaryAction,
+	secondaryAction,
+}: HeaderProps) => {
 	const [open, setOpen] = React.useState(false);
 	const [isHovered, setIsHovered] = React.useState(false);
 	const scrolled = useScroll(10);
 	const { isVisible } = useScrollDirection(50);
 
 	const navigation = navigationItems || DEFAULT_NAVIGATION;
+	const brandLink = brand || DEFAULT_BRAND;
+	const primaryButton = primaryAction || DEFAULT_PRIMARY_ACTION;
+	const secondaryButton = secondaryAction || DEFAULT_SECONDARY_ACTION;
 
 	React.useEffect(() => {
 		if (open) {
@@ -54,12 +67,18 @@ export const Header = ({ navigationItems }: HeaderProps) => {
 					},
 				)}
 			>
-				<a className="text-xl font-bold" href='/'>Logo</a>
+				<a className="text-xl font-bold" href={brandLink.href}>
+					{brandLink.title}
+				</a>
 
 				<div className="hidden items-center gap-2 md:flex">
 					<DesktopNav items={navigation} />
-					<Button variant="outline">Sign In</Button>
-					<Button>Get Started</Button>
+					<Button asChild variant="outline">
+						<a href={secondaryButton.href}>{secondaryButton.title}</a>
+					</Button>
+					<Button asChild>
+						<a href={primaryButton.href}>{primaryButton.title}</a>
+					</Button>
 				</div>
 
 				<Button size="icon" variant="outline" onClick={() => setOpen(!open)} className="md:hidden">
@@ -83,10 +102,12 @@ export const Header = ({ navigationItems }: HeaderProps) => {
 				>
 					<MobileNav items={navigation} />
 					<div className="flex flex-col gap-2">
-						<Button variant="outline" className="w-full">
-							Sign In
+						<Button asChild variant="outline" className="w-full">
+							<a href={secondaryButton.href}>{secondaryButton.title}</a>
 						</Button>
-						<Button className="w-full">Get Started</Button>
+						<Button asChild className="w-full">
+							<a href={primaryButton.href}>{primaryButton.title}</a>
+						</Button>
 					</div>
 				</div>
 			</div>

@@ -1,28 +1,104 @@
 ---
 import "@/shared/styles/__global.css";
 import stylesUrl from "@/shared/styles/__global.css?url";
+import { fetchGlobalContent } from "@/shared/api/site";
+import { getPreviewCmsRequestOptions } from "@/shared/preview/session";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import { buildLocalizedPath, toHtmlLang, toSiteLocale } from "@/shared/i18n/config";
 import { Header } from "@/widgets/Header";
 import { Footer } from "@/widgets/Footer";
 import { cn } from "@/shared/lib/utils";
 
 const { content, className } = Astro.props;
+const siteLocale = toSiteLocale(content?.locale || content?.lang);
+const lang = toHtmlLang(content?.locale || content?.lang);
+const pathname = content?.pathname || buildLocalizedPath(siteLocale);
+const previewMode = Boolean(content?.previewMode);
+const seo = buildSeoMetadata({
+	seo: content?.seo,
+	title: content?.title,
+	description: content?.description,
+	pathname,
+	noIndex: previewMode,
+	status: content?.cmsStatus,
+});
+
+let globalContent = undefined;
+
+try {
+	globalContent = await fetchGlobalContent(
+		siteLocale,
+		previewMode ? getPreviewCmsRequestOptions() : undefined
+	);
+} catch (error) {
+	console.warn("Failed to load global content from CMS.", error);
+}
+
+const headerBrand = globalContent
+	? {
+			title: globalContent.companyName,
+			href: globalContent.homeHref || buildLocalizedPath(siteLocale),
+		}
+	: undefined;
+
+const footerCompanyInfo = globalContent
+	? {
+			name: globalContent.companyName,
+			description: globalContent.description,
+			logoDark: globalContent.logoUrl || "/logo_dark.png",
+			logoLight: globalContent.logoUrl || "/logo_light.png",
+		}
+	: undefined;
 ---
 
-<html lang="en">
+<html lang={lang}>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="preload" href={stylesUrl} as="style" />
-		<title>{content.title}</title>
+		<title>{seo.metaTitle}</title>
+		{seo.metaDescription && <meta name="description" content={seo.metaDescription} />}
+		{seo.canonicalURL && <link rel="canonical" href={seo.canonicalURL} />}
+		<meta property="og:title" content={seo.ogTitle} />
+		{seo.ogDescription && <meta property="og:description" content={seo.ogDescription} />}
+		<meta property="og:type" content="website" />
+		<meta property="og:locale" content={lang === "ru" ? "ru_RU" : "en_US"} />
+		<meta property="og:site_name" content={globalContent?.companyName || "Company"} />
+		{seo.canonicalURL && <meta property="og:url" content={seo.canonicalURL} />}
+		{seo.ogImageUrl && <meta property="og:image" content={seo.ogImageUrl} />}
+		<meta name="twitter:card" content={seo.ogImageUrl ? "summary_large_image" : "summary"} />
+		<meta name="twitter:title" content={seo.ogTitle} />
+		{seo.ogDescription && <meta name="twitter:description" content={seo.ogDescription} />}
+		{seo.ogImageUrl && <meta name="twitter:image" content={seo.ogImageUrl} />}
+		{seo.noIndex && <meta name="robots" content="noindex, nofollow" />}
 	</head>
 	<body class="dark">
 		<div class={"w-full min-h-screen"}>
-			<Header client:load />
+			<Header
+				client:load
+				navigationItems={
+					globalContent?.navigationItems.length
+						? globalContent.navigationItems
+						: undefined
+				}
+				brand={headerBrand}
+				primaryAction={globalContent?.headerPrimaryCta}
+				secondaryAction={globalContent?.headerSecondaryCta}
+			/>
 			<main class={cn("w-full", className)}>
 				<slot />
 			</main>
-			<Footer client:visible />
+			<Footer
+				client:visible
+				columns={
+					globalContent?.footerColumns.length
+						? globalContent.footerColumns
+						: undefined
+				}
+				companyInfo={footerCompanyInfo}
+				copyrightText={globalContent?.footerCopyright}
+			/>
 		</div>
 	</body>
 </html>

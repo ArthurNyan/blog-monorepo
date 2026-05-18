@@ -1,0 +1,155 @@
+@startuml cms_data_model
+
+title Диаграмма модели данных CMS\nПодтвержденные сущности и связи
+
+hide circle
+skinparam classAttributeIconSize 0
+
+abstract class LocalizedDraftEntity {
+  +documentId: string
+  +locale: string
+  +publishedAt: datetime?
+}
+
+class Page {
+  +title: string
+  +slug: uid
+}
+
+class HomePage {
+  +Title: text?
+  +description: text
+}
+
+class Global {
+  +companyName: string
+  +description: text
+  +navigationItems: component[]
+  +headerPrimaryCta: component?
+  +headerSecondaryCta: component?
+  +footerColumns: component[]
+  +footerCopyright: string?
+}
+
+class SharedSeo {
+  +metaTitle: string
+  +metaDescription: text
+  +canonicalURL: string?
+  +ogTitle: string?
+  +ogDescription: text?
+  +noIndex: boolean?
+}
+
+class PageBlock {
+  +__component: string
+}
+
+class Article {
+  +name: text
+  +description: text
+  +slug: uid
+  +date: date?
+  +content: richtext?
+}
+
+class Author {
+  +firstName: string
+  +lastName: string
+}
+
+class Project {
+  +name: text
+  +description: text
+  +slug: uid
+  +date: date?
+  +content: richtext?
+}
+
+class Vacancy {
+  +title: string
+  +slug: uid
+  +location: string?
+  +workFormat: enum
+  +employmentType: enum?
+  +level: enum?
+  +salaryFrom: integer?
+  +salaryTo: integer?
+  +currency: enum?
+  +description: richtext?
+  +isActive: boolean?
+}
+
+class VacancyApplication {
+  +fullName: string
+  +email: email
+  +phone: string
+  +city: string?
+  +coverLetter: text?
+  +consent: boolean
+  +hrStatus: enum
+  +submittedAt: datetime?
+  +source: string?
+}
+
+class Industry {
+  +name: string
+  +slug: uid
+}
+
+class JobRole {
+  +name: string
+  +slug: uid
+}
+
+class UploadFile {
+  +url: string
+  +mime: string
+  +size: number
+}
+
+LocalizedDraftEntity <|-- Page
+LocalizedDraftEntity <|-- HomePage
+LocalizedDraftEntity <|-- Global
+LocalizedDraftEntity <|-- Article
+LocalizedDraftEntity <|-- Author
+LocalizedDraftEntity <|-- Project
+LocalizedDraftEntity <|-- Vacancy
+LocalizedDraftEntity <|-- Industry
+LocalizedDraftEntity <|-- JobRole
+
+Page *-- SharedSeo : seo
+HomePage *-- SharedSeo : seo
+Page *-- "0..*" PageBlock : blocks
+HomePage *-- "0..*" PageBlock : blocks
+
+Global --> UploadFile : logo
+Article --> UploadFile : cover
+Project --> UploadFile : cover
+Project --> UploadFile : logo
+VacancyApplication --> UploadFile : resumeFile
+
+Article "0..*" -- "0..*" Author : authors
+Vacancy "0..*" --> "1" Industry : industry
+Vacancy "0..*" --> "1" JobRole : role
+VacancyApplication "0..*" --> "1" Vacancy : vacancy
+
+note right of PageBlock
+Dynamic Zone currently supports:
+hero, rich-text, feature-cards, cta,
+preview-list, logo-cloud, testimonials,
+stats, feature-highlight, faq,
+process-timeline, quote, checklist,
+content-columns, numbered-points
+end note
+
+note bottom of LocalizedDraftEntity
+These entities use i18n and draft/publish
+in the current Strapi model.
+end note
+
+note bottom of VacancyApplication
+Vacancy application is an applied record:
+it does not use i18n or draft/publish.
+end note
+
+@enduml
