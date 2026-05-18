@@ -160,6 +160,9 @@
 | `/[locale]/[slug]` | `src/pages/[locale]/[slug].astro` | `fetchPageSlugs()`, `fetchPageBySlug()` и `DynamicZoneRenderer` | реализован для локализованных CMS-страниц `pages` |
 | `/preview/[locale]` | `src/pages/preview/[locale]/index.astro` | `fetchHomePage(..., draft)` | реализован как server-side preview главной |
 | `/preview/[locale]/[slug]` | `src/pages/preview/[locale]/[slug].astro` | `fetchPageBySlug(..., draft)` | реализован как server-side preview CMS-страниц |
+| `/preview/[locale]/articles/[slug]` | `src/pages/preview/[locale]/articles/[slug].astro` | `fetchArticleBySlug(..., draft)` | реализован как server-side preview статей |
+| `/preview/[locale]/projects/[slug]` | `src/pages/preview/[locale]/projects/[slug].astro` | `fetchProjectBySlug(..., draft)` | реализован как server-side preview проектов |
+| `/preview/[locale]/vacancies/[slug]` | `src/pages/preview/[locale]/vacancies/[slug].astro` | `fetchVacancyBySlug(..., draft)` | реализован как server-side preview вакансий |
 | `/api/preview` | `src/pages/api/preview.ts` | проверка `PREVIEW_SECRET`, установка preview cookie | реализован |
 | `/api/exit-preview` | `src/pages/api/exit-preview.ts` | очистка preview cookie и возврат на public URL | реализован |
 | `/articles` | `src/pages/articles/index.astro` | `getArticles()` из generated API | реализован |
@@ -173,8 +176,8 @@
 
 - frontend уже публикует локализованную главную витрину через `home-page` из `Strapi`;
 - frontend уже умеет генерировать локализованные CMS-страницы `pages` по маршруту `/:locale/:slug/`;
-- frontend уже умеет открывать draft-preview для `home-page` и `pages` через server-side
-  маршруты `/preview/...`;
+- frontend уже умеет открывать draft-preview для `home-page`, `pages`, `articles`,
+  `projects` и `vacancies` через server-side маршруты `/preview/...`;
 - frontend уже публикует статьи, проекты и вакансии;
 - детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
@@ -183,7 +186,9 @@
 
 - locale-prefixed маршрутный контур пока покрывает только главную витрину и CMS-страницы `pages`;
 - разделы `articles`, `projects` и `vacancies` пока остаются вне полной публичной маршрутной локализации;
-- preview-контур пока покрывает только `home-page` и `pages`.
+- locale-prefixed preview уже покрывает витрину первой очереди и ключевые content sections,
+  однако публичные production-маршруты `articles/projects/vacancies` все еще остаются вне
+  полного locale-prefixed контура.
 
 ### 2.3. Реально используемые сценарии frontend
 
@@ -262,8 +267,11 @@
 - В [apps/front/src/pages/[locale]/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/[slug].astro)
   `pages` переведены на локализованный маршрут `/:locale/:slug/` и используют те же
   CMS-управляемые метаданные.
-- В [apps/front/src/pages/preview/[locale]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/index.astro)
-  и [apps/front/src/pages/preview/[locale]/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/[slug].astro)
+- В [apps/front/src/pages/preview/[locale]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/index.astro),
+  [apps/front/src/pages/preview/[locale]/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/[slug].astro),
+  [apps/front/src/pages/preview/[locale]/articles/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/articles/[slug].astro),
+  [apps/front/src/pages/preview/[locale]/projects/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/projects/[slug].astro)
+  и [apps/front/src/pages/preview/[locale]/vacancies/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/vacancies/[slug].astro)
   реализован защищенный preview для draft-версий с `noindex` и canonical на публичный URL.
 - В [apps/front/src/shared/preview/session.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/preview/session.ts)
   зафиксирована cookie-based preview session и secret-header для запросов к CMS.
@@ -278,7 +286,8 @@
 - ключевые тексты навигации, футера и основной витрины уже вынесены в `Strapi`;
 - `global`, `home-page` и `pages` образуют рабочий CMS-first контур публичной витрины первой очереди;
 - для `home-page` и `pages` уже реализован управляемый `SEO/Open Graph` контур из CMS;
-- для `home-page` и `pages` уже реализован защищенный preview-сценарий `draft -> server-side preview`;
+- для `home-page`, `pages`, `articles`, `projects` и `vacancies` уже реализован защищенный
+  preview-сценарий `draft -> server-side preview`;
 - неполнота проекта теперь связана не с отсутствием CMS-интеграции как таковой, а с ее
   неполным охватом остальных публичных разделов и эксплуатационных сценариев.
 
@@ -295,7 +304,7 @@
 - локализованные CMS-страницы `/:locale/:slug/`, строящиеся по `pages` и `Dynamic Zone`;
 - вынос ключевых текстов header/footer/main showcase из frontend в `global` и `home-page`;
 - CMS-управляемые `SEO/Open Graph` метаданные для `home-page` и `pages`;
-- защищенный preview mode для `home-page` и `pages`;
+- защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` для публичных prerendered маршрутов;
 - публичные разделы статей и проектов с детальными страницами;
 - модуль вакансий с фильтрацией, пагинацией, карточками и детальной страницей;
@@ -320,7 +329,9 @@
 - публичный locale-prefixed контур пока ограничен маршрутами `/:locale/` и `/:locale/:slug/`;
 - списковые и детальные маршруты `articles`, `projects` и `vacancies` пока не встроены в ту же
   схему `ru/en`;
-- preview и CMS-управляемые SEO пока распространяются только на `home-page` и `pages`;
+- CMS-управляемые SEO по отдельной `seo`-схеме пока распространяются только на
+  `home-page` и `pages`; для `articles/projects/vacancies` preview уже есть, но метаконтур
+  остается более простым и в основном строится из самих контентных полей;
 - полная prerender-сборка публичной витрины по-прежнему зависит от доступности `Strapi`
   во время build;
 - значительная часть проектной главы пока не может быть написана как описание завершенной
@@ -336,7 +347,6 @@
 |---|---|---|---|
 | Расширение `ru/en` за пределы витрины первой очереди | без этого мультиязычность пока демонстрируется только на главной и `pages`, а не на всех ключевых публичных разделах | уже работают `/:locale/`, `/:locale/:slug/`, корректный `lang` и locale-aware fetchers для `global`/`home-page`/`pages` | перевести в ту же схему `articles`, `projects` и при необходимости `vacancies`, а также унифицировать ссылки и fallback-локали |
 | Расширение CMS-управляемого SEO на `articles/projects/vacancies` | сейчас завершенный редактируемый мета-контур доказан только для `home-page` и `pages` | есть централизованный `MainLayout`, SEO-builder и absolute URL contract | добавить `seo` component в схемы остальных публичных сущностей и подключить его в их маршрутах |
-| Расширение preview mode за пределы `home-page/pages` | текущий редакторский preview уже работает, но только для витрины первой очереди | есть защищенный server-side preview с cookie-session и `x-preview-secret` | подключить аналогичный контур для других локализуемых разделов, если они остаются в CMS-first модели |
 | `webhook -> rebuild` | именно этот шаг связывает CMS и статическую витрину в цельный публикационный контур | публичная витрина уже prerendered, есть `SITE_URL`, `sitemap` и preview | настроить вызов deploy hook после публикации и проверить, что обновление контента не требует ручного вмешательства в frontend |
 | Публикационные и эксплуатационные настройки | для итоговой ВКР нужен не только редакторский контур, но и воспроизводимая эксплуатация | environment contracts `SITE_URL`, `PUBLIC_URL`, `IS_PROXIED`, `PREVIEW_SECRET` уже зафиксированы кодом | зафиксировать `roles/permissions`, frontend deployment на `Vercel`, CMS deployment в `Docker` и deploy hooks |
 
@@ -369,7 +379,7 @@
 - locale-prefixed маршруты `/:locale/` и `/:locale/:slug/`;
 - вынос ключевых текстов навигации, футера и основной витрины в `Strapi`;
 - централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `twitter:*`, `noindex`;
-- защищенный preview mode для `home-page` и `pages`;
+- защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections;
 - пользовательский сценарий вакансий и откликов;
