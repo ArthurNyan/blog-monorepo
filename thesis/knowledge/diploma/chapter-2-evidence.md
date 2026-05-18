@@ -39,6 +39,10 @@
 - В [apps/cms/config/plugins.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/config/plugins.ts)
   включена генерация OpenAPI-документации с базовым URL `${PUBLIC_URL}/api`
   с fallback на `http://localhost:1337/api`.
+- В [apps/cms/config/admin.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/config/admin.ts)
+  включена конфигурация `preview`: при наличии `PREVIEW_SECRET` CMS формирует preview-ссылки
+  на frontend через `/api/preview`, ограничивает допустимый origin значением `SITE_URL`
+  и поддерживает цели `home`, `page`, `article`, `project`, `vacancy`.
 - В [apps/cms/config/middlewares.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/config/middlewares.ts)
   подключен собственный middleware
   [enforce-published.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/middlewares/enforce-published.ts),
@@ -147,7 +151,10 @@
 - витрина реализована как отдельный frontend-слой;
 - публичная витрина остается основанной на предварительной сборке, но дополнена
   server-side preview-маршрутами через `prerender = false`;
-- интеграция со `Strapi` уже частично типизирована через OpenAPI.
+- интеграция со `Strapi` уже частично типизирована через OpenAPI;
+- generated client не покрывает весь frontend: для `global`, `home-page`, `pages` и
+  карьерного модуля в проекте сохранен отдельный data-layer с явным управлением
+  `locale`, `populate` и `draft/published` режимами.
 
 ### 2.2. Существующие публичные маршруты
 
@@ -178,6 +185,8 @@
 - frontend уже умеет генерировать локализованные CMS-страницы `pages` по маршруту `/:locale/:slug/`;
 - frontend уже умеет открывать draft-preview для `home-page`, `pages`, `articles`,
   `projects` и `vacancies` через server-side маршруты `/preview/...`;
+- preview-контур теперь связан с CMS admin-конфигурацией и может формировать preview-ссылки
+  на frontend на основании `documentId`, локали и статуса публикации;
 - frontend уже публикует статьи, проекты и вакансии;
 - детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
@@ -275,6 +284,10 @@
   реализован защищенный preview для draft-версий с `noindex` и canonical на публичный URL.
 - В [apps/front/src/shared/preview/session.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/preview/session.ts)
   зафиксирована cookie-based preview session и secret-header для запросов к CMS.
+- В [apps/cms/config/admin.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/config/admin.ts)
+  preview интегрирован на стороне `Strapi Admin`: CMS определяет целевой тип сущности,
+  при необходимости извлекает `slug` по `documentId` и передает на frontend параметры
+  `secret`, `locale`, `type`, `slug`, `status`.
 - В [apps/front/src/widgets/Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts)
   и [apps/front/src/widgets/Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts)
   локальные константы сохранены как fallback, но больше не являются основным источником данных для витрины первой очереди.
@@ -288,6 +301,8 @@
 - для `home-page` и `pages` уже реализован управляемый `SEO/Open Graph` контур из CMS;
 - для `home-page`, `pages`, `articles`, `projects` и `vacancies` уже реализован защищенный
   preview-сценарий `draft -> server-side preview`;
+- preview-сценарий уже связан с `Strapi Admin` через генерацию целевых preview-ссылок на
+  frontend по `documentId`, локали и статусу публикации;
 - неполнота проекта теперь связана не с отсутствием CMS-интеграции как таковой, а с ее
   неполным охватом остальных публичных разделов и эксплуатационных сценариев.
 
@@ -372,7 +387,9 @@
 На основе текущей доказательной базы уже можно писать:
 
 - структуру monorepo и роли `apps/cms` и `apps/front`;
-- текущую архитектуру взаимодействия `Strapi -> OpenAPI -> Astro`;
+- текущую архитектуру взаимодействия `Strapi -> API -> Astro`, включая частично
+  типизированный OpenAPI-контур и отдельные frontend-fetchers для page builder и
+  карьерного модуля;
 - существующую модель данных для `articles`, `projects`, `vacancies`,
   `vacancy-applications`, `industry`, `job-role`, `global`, `home-page`, `page`;
 - использование `components` и `Dynamic Zone` для `pages` и `home-page`;
