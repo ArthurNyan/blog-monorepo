@@ -1,0 +1,52 @@
+@startuml cms_preview_sequence
+
+title Диаграмма последовательности\nЗащищенный preview чернового контента
+
+actor "Контент-менеджер" as Editor
+participant "Strapi Admin UI" as AdminUi
+participant "Preview config\napps/cms/config/admin.ts" as PreviewConfig
+participant "Strapi documents service" as DocumentsService
+participant "Frontend /api/preview" as PreviewApi
+collections "Preview session\n__cms_preview cookie" as PreviewSession
+participant "Frontend /preview/..." as PreviewPage
+participant "Middleware\nenforce-published" as PublishGuard
+participant "Strapi REST API" as CmsApi
+database "SQLite" as SqliteDb
+
+Editor -> AdminUi : Нажать Preview
+AdminUi -> PreviewConfig : uid, documentId, locale, status
+
+alt Preview for draft content
+  PreviewConfig -> DocumentsService : findOne(documentId, locale)\nfields=[slug] for slug-based entities
+  DocumentsService -> SqliteDb : Read current entry
+  SqliteDb --> DocumentsService : Entry data
+  DocumentsService --> PreviewConfig : slug or home target
+  PreviewConfig --> AdminUi : /api/preview?secret=...&locale=...&type=...&slug=...&status=draft
+
+  AdminUi -> PreviewApi : GET preview URL
+  PreviewApi -> PreviewApi : Validate PREVIEW_SECRET,\nlocale and target type
+  PreviewApi -> PreviewSession : Set httpOnly cookie
+  PreviewApi --> PreviewPage : 307 Redirect /preview/...
+
+  PreviewPage -> PreviewSession : Verify preview cookie
+  PreviewPage -> PublishGuard : GET /api/...&status=draft\nx-preview-secret
+  PublishGuard -> PublishGuard : Valid preview header,\nstatus is not forced
+  PublishGuard -> CmsApi : Pass draft request
+  CmsApi -> SqliteDb : Read draft entry
+  SqliteDb --> CmsApi : Draft content
+  CmsApi --> PreviewPage : Content + SEO data
+  PreviewPage --> Editor : Render preview page\nwith noindex
+else Entity already published
+  PreviewConfig --> AdminUi : /api/preview?...&status=published
+  AdminUi -> PreviewApi : GET preview URL
+  PreviewApi -> PreviewSession : Clear preview cookie
+  PreviewApi --> AdminUi : 307 Redirect to public URL
+end
+
+note over PublishGuard, CmsApi
+Public GET /api/* requests without
+x-preview-secret are forced to
+status=published before the controller layer.
+end note
+
+@enduml

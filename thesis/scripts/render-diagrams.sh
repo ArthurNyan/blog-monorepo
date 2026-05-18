@@ -129,21 +129,36 @@ need_command rsvg-convert
 need_command plantuml
 need_command pnpm
 
-shopt -s nullglob
-mermaid_files=("${MERMAID_SRC_DIR}"/*.mmd)
-plantuml_files=("${PLANTUML_SRC_DIR}"/*.puml)
+mermaid_files=()
+plantuml_files=()
+mermaid_count=0
+plantuml_count=0
 
-if [[ "${#mermaid_files[@]}" -eq 0 && "${#plantuml_files[@]}" -eq 0 ]]; then
+while IFS= read -r file; do
+  mermaid_files+=("${file}")
+  ((mermaid_count += 1))
+done < <(find "${MERMAID_SRC_DIR}" -maxdepth 1 -type f -name '*.mmd' | sort)
+
+while IFS= read -r file; do
+  plantuml_files+=("${file}")
+  ((plantuml_count += 1))
+done < <(find "${PLANTUML_SRC_DIR}" -maxdepth 1 -type f -name '*.puml' | sort)
+
+if [[ "${mermaid_count}" -eq 0 && "${plantuml_count}" -eq 0 ]]; then
   echo "Исходники диаграмм не найдены. Ожидаются файлы в ${MERMAID_SRC_DIR} и ${PLANTUML_SRC_DIR}."
   exit 0
 fi
 
-for file in "${mermaid_files[@]}"; do
-  render_mermaid_file "${file}"
-done
+if [[ "${mermaid_count}" -gt 0 ]]; then
+  for file in "${mermaid_files[@]}"; do
+    render_mermaid_file "${file}"
+  done
+fi
 
-for file in "${plantuml_files[@]}"; do
-  render_plantuml_file "${file}"
-done
+if [[ "${plantuml_count}" -gt 0 ]]; then
+  for file in "${plantuml_files[@]}"; do
+    render_plantuml_file "${file}"
+  done
+fi
 
 echo "Генерация диаграмм завершена."

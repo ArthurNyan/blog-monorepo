@@ -1,0 +1,64 @@
+@startuml cms_content_lifecycle
+
+title Диаграмма состояний\nЖизненный цикл локализованной контентной единицы
+
+[*] --> Draft : Создать запись\nи сохранить черновик
+
+state Draft {
+  Draft : publishedAt = null
+  Draft : доступна в Strapi Admin
+  Draft : читается через preview-маршруты
+}
+
+state Published {
+  Published : publishedAt != null
+  Published : доступна как published content
+  Published : может использоваться\npublic frontend routes
+}
+
+state Deleted {
+  Deleted : запись удалена
+}
+
+Draft --> Draft : Редактировать\nили загрузить media
+Draft --> Draft : Открыть preview\nчерез /api/preview и /preview/...
+
+Draft --> Published : Publish в Strapi Admin
+note on link
+  Сущность становится доступной
+  как published content для публичного API.
+end note
+
+Published --> Published : Редактировать опубликованную запись
+note on link
+  Обновленная опубликованная версия
+  читается API сразу, а public static routes
+  подхватывают ее при следующей сборке frontend.
+end note
+
+Published --> Draft : Unpublish в Strapi Admin
+note on link
+  Публичные GET-запросы перестают получать
+  эту запись, а черновик остается доступен
+  только через preview-контур.
+end note
+
+Draft --> Deleted : Delete
+Published --> Deleted : Delete
+Deleted --> [*]
+
+note right of Draft
+Применимо к сущностям:
+article, author, project, vacancy,
+industry, job-role, global,
+home-page и page.
+end note
+
+note right of Published
+vacancy-application исключена:
+эта сущность не использует
+draft/publish и записывается
+как прикладной отклик.
+end note
+
+@enduml

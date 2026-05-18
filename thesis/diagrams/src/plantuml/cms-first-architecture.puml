@@ -1,0 +1,72 @@
+@startuml cms_first_architecture
+
+title Контекстная схема CMS-first системы\nТекущий контур Strapi + Astro
+
+left to right direction
+
+actor "Контент-менеджер" as Editor
+actor "Посетитель сайта" as Visitor
+
+rectangle "Monorepo Nx + pnpm" {
+  package "apps/cms\nStrapi 5" as CmsApp {
+    component "Strapi Admin UI" as AdminUi
+    component "Content types\npage, home-page, global,\narticle, project, vacancy,\nvacancy-application" as ContentModel
+    component "Preview config\nconfig/admin.ts" as PreviewConfig
+    component "Published-only middleware\nenforce-published.ts" as PublishGuard
+    component "REST API + OpenAPI docs" as CmsApi
+  }
+
+  package "apps/front\nAstro 6" as FrontApp {
+    component "Localized public routes\n/ru/, /en/, /:locale/:slug/" as PublicRoutes
+    component "Collection routes\n/articles, /projects, /vacancies" as CollectionRoutes
+    component "Preview routes\n/api/preview, /preview/..." as PreviewRoutes
+    component "Layout + SEO rendering\nmain.astro" as LayoutSeo
+    component "Generated SDK + custom data layer" as FrontData
+  }
+}
+
+database "SQLite" as SqliteDb
+artifact "OpenAPI JSON" as OpenApiJson
+
+Editor --> AdminUi : редактирует контент
+AdminUi --> ContentModel : content manager
+ContentModel --> SqliteDb : хранение записей
+
+AdminUi --> PreviewConfig : preview action
+PreviewConfig --> PreviewRoutes : формирует preview URL
+
+PublishGuard --> CmsApi : ограничивает публичные GET\nstatus=published
+CmsApi --> SqliteDb : чтение и запись данных
+CmsApi --> OpenApiJson : публикует схему API
+
+FrontData ..> OpenApiJson : generated client\narticles/projects
+FrontData ..> CmsApi : published API requests
+PreviewRoutes ..> CmsApi : draft requests\nx-preview-secret
+
+PublicRoutes --> FrontData : home-page + pages
+CollectionRoutes --> FrontData : articles/projects/vacancies
+PreviewRoutes --> FrontData : draft fetchers
+
+PublicRoutes --> LayoutSeo
+CollectionRoutes --> LayoutSeo
+PreviewRoutes --> LayoutSeo
+
+Visitor --> PublicRoutes : открывает локализованную витрину
+Visitor --> CollectionRoutes : открывает контентные разделы
+Editor --> PreviewRoutes : открывает ссылку preview
+
+note right of PublicRoutes
+Locale-prefixed public routes
+currently cover home-page and pages.
+articles, projects and vacancies
+remain outside the full locale-prefixed
+public routing contour.
+end note
+
+note bottom of PreviewRoutes
+Preview is server-side only and uses
+PREVIEW_SECRET + httpOnly cookie
+instead of a public draft API.
+end note
+
+@enduml
