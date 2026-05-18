@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_blocks_process_timelines",
+  "info": {
+    "displayName": "Process timeline"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.process-step"
+    }
+  }
+}

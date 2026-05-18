@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_blocks_feature_highlights",
+  "info": {
+    "displayName": "Feature highlight"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "media": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ]
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.feature-card-item"
+    },
+    "ctaLabel": {
+      "type": "string"
+    },
+    "ctaUrl": {
+      "type": "string"
+    }
+  }
+}

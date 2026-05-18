@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_blocks_feature_cards",
+  "info": {
+    "displayName": "Feature cards"
+  },
+  "options": {},
+  "attributes": {
+    "eyebrow": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.feature-card-item"
+    }
+  }
+}
