@@ -1,5 +1,29 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface BlocksChecklist extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_checklists';
+  info: {
+    displayName: 'Checklist';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    heading: Schema.Attribute.String;
+    items: Schema.Attribute.Component<'shared.checklist-item', true>;
+  };
+}
+
+export interface BlocksContentColumns extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_content_columns';
+  info: {
+    displayName: 'Content columns';
+  };
+  attributes: {
+    columns: Schema.Attribute.Component<'shared.content-column', true>;
+    eyebrow: Schema.Attribute.String;
+    heading: Schema.Attribute.String;
+  };
+}
+
 export interface BlocksCta extends Struct.ComponentSchema {
   collectionName: 'components_blocks_ctas';
   info: {
@@ -85,6 +109,18 @@ export interface BlocksLogoCloud extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksNumberedPoints extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_numbered_points';
+  info: {
+    displayName: 'Numbered points';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    heading: Schema.Attribute.String;
+    items: Schema.Attribute.Component<'shared.numbered-point', true>;
+  };
+}
+
 export interface BlocksPreviewList extends Struct.ComponentSchema {
   collectionName: 'components_blocks_preview_lists';
   info: {
@@ -112,6 +148,19 @@ export interface BlocksProcessTimeline extends Struct.ComponentSchema {
     description: Schema.Attribute.Text;
     heading: Schema.Attribute.String;
     items: Schema.Attribute.Component<'shared.process-step', true>;
+  };
+}
+
+export interface BlocksQuote extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_quotes';
+  info: {
+    displayName: 'Quote';
+  };
+  attributes: {
+    authorName: Schema.Attribute.String;
+    authorRole: Schema.Attribute.String;
+    quote: Schema.Attribute.Text & Schema.Attribute.Required;
+    sourceLabel: Schema.Attribute.String;
   };
 }
 
@@ -150,6 +199,28 @@ export interface BlocksTestimonials extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedChecklistItem extends Struct.ComponentSchema {
+  collectionName: 'components_shared_checklist_items';
+  info: {
+    displayName: 'Checklist item';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface SharedContentColumn extends Struct.ComponentSchema {
+  collectionName: 'components_shared_content_columns';
+  info: {
+    displayName: 'Content column';
+  };
+  attributes: {
+    body: Schema.Attribute.RichText & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface SharedFaqItem extends Struct.ComponentSchema {
   collectionName: 'components_shared_faq_items';
   info: {
@@ -182,6 +253,17 @@ export interface SharedLogoItem extends Struct.ComponentSchema {
     logo: Schema.Attribute.Media<'images'> & Schema.Attribute.Required;
     name: Schema.Attribute.String & Schema.Attribute.Required;
     url: Schema.Attribute.String;
+  };
+}
+
+export interface SharedNumberedPoint extends Struct.ComponentSchema {
+  collectionName: 'components_shared_numbered_points';
+  info: {
+    displayName: 'Numbered point';
+  };
+  attributes: {
+    description: Schema.Attribute.Text;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -243,20 +325,27 @@ export interface SharedTestimonialItem extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'blocks.checklist': BlocksChecklist;
+      'blocks.content-columns': BlocksContentColumns;
       'blocks.cta': BlocksCta;
       'blocks.faq': BlocksFaq;
       'blocks.feature-cards': BlocksFeatureCards;
       'blocks.feature-highlight': BlocksFeatureHighlight;
       'blocks.hero': BlocksHero;
       'blocks.logo-cloud': BlocksLogoCloud;
+      'blocks.numbered-points': BlocksNumberedPoints;
       'blocks.preview-list': BlocksPreviewList;
       'blocks.process-timeline': BlocksProcessTimeline;
+      'blocks.quote': BlocksQuote;
       'blocks.rich-text': BlocksRichText;
       'blocks.stats': BlocksStats;
       'blocks.testimonials': BlocksTestimonials;
+      'shared.checklist-item': SharedChecklistItem;
+      'shared.content-column': SharedContentColumn;
       'shared.faq-item': SharedFaqItem;
       'shared.feature-card-item': SharedFeatureCardItem;
       'shared.logo-item': SharedLogoItem;
+      'shared.numbered-point': SharedNumberedPoint;
       'shared.process-step': SharedProcessStep;
       'shared.seo': SharedSeo;
       'shared.stat-item': SharedStatItem;

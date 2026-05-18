@@ -1,0 +1,21 @@
+---
+import type { PageBlock } from "@/shared/api/pages";
+import PageBlockRenderer from "@/shared/components/page-builder/PageBlock.astro";
+
+interface Props {
+	blocks: PageBlock[];
+	locale?: string;
+}
+
+const { blocks, locale } = Astro.props as Props;
+---
+
+<>
+	{blocks.map((block, index) => (
+		<PageBlockRenderer
+			block={block}
+			locale={locale}
+			key={`${block.__component}-${index}`}
+		/>
+	))}
+</>

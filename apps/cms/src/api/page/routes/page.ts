@@ -4,4 +4,18 @@
 
 import { factories } from '@strapi/strapi';
 
-export default factories.createCoreRouter('api::page.page');
+export default factories.createCoreRouter('api::page.page', {
+  only: ['find', 'findOne'],
+  config: {
+    find: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+    findOne: {
+      auth: false,
+      policies: [],
+      middlewares: [],
+    },
+  },
+});

@@ -151,18 +151,20 @@
 | `/projects/[slug]` | `src/pages/projects/[slug]/index.astro` | `getProjects()`, `getProjectsId()` | реализован |
 | `/vacancies` | `src/pages/vacancies/index.astro` | клиентский `VacancyExplorer` | реализован |
 | `/vacancies/[slug]` | `src/pages/vacancies/[slug]/index.astro` | `fetchVacancies()`, `fetchVacancyBySlug()` | реализован |
+| `/[slug]` | `src/pages/[slug].astro` | `fetchPageSlugs()`, `fetchPageBySlug()` и `DynamicZoneRenderer` | реализован для CMS-страниц коллекции `pages` |
 
 Что это реально подтверждает:
 
 - frontend уже публикует статьи, проекты и вакансии;
+- frontend уже умеет генерировать отдельные CMS-страницы коллекции `pages` по `slug`;
 - детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
 
 Ограничения:
 
-- в проекте отсутствуют frontend-маршруты для коллекции `pages`;
-- главная страница не получает структуру из CMS и не использует `home-page` как
-  полнофункциональный page builder-источник;
+- главная страница `/` по-прежнему не получает структуру из CMS и не использует
+  `home-page` как полнофункциональный page builder-источник;
+- контур `pages` уже работает, но пока не покрывает всю публичную витрину;
 - в коде не обнаружены отдельные preview-маршруты.
 
 ### 2.3. Реально используемые сценарии frontend
@@ -232,19 +234,23 @@
 - Главная страница в [apps/front/src/pages/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/index.astro)
   собирается из локальных секций `HeroSection`, `LogoPanel`, `FeatureTabs`,
   `TestimonialsPanel`, `BentoGridWidget`, `FeatureHighlighter`.
+- В [apps/front/src/pages/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[slug].astro)
+  реализован маршрут для `pages`, который получает `blocks` из CMS и рендерит их через
+  `DynamicZoneRenderer`, без хардкода структуры страницы в самом route-файле.
 - В [apps/front/src/widgets/Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts)
   используется `DEFAULT_NAVIGATION` с демо-ориентированными пунктами `Getting Started`,
   `Components`, `Blog`, `Cases`.
 - В [apps/front/src/widgets/Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts)
   используется `DEFAULT_COMPANY_INFO` и `DEFAULT_FOOTER_COLUMNS` с демо-брендом `Ruixen`.
 - В [apps/front/src/layouts/main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro)
-  задаются только базовые `title`, favicon и `lang="en"`.
+  уже добавлена поддержка `description`, `canonical`, `Open Graph`, `noindex` и
+  динамического `lang`, но шапка и футер все еще питаются от локальных констант.
 
 Что это означает:
 
 - значимая часть интерфейсных текстов и структуры витрины все еще зашита во frontend;
-- CMS-модель `global` и `home-page` пока не доведена до фактического использования в
-  публичной витрине;
+- `pages` как отдельный CMS-first контур уже работают, но `global` и `home-page` пока не
+  доведены до фактического использования в публичной витрине;
 - текущий frontend содержит следы шаблонного/демо-контента и нуждается в предметной
   адаптации под тему диплома.
 
@@ -296,8 +302,8 @@
 
 | Доработка первой очереди | Почему это критично именно для главы 2 | Что уже есть в коде | Что нужно довести |
 |---|---|---|---|
-| `pages` как отдельная сущность | без самостоятельной CMS-модели страниц проект остается набором отдельных разделов, а не page builder-ориентированной маркетинговой CMS | есть `global` и `home-page`, но нет `pages`; витрина использует жестко заданный [index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/index.astro) | создать collection type `pages` со `slug`, заголовком, локалью, статусом публикации и связью с блоками страницы |
-| Базовый `Dynamic Zone` | именно он переводит страницы из frontend-шаблона в редакторский сценарий и делает тезис про `CMS-first` доказуемым | в `apps/cms` нет собственных `components`; во frontend уже есть локальные секции `HeroSection`, `LogoPanel`, `FeatureTabs`, `TestimonialsPanel`, `BentoGridWidget`, `FeatureHighlighter` | реализовать минимум 4-5 ключевых блоков первой очереди, достаточных для главной и 1-2 внутренних страниц; рациональный стартовый набор: `hero`, `rich text`, `features/cards`, `CTA`, `preview list` |
+| `pages` как отдельная сущность | без рабочей CMS-модели страниц проект остается набором отдельных разделов, а не page builder-ориентированной маркетинговой CMS | `page` уже имеет поля `title`, `slug`, `blocks`, `seo`, а frontend уже строит маршрут [src/pages/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[slug].astro) по данным CMS | перевести в тот же контур главную страницу `/` и связанные глобальные тексты |
+| Базовый `Dynamic Zone` | именно он переводит страницы из frontend-шаблона в редакторский сценарий и делает тезис про `CMS-first` доказуемым | в `apps/cms` уже есть собственные `components`, а во frontend уже есть `DynamicZoneRenderer` и маппинг на sourced-компоненты и существующие секции | расширять и доочищать блоки только по мере перевода оставшихся hardcoded частей витрины; ближайшее рациональное расширение — информационные блоки `quote`, `checklist`, `content-columns`, `numbered-points` |
 | Вынос ключевых текстов из frontend в `Strapi` | пока шапка, футер и главная страница содержат демо- и шаблонный контент, трудно утверждать, что витрина реально управляется через CMS | в CMS уже есть `global` и `home-page`; во frontend зашиты [Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts) и [Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts) | перевести в `Strapi` навигацию, данные компании, ключевые hero- и summary-тексты витрины, затем подключить их в layout и на главной странице |
 | `ru/en` для основной витрины и части CMS-контента | мультиязычность уже заявлена как обязательный результат, но сейчас она видна в данных сильнее, чем в публичной витрине | `i18n` включен для основных сущностей `Strapi`, а [vacancies.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/api/vacancies.ts) использует `ru-RU`; в [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro) язык жестко задан как `en` | добавить локализованные маршруты и переключение `ru/en` хотя бы для главной страницы, страниц `pages` и части контента `articles/projects`; корректно выставлять `lang`, `slug` и метаданные по локали |
 | `SEO` и `Open Graph` | без них проектная глава не закрывает важную часть маркетинговой CMS и не подтверждает управляемость discoverability-слоя | сейчас в [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro) задается только `title`; отдельной SEO-модели в `Strapi` нет | выделить переиспользуемую SEO-структуру в CMS и централизованный рендер `title`, `description`, canonical, `og:title`, `og:description`, `og:image` |

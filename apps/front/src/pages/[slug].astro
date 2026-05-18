@@ -1,0 +1,45 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { fetchPageBySlug, fetchPageSlugs } from "@/shared/api/pages";
+import DynamicZoneRenderer from "@/shared/components/page-builder/DynamicZoneRenderer.astro";
+import { resolveCmsMediaUrl } from "@/shared/api/cms";
+
+export const getStaticPaths = async () => {
+	const slugs = await fetchPageSlugs();
+
+	return slugs.map((slug) => ({
+		params: { slug },
+	}));
+};
+
+const { slug } = Astro.params;
+
+if (!slug) {
+	throw new Error("Page slug is required");
+}
+
+const page = await fetchPageBySlug(slug);
+
+if (!page) {
+	throw new Error(`Page not found for slug: ${slug}`);
+}
+
+const seo = {
+	...page.seo,
+	ogImageUrl: resolveCmsMediaUrl(
+		page.seo.ogImage?.formats?.medium?.url || page.seo.ogImage?.url
+	),
+};
+---
+
+<MainLayout
+	content={{
+		title: page.seo.metaTitle || page.title,
+		description: page.seo.metaDescription,
+		seo,
+		lang: page.locale === "ru-RU" ? "ru" : page.locale || "en",
+	}}
+	className="flex flex-col"
+>
+	<DynamicZoneRenderer blocks={page.blocks} locale={page.locale} />
+</MainLayout>

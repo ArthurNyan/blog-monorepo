@@ -1,0 +1,73 @@
+---
+import type { PreviewListBlock as PreviewListBlockType } from "@/shared/api/pages";
+import {
+	fetchArticlePreviews,
+	fetchProjectPreviews,
+	fetchVacancyPreviews,
+} from "@/shared/api/pages";
+import { ArticleCard } from "@/widgets/ArticleCard";
+import { ProjectCard } from "@/widgets/ProjectCard";
+import { VacancyCard } from "@/widgets/VacancyCard";
+
+interface Props {
+	block: PreviewListBlockType;
+	locale?: string;
+}
+
+const { block, locale } = Astro.props as Props;
+const limit = block.limit || 3;
+
+const articles =
+	block.source === "articles" ? await fetchArticlePreviews(limit, locale) : [];
+const projects =
+	block.source === "projects" ? await fetchProjectPreviews(limit, locale) : [];
+const vacancies =
+	block.source === "vacancies" ? await fetchVacancyPreviews(limit, locale) : [];
+---
+
+<section class="py-20">
+	<div class="container mx-auto px-4">
+		<div class="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+			<div class="max-w-3xl">
+				<h2 class="text-3xl font-semibold tracking-tight md:text-5xl">
+					{block.heading}
+				</h2>
+				{block.description && (
+					<p class="mt-4 text-muted-foreground md:text-lg">{block.description}</p>
+				)}
+			</div>
+			{block.ctaLabel && block.ctaUrl && (
+				<a
+					href={block.ctaUrl}
+					class="text-sm font-medium uppercase tracking-[0.2em] text-primary"
+				>
+					{block.ctaLabel}
+				</a>
+			)}
+		</div>
+
+		{block.source === "articles" && articles.length > 0 && (
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+				{articles.map((article) => (
+					<ArticleCard article={article as never} client:load />
+				))}
+			</div>
+		)}
+
+		{block.source === "projects" && projects.length > 0 && (
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+				{projects.map((project) => (
+					<ProjectCard project={project as never} client:load />
+				))}
+			</div>
+		)}
+
+		{block.source === "vacancies" && vacancies.length > 0 && (
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+				{vacancies.map((vacancy) => (
+					<VacancyCard vacancy={vacancy} client:load />
+				))}
+			</div>
+		)}
+	</div>
+</section>

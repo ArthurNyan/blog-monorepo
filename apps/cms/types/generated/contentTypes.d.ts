@@ -759,6 +759,10 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.feature-highlight',
         'blocks.faq',
         'blocks.process-timeline',
+        'blocks.quote',
+        'blocks.checklist',
+        'blocks.content-columns',
+        'blocks.numbered-points',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{

@@ -8,7 +8,11 @@
   },
   "scripts": {
     "dev": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t dev --projects=cms,front --parallel",
+    "dev:cms": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t dev --projects=cms --parallel",
+    "dev:front": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t dev --projects=front --parallel",
     "build": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t build --projects=cms,front --parallel",
+    "build:cms": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t build --projects=cms --parallel",
+    "build:front": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run-many -t build --projects=front --parallel",
     "start:cms": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run cms:start",
     "preview:front": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:preview",
     "generate:api": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:generate:api",

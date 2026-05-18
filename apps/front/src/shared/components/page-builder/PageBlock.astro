@@ -1,0 +1,55 @@
+---
+import type { PageBlock } from "@/shared/api/pages";
+import { HeroBlock } from "@/shared/components/page-builder/blocks/HeroBlock";
+import RichTextBlock from "@/shared/components/page-builder/blocks/RichTextBlock.astro";
+import { FeatureCardsBlock } from "@/shared/components/page-builder/blocks/FeatureCardsBlock";
+import { CtaBlock } from "@/shared/components/page-builder/blocks/CtaBlock";
+import PreviewListBlock from "@/shared/components/page-builder/blocks/PreviewListBlock.astro";
+import { LogoCloudBlock } from "@/shared/components/page-builder/blocks/LogoCloudBlock";
+import { TestimonialsBlock } from "@/shared/components/page-builder/blocks/TestimonialsBlock";
+import { StatsBlock } from "@/shared/components/page-builder/blocks/StatsBlock";
+import { FeatureHighlightBlock } from "@/shared/components/page-builder/blocks/FeatureHighlightBlock";
+import { FaqBlock } from "@/shared/components/page-builder/blocks/FaqBlock";
+import { ProcessTimelineBlock } from "@/shared/components/page-builder/blocks/ProcessTimelineBlock";
+import { QuoteBlock } from "@/shared/components/page-builder/blocks/QuoteBlock";
+import { ChecklistBlock } from "@/shared/components/page-builder/blocks/ChecklistBlock";
+import ContentColumnsBlock from "@/shared/components/page-builder/blocks/ContentColumnsBlock.astro";
+import { NumberedPointsBlock } from "@/shared/components/page-builder/blocks/NumberedPointsBlock";
+
+interface Props {
+	block: PageBlock;
+	locale?: string;
+}
+
+const { block, locale } = Astro.props as Props;
+---
+
+{block.__component === "blocks.hero" && <HeroBlock block={block} client:visible />}
+{block.__component === "blocks.rich-text" && <RichTextBlock block={block} />}
+{block.__component === "blocks.feature-cards" && (
+	<FeatureCardsBlock block={block} client:visible />
+)}
+{block.__component === "blocks.cta" && <CtaBlock block={block} />}
+{block.__component === "blocks.preview-list" && (
+	<PreviewListBlock block={block} locale={locale} />
+)}
+{block.__component === "blocks.logo-cloud" && (
+	<LogoCloudBlock block={block} client:visible />
+)}
+{block.__component === "blocks.testimonials" && (
+	<TestimonialsBlock block={block} client:visible />
+)}
+{block.__component === "blocks.stats" && <StatsBlock block={block} />}
+{block.__component === "blocks.feature-highlight" && (
+	<FeatureHighlightBlock block={block} client:visible />
+)}
+{block.__component === "blocks.faq" && <FaqBlock block={block} client:visible />}
+{block.__component === "blocks.process-timeline" && (
+	<ProcessTimelineBlock block={block} client:visible />
+)}
+{block.__component === "blocks.quote" && <QuoteBlock block={block} />}
+{block.__component === "blocks.checklist" && <ChecklistBlock block={block} />}
+{block.__component === "blocks.content-columns" && <ContentColumnsBlock block={block} />}
+{block.__component === "blocks.numbered-points" && (
+	<NumberedPointsBlock block={block} />
+)}
