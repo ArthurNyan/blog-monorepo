@@ -8,6 +8,10 @@
 
 Документ используется как основа для написания `content/01-introduction.tex`, `content/02-chapter-1.tex`, `content/03-chapter-2.tex` и `content/04-conclusion.tex`.
 
+Граница финального результата дополнительно заморожена в
+[final-scope.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/final-scope.md)
+и должна учитываться как приоритетная по отношению к более широким ранним формулировкам.
+
 ## Общая логика диплома
 
 Работа строится как прикладная инженерная ВКР по схеме:
@@ -274,19 +278,20 @@
 
 - `Hero`
 - `rich text`
-- `image/media`
-- `CTA`
 - `features/cards`
-- `FAQ`
-- `testimonials`
+- `CTA`
+- `preview list` (`articles` / `projects` / `vacancies`)
 - `logo cloud`
-- `form/embed block`
-- `pricing`
+- `testimonials`
 - `stats`
-- `timeline`
-- `case preview`
-- `vacancy preview`
-- `article preview`
+- `feature highlight`
+- `FAQ`
+- `process timeline`
+- `quote`
+- `checklist`
+- `content columns`
+- `numbered points`
+- `lead form`
 
 #### Ключевые тезисы
 
@@ -332,7 +337,10 @@
 #### Ключевые тезисы
 
 - Мультиязычность должна быть частью архитектуры, а не набором точечных переводов.
-- Нужно обеспечить целостность контента и метаданных на обеих локалях.
+- В финальном scope обязательный public route-контур `ru/en` ограничен storefront-core:
+  `global`, `home-page`, `page`.
+- Для `articles`, `projects` и `vacancies` допустимо сохранить локализуемую CMS-модель и
+  локализованный preview без обязательного переноса production URLs на `/:locale/...`.
 - Проверка локализации — обязательная часть результата.
 
 ### 2.6. Preview, публикация и deployment pipeline
@@ -389,7 +397,7 @@
 #### Что раскрыть
 
 - функциональные сценарии;
-- проверка `ru/en`;
+- проверка `ru/en` для storefront-core;
 - проверка `preview`;
 - проверка `SEO` и `sitemap`;
 - проверка `accessibility`;
@@ -406,11 +414,14 @@
 6. Проверка обновления фронтенда после rebuild.
 7. Проверка корректности метаданных и `sitemap`.
 8. Проверка отображения страницы на обеих локалях.
+9. Проверка `accessibility` и `SEO`-метрик для `/ru/` и одной CMS-страницы.
 
 #### Ключевые тезисы
 
 - Результат должен быть подтвержден не только наличием кода, но и сценариями проверки.
 - Важен не только рендеринг страницы, но и редакторский путь публикации.
+- Полноценный CMS-managed `SEO` в финальном тексте нужно трактовать как результат для
+  `home-page` и `page`, а не для всех content sections одинаково.
 - Тестирование должно подтверждать, что система пригодна для практического использования.
 
 ### Итог главы 2
