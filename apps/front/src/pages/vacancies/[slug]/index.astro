@@ -2,12 +2,15 @@
 import MainLayout from "@/layouts/main.astro";
 import { Badge } from "@/shared/components/ui/badge";
 import { MarkdownContent } from "@/shared/components/MarkdownContent";
-import { fetchVacancies, fetchVacancyBySlug } from "@/shared/api/vacancies";
+import {
+	fetchCmsVacancies,
+	fetchCmsVacancyBySlug,
+} from "@/shared/api/vacancies-cms";
 import { VacancyApplicationForm } from "@/widgets/VacancyApplicationForm";
 
 export const getStaticPaths = async () => {
 	try {
-		const response = await fetchVacancies({
+		const response = await fetchCmsVacancies({
 			page: 1,
 			pageSize: 1000,
 			sort: "publishedAt:desc",
@@ -42,7 +45,7 @@ const LEVEL_LABELS: Record<string, string> = {
 };
 
 const slug = Astro.params.slug as string;
-const vacancy = await fetchVacancyBySlug(slug).catch(() => null);
+const vacancy = await fetchCmsVacancyBySlug(slug).catch(() => null);
 const isNotFound = !vacancy;
 
 const salary = (() => {

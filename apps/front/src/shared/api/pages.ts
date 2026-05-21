@@ -6,7 +6,8 @@ import {
 	parseCmsErrorMessage,
 	resolveCmsMediaUrl,
 } from "@/shared/api/cms";
-import { fetchVacancies, type Vacancy } from "@/shared/api/vacancies";
+import { fetchCmsVacancies } from "@/shared/api/vacancies-cms";
+import type { Vacancy } from "@/shared/api/vacancies";
 
 type StrapiEntity<T> = {
 	id?: string | number;
@@ -598,7 +599,7 @@ export const fetchVacancyPreviews = async (
 	limit = 3,
 	locale = defaultCmsLocale
 ): Promise<Vacancy[]> => {
-	const result = await fetchVacancies({
+	const result = await fetchCmsVacancies({
 		locale,
 		page: 1,
 		pageSize: limit,

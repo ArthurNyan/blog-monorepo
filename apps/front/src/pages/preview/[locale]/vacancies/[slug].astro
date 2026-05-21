@@ -2,7 +2,7 @@
 import MainLayout from "@/layouts/main.astro";
 import { Badge } from "@/shared/components/ui/badge";
 import { MarkdownContent } from "@/shared/components/MarkdownContent";
-import { fetchVacancyBySlug } from "@/shared/api/vacancies";
+import { fetchCmsVacancyBySlug } from "@/shared/api/vacancies-cms";
 import {
 	buildPublicCollectionPath,
 	getPreviewCmsRequestOptions,
@@ -50,7 +50,7 @@ if (!hasValidPreviewCookie(Astro.cookies)) {
 }
 
 const pathname = buildPublicCollectionPath("vacancy", slug);
-const vacancy = await fetchVacancyBySlug(slug, {
+const vacancy = await fetchCmsVacancyBySlug(slug, {
 	...getPreviewCmsRequestOptions(),
 	locale: toCmsLocale(locale),
 	includeInactive: true,

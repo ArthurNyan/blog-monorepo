@@ -1,52 +1,6 @@
 import type { CmsRequestOptions } from "@/shared/api/cms";
 
-const cmsBaseUrl = import.meta.env.PUBLIC_CMS_URL ?? "http://localhost:1337";
-const apiBaseUrl = `${cmsBaseUrl}/api`;
 const defaultLocale = "ru-RU";
-
-type StrapiEntity<T> = {
-	id?: string | number;
-	documentId?: string;
-} & T;
-
-type StrapiListResponse<T> = {
-	data?: Array<StrapiEntity<T>>;
-	meta?: {
-		pagination?: {
-			page?: number;
-			pageSize?: number;
-			pageCount?: number;
-			total?: number;
-		};
-	};
-};
-
-type VacancyRaw = {
-	title?: string;
-	slug?: string;
-	location?: string;
-	workFormat?: WorkFormat;
-	employmentType?: EmploymentType;
-	level?: VacancyLevel;
-	salaryFrom?: number;
-	salaryTo?: number;
-	currency?: string;
-	description?: string;
-	publishedAt?: string;
-	industry?: {
-		name?: string;
-		slug?: string;
-	};
-	role?: {
-		name?: string;
-		slug?: string;
-	};
-};
-
-type TaxonomyRaw = {
-	name?: string;
-	slug?: string;
-};
 
 export type TaxonomyItem = {
 	name: string;
@@ -115,40 +69,12 @@ export type VacancyBySlugOptions = CmsRequestOptions & {
 	includeInactive?: boolean;
 };
 
-const mapTaxonomy = (item?: TaxonomyRaw | null): TaxonomyItem | null => {
-	if (!item?.name || !item?.slug) {
-		return null;
+const buildLocalApiUrl = (path: string, params?: Record<string, string>) => {
+	const url = new URL(path, "http://frontend.local");
+
+	if (!params) {
+		return url;
 	}
-
-	return {
-		name: item.name,
-		slug: item.slug,
-	};
-};
-
-const mapVacancy = (item: StrapiEntity<VacancyRaw>): Vacancy => {
-	return {
-		id: item.id,
-		documentId: item.documentId,
-		title: item.title || "",
-		slug: item.slug || "",
-		location: item.location || "",
-		workFormat: item.workFormat || "",
-		employmentType: item.employmentType || "",
-		level: item.level || "",
-		salaryFrom: item.salaryFrom,
-		salaryTo: item.salaryTo,
-		currency: item.currency,
-		description: item.description,
-		publishedAt: item.publishedAt,
-		industry: mapTaxonomy(item.industry),
-		role: mapTaxonomy(item.role),
-	};
-};
-
-const buildUrl = (path: string, params?: Record<string, string>) => {
-	const url = new URL(`${apiBaseUrl}${path}`);
-	if (!params) return url;
 
 	for (const [key, value] of Object.entries(params)) {
 		if (value) {
@@ -175,133 +101,96 @@ const parseErrorMessage = async (response: Response) => {
 export const fetchVacancies = async (
 	params: VacancySearchParams = {}
 ): Promise<VacancyListResult> => {
-	const url = buildUrl("/vacancies");
+	const url = buildLocalApiUrl("/api/vacancies");
 	url.searchParams.set("sort", params.sort || "publishedAt:desc");
-	url.searchParams.set("populate[0]", "industry");
-	url.searchParams.set("populate[1]", "role");
-	url.searchParams.set("pagination[page]", String(params.page || 1));
-	url.searchParams.set("pagination[pageSize]", String(params.pageSize || 9));
+	url.searchParams.set("page", String(params.page || 1));
+	url.searchParams.set("pageSize", String(params.pageSize || 9));
 	url.searchParams.set("locale", params.locale || defaultLocale);
-	url.searchParams.set("filters[isActive][$eq]", "true");
 
-	const searchQuery = params.q?.trim();
-	let andIndex = 0;
-	if (searchQuery) {
-		url.searchParams.set(
-			`filters[$and][${andIndex}][$or][0][title][$containsi]`,
-			searchQuery
-		);
-		url.searchParams.set(
-			`filters[$and][${andIndex}][$or][1][description][$containsi]`,
-			searchQuery
-		);
-		andIndex += 1;
+	if (params.q?.trim()) {
+		url.searchParams.set("q", params.q.trim());
 	}
 	if (params.industry) {
-		url.searchParams.set("filters[industry][slug][$eq]", params.industry);
+		url.searchParams.set("industry", params.industry);
 	}
 	if (params.role) {
-		url.searchParams.set("filters[role][slug][$eq]", params.role);
+		url.searchParams.set("role", params.role);
 	}
-	if (params.location) {
-		url.searchParams.set("filters[location][$containsi]", params.location.trim());
+	if (params.location?.trim()) {
+		url.searchParams.set("location", params.location.trim());
 	}
 	if (params.workFormat) {
-		url.searchParams.set("filters[workFormat][$eq]", params.workFormat);
+		url.searchParams.set("workFormat", params.workFormat);
 	}
 	if (params.employmentType) {
-		url.searchParams.set("filters[employmentType][$eq]", params.employmentType);
+		url.searchParams.set("employmentType", params.employmentType);
 	}
 	if (params.level) {
-		url.searchParams.set("filters[level][$eq]", params.level);
+		url.searchParams.set("level", params.level);
 	}
 
-	const response = await fetch(url.toString());
+	const response = await fetch(`${url.pathname}?${url.searchParams.toString()}`);
+
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));
 	}
 
-	const json = (await response.json()) as StrapiListResponse<VacancyRaw>;
-	return {
-		items: (json.data || []).map(mapVacancy),
-		pagination: {
-			page: json.meta?.pagination?.page || 1,
-			pageSize: json.meta?.pagination?.pageSize || 9,
-			pageCount: json.meta?.pagination?.pageCount || 1,
-			total: json.meta?.pagination?.total || 0,
-		},
-	};
+	return (await response.json()) as VacancyListResult;
 };
 
 export const fetchVacancyBySlug = async (
 	slug: string,
 	options: VacancyBySlugOptions = {}
 ): Promise<Vacancy | null> => {
-	const url = buildUrl("/vacancies");
-	url.searchParams.set("populate[0]", "industry");
-	url.searchParams.set("populate[1]", "role");
+	const url = buildLocalApiUrl(`/api/vacancies/${encodeURIComponent(slug)}`);
 	url.searchParams.set("locale", options.locale || defaultLocale);
-	url.searchParams.set("filters[slug][$eq]", slug);
-	url.searchParams.set("pagination[page]", "1");
-	url.searchParams.set("pagination[pageSize]", "1");
 
-	if (!options.includeInactive) {
-		url.searchParams.set("filters[isActive][$eq]", "true");
+	if (options.includeInactive) {
+		url.searchParams.set("includeInactive", "true");
 	}
-
 	if (options.status) {
 		url.searchParams.set("status", options.status);
 	}
 
-	const response = await fetch(url.toString(), {
+	const response = await fetch(`${url.pathname}?${url.searchParams.toString()}`, {
 		headers: options.headers,
 	});
 
+	if (response.status === 404) {
+		return null;
+	}
+
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));
 	}
 
-	const json = (await response.json()) as StrapiListResponse<VacancyRaw>;
-	const vacancy = json.data?.[0];
-	return vacancy ? mapVacancy(vacancy) : null;
+	return (await response.json()) as Vacancy | null;
 };
 
-export const fetchIndustries = async (): Promise<TaxonomyItem[]> => {
-	const response = await fetch(
-		buildUrl("/industries", {
-			sort: "name:asc",
-			"pagination[pageSize]": "100",
-			locale: defaultLocale,
-		}).toString()
-	);
+export const fetchIndustries = async (
+	locale = defaultLocale
+): Promise<TaxonomyItem[]> => {
+	const url = buildLocalApiUrl("/api/industries", { locale });
+	const response = await fetch(`${url.pathname}?${url.searchParams.toString()}`);
 
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));
 	}
 
-	const json = (await response.json()) as StrapiListResponse<TaxonomyRaw>;
-	return (json.data || [])
-		.map((item) => mapTaxonomy(item))
-		.filter((item): item is TaxonomyItem => Boolean(item));
+	return (await response.json()) as TaxonomyItem[];
 };
 
-export const fetchJobRoles = async (): Promise<TaxonomyItem[]> => {
-	const response = await fetch(
-		buildUrl("/job-roles", {
-			sort: "name:asc",
-			"pagination[pageSize]": "100",
-			locale: defaultLocale,
-		}).toString()
-	);
+export const fetchJobRoles = async (
+	locale = defaultLocale
+): Promise<TaxonomyItem[]> => {
+	const url = buildLocalApiUrl("/api/job-roles", { locale });
+	const response = await fetch(`${url.pathname}?${url.searchParams.toString()}`);
 
 	if (!response.ok) {
 		throw new Error(await parseErrorMessage(response));
 	}
 
-	const json = (await response.json()) as StrapiListResponse<TaxonomyRaw>;
-	return (json.data || [])
-		.map((item) => mapTaxonomy(item))
-		.filter((item): item is TaxonomyItem => Boolean(item));
+	return (await response.json()) as TaxonomyItem[];
 };
 
 export const submitVacancyApplication = async (
@@ -319,11 +208,10 @@ export const submitVacancyApplication = async (
 	formData.append("data[city]", payload.city || "");
 	formData.append("data[coverLetter]", payload.coverLetter || "");
 	formData.append("data[consent]", String(payload.consent));
-	formData.append("data[source]", "frontend");
-	formData.append("data[submittedAt]", new Date().toISOString());
+	formData.append("honeypot", payload.honeypot || "");
 	formData.append("files.resumeFile", payload.resumeFile);
 
-	const response = await fetch(`${apiBaseUrl}/vacancy-applications`, {
+	const response = await fetch("/api/vacancy-applications", {
 		method: "POST",
 		body: formData,
 	});

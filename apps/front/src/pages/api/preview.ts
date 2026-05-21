@@ -5,7 +5,7 @@ import {
 	fetchProjectBySlug,
 } from "@/shared/api/pages";
 import { fetchHomePage } from "@/shared/api/site";
-import { fetchVacancyBySlug } from "@/shared/api/vacancies";
+import { fetchCmsVacancyBySlug } from "@/shared/api/vacancies-cms";
 import {
 	buildPublicCollectionPath,
 	buildPublicPath,
@@ -129,7 +129,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
 			return redirect(buildPublicCollectionPath("vacancy", slug));
 		}
 
-		const vacancy = await fetchVacancyBySlug(slug, {
+		const vacancy = await fetchCmsVacancyBySlug(slug, {
 			...previewRequestOptions,
 			locale: cmsLocale,
 			includeInactive: true,
