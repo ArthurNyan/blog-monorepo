@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "lead_submissions",
+  "info": {
+    "singularName": "lead-submission",
+    "pluralName": "lead-submissions",
+    "displayName": "Lead submission"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "fullName": {
+      "type": "string",
+      "required": true
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": false
+    },
+    "phone": {
+      "type": "string"
+    },
+    "companyName": {
+      "type": "string"
+    },
+    "message": {
+      "type": "text",
+      "required": true
+    },
+    "consent": {
+      "type": "boolean",
+      "required": true
+    },
+    "submittedAt": {
+      "type": "datetime"
+    },
+    "source": {
+      "type": "string"
+    },
+    "formName": {
+      "type": "string"
+    },
+    "pagePath": {
+      "type": "string"
+    },
+    "pageTitle": {
+      "type": "string"
+    },
+    "locale": {
+      "type": "string"
+    }
+  }
+}

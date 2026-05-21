@@ -3,6 +3,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { submitVacancyApplication } from "@/shared/api/vacancies";
 import {
+	isHoneypotFilled,
+	normalizeOptionalText,
+} from "@/shared/lib/form-security";
+import {
 	vacancyApplicationDefaultValues,
 	vacancyApplicationFormSchema,
 	type VacancyApplicationFormValues,
@@ -32,7 +36,7 @@ export const useVacancyApplicationRHF = ({
 		setSubmitError(null);
 		setSubmitSuccess(null);
 
-		if (values.honeypot?.trim()) {
+		if (isHoneypotFilled(values.honeypot)) {
 			setSubmitSuccess(successMessage);
 			form.reset(vacancyApplicationDefaultValues);
 			return;
@@ -44,8 +48,8 @@ export const useVacancyApplicationRHF = ({
 				fullName: values.fullName.trim(),
 				email: values.email.trim(),
 				phone: values.phone.trim(),
-				city: values.city.trim(),
-				coverLetter: values.coverLetter.trim(),
+				city: normalizeOptionalText(values.city),
+				coverLetter: normalizeOptionalText(values.coverLetter),
 				consent: values.consent,
 				resumeFile: values.resumeFile,
 				honeypot: values.honeypot || "",

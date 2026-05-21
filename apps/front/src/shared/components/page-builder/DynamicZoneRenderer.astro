@@ -1,13 +1,17 @@
 ---
 import type { PageBlock } from "@/shared/api/pages";
+import type { SiteLocale } from "@/shared/i18n/config";
 import PageBlockRenderer from "@/shared/components/page-builder/PageBlock.astro";
 
 interface Props {
 	blocks: PageBlock[];
 	locale?: string;
+	siteLocale?: SiteLocale;
+	pagePath?: string;
+	pageTitle?: string;
 }
 
-const { blocks, locale } = Astro.props as Props;
+const { blocks, locale, siteLocale, pagePath, pageTitle } = Astro.props as Props;
 ---
 
 <>
@@ -15,6 +19,9 @@ const { blocks, locale } = Astro.props as Props;
 		<PageBlockRenderer
 			block={block}
 			locale={locale}
+			siteLocale={siteLocale}
+			pagePath={pagePath}
+			pageTitle={pageTitle}
 			key={`${block.__component}-${index}`}
 		/>
 	))}

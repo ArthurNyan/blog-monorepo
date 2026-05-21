@@ -266,6 +266,19 @@ const homePageSeed = {
 				ctaUrl: "/articles",
 			},
 			{
+				__component: "blocks.lead-form",
+				formName: "home-page-primary-lead",
+				eyebrow: "Маркетинговый лид",
+				heading: "Запросите демонстрацию CMS-first платформы",
+				description:
+					"Главная страница теперь может собирать лиды через собственный CMS-блок и server-side Astro route без внешнего iframe.",
+				submitLabel: "Запросить демонстрацию",
+				successMessage:
+					"Запрос отправлен. Лид сохранен в отдельной сущности lead-submission.",
+				consentLabel:
+					"Согласен(а) на обработку персональных данных для связи по демонстрации платформы *",
+			},
+			{
 				__component: "blocks.cta",
 				title: "Следующий слой после восстановления данных",
 				description:
@@ -362,6 +375,19 @@ const homePageSeed = {
 				limit: 3,
 				ctaLabel: "Read articles",
 				ctaUrl: "/articles",
+			},
+			{
+				__component: "blocks.lead-form",
+				formName: "home-page-primary-lead",
+				eyebrow: "Marketing lead",
+				heading: "Request a demo of the CMS-first platform",
+				description:
+					"The homepage can now capture leads through its own CMS block and a server-side Astro route without an external iframe.",
+				submitLabel: "Request demo",
+				successMessage:
+					"Your request has been sent. The lead is stored in a dedicated lead-submission entity.",
+				consentLabel:
+					"I agree to the processing of personal data for follow-up about the platform demo *",
 			},
 			{
 				__component: "blocks.cta",

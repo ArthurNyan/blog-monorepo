@@ -97,6 +97,22 @@ export interface BlocksHero extends Struct.ComponentSchema {
   };
 }
 
+export interface BlocksLeadForm extends Struct.ComponentSchema {
+  collectionName: 'components_blocks_lead_forms';
+  info: {
+    displayName: 'Lead form';
+  };
+  attributes: {
+    consentLabel: Schema.Attribute.Text;
+    description: Schema.Attribute.Text;
+    eyebrow: Schema.Attribute.String;
+    formName: Schema.Attribute.String & Schema.Attribute.Required;
+    heading: Schema.Attribute.String & Schema.Attribute.Required;
+    submitLabel: Schema.Attribute.String;
+    successMessage: Schema.Attribute.Text;
+  };
+}
+
 export interface BlocksLogoCloud extends Struct.ComponentSchema {
   collectionName: 'components_blocks_logo_clouds';
   info: {
@@ -372,6 +388,7 @@ declare module '@strapi/strapi' {
       'blocks.feature-cards': BlocksFeatureCards;
       'blocks.feature-highlight': BlocksFeatureHighlight;
       'blocks.hero': BlocksHero;
+      'blocks.lead-form': BlocksLeadForm;
       'blocks.logo-cloud': BlocksLogoCloud;
       'blocks.numbered-points': BlocksNumberedPoints;
       'blocks.preview-list': BlocksPreviewList;

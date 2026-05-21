@@ -663,6 +663,7 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
         'blocks.checklist',
         'blocks.content-columns',
         'blocks.numbered-points',
+        'blocks.lead-form',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -796,6 +797,45 @@ export interface ApiJobRoleJobRole extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiLeadSubmissionLeadSubmission
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'lead_submissions';
+  info: {
+    displayName: 'Lead submission';
+    pluralName: 'lead-submissions';
+    singularName: 'lead-submission';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    companyName: Schema.Attribute.String;
+    consent: Schema.Attribute.Boolean & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    formName: Schema.Attribute.String;
+    fullName: Schema.Attribute.String & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::lead-submission.lead-submission'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text & Schema.Attribute.Required;
+    pagePath: Schema.Attribute.String;
+    pageTitle: Schema.Attribute.String;
+    phone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.String;
+    submittedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
@@ -829,6 +869,7 @@ export interface ApiPagePage extends Struct.CollectionTypeSchema {
         'blocks.checklist',
         'blocks.content-columns',
         'blocks.numbered-points',
+        'blocks.lead-form',
       ]
     > &
       Schema.Attribute.SetPluginOptions<{
@@ -1618,6 +1659,7 @@ declare module '@strapi/strapi' {
       'api::home-page.home-page': ApiHomePageHomePage;
       'api::industry.industry': ApiIndustryIndustry;
       'api::job-role.job-role': ApiJobRoleJobRole;
+      'api::lead-submission.lead-submission': ApiLeadSubmissionLeadSubmission;
       'api::page.page': ApiPagePage;
       'api::project.project': ApiProjectProject;
       'api::vacancy-application.vacancy-application': ApiVacancyApplicationVacancyApplication;

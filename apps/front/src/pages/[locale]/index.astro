@@ -47,5 +47,11 @@ const seo = buildSeoMetadata({
 	}}
 	className="flex flex-col"
 >
-	<DynamicZoneRenderer blocks={homePage.blocks} locale={homePage.locale} />
+	<DynamicZoneRenderer
+		blocks={homePage.blocks}
+		locale={homePage.locale}
+		siteLocale={locale}
+		pagePath={pathname}
+		pageTitle={homePage.title}
+	/>
 </MainLayout>

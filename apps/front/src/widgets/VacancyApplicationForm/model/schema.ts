@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createRequiredConsentSchema } from "@/shared/lib/form-security";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 const allowedExtensions = [".pdf", ".doc", ".docx"];
@@ -18,11 +19,9 @@ export const vacancyApplicationFormSchema = z.object({
 			message: "Уточните название города",
 		}),
 	coverLetter: z.string().max(3000, "Максимум 3000 символов"),
-	consent: z.literal(true, {
-		errorMap: () => ({
-			message: "Нужно согласие на обработку персональных данных",
-		}),
-	}),
+	consent: createRequiredConsentSchema(
+		"Нужно согласие на обработку персональных данных"
+	),
 	resumeFile: z
 		.instanceof(File, { message: "Прикрепите резюме" })
 		.refine(

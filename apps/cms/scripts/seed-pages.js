@@ -147,7 +147,7 @@ const pagesSeed = {
 					"Блок статистики нужен не как украшение, а как компактная форма инженерных тезисов.",
 				items: [
 					{
-						value: "11",
+						value: "16",
 						label: "Типов блоков",
 						description: "Все блоки первой очереди уже подключены к renderer layer.",
 					},
@@ -308,6 +308,19 @@ const pagesSeed = {
 				],
 			},
 			{
+				__component: "blocks.lead-form",
+				formName: "cms-first-platform-demo-lead",
+				eyebrow: "Встроенная прикладная форма",
+				heading: "Оставьте маркетинговый запрос прямо со страницы",
+				description:
+					"Этот блок показывает, что сбор лидов теперь встроен в CMS-first витрину как собственный сценарий, а не как внешний embed.",
+				submitLabel: "Отправить запрос",
+				successMessage:
+					"Запрос отправлен. Демонстрационная lead form записывает отдельный marketing lead в CMS.",
+				consentLabel:
+					"Согласен(а) на обработку персональных данных для обратной связи по маркетинговому запросу *",
+			},
+			{
 				__component: "blocks.cta",
 				title: "Следующий шаг",
 				description:
@@ -459,7 +472,7 @@ const pagesSeed = {
 					"This stats block is used as a compact presentation of engineering facts, not as decoration.",
 				items: [
 					{
-						value: "11",
+						value: "16",
 						label: "Block types",
 						description: "All first-queue blocks are already connected to the renderer layer.",
 					},
@@ -618,6 +631,19 @@ const pagesSeed = {
 							"The build already produces `/en/cms-first-platform/` as a real locale-aware CMS-driven page.",
 					},
 				],
+			},
+			{
+				__component: "blocks.lead-form",
+				formName: "cms-first-platform-demo-lead",
+				eyebrow: "Embedded application form",
+				heading: "Leave a marketing request directly from the page",
+				description:
+					"This block demonstrates that lead capture now lives inside the CMS-first storefront as a native scenario rather than an external embed.",
+				submitLabel: "Send request",
+				successMessage:
+					"Your request has been sent. The demo lead form stores a separate marketing lead in CMS.",
+				consentLabel:
+					"I agree to the processing of personal data for follow-up on this marketing request *",
 			},
 			{
 				__component: "blocks.cta",

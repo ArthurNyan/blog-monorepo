@@ -225,6 +225,17 @@ export type NumberedPointsBlock = {
 	items?: NumberedPoint[];
 };
 
+export type LeadFormBlock = {
+	__component: "blocks.lead-form";
+	formName: string;
+	eyebrow?: string;
+	heading: string;
+	description?: string;
+	submitLabel?: string;
+	successMessage?: string;
+	consentLabel?: string;
+};
+
 export type PageBlock =
 	| HeroBlock
 	| RichTextBlock
@@ -240,7 +251,8 @@ export type PageBlock =
 	| QuoteBlock
 	| ChecklistBlock
 	| ContentColumnsBlock
-	| NumberedPointsBlock;
+	| NumberedPointsBlock
+	| LeadFormBlock;
 
 export type CmsPage = {
 	id?: string | number;
@@ -413,6 +425,7 @@ const appendPageBuilderPopulateParams = (url: URL) => {
 		"populate[blocks][on][blocks.numbered-points][populate][items]",
 		"true"
 	);
+	url.searchParams.set("populate[blocks][on][blocks.lead-form]", "true");
 };
 
 export const fetchPageSlugs = async (

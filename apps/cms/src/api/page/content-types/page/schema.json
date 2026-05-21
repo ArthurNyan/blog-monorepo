@@ -51,7 +51,8 @@
         "blocks.quote",
         "blocks.checklist",
         "blocks.content-columns",
-        "blocks.numbered-points"
+        "blocks.numbered-points",
+        "blocks.lead-form"
       ],
       "pluginOptions": {
         "i18n": {

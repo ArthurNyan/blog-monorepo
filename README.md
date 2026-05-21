@@ -11,6 +11,7 @@
 ## Environment
 Скопируй `.env.example` в `.env` (или задай переменные в shell):
 - `CMS_URL` — URL Strapi (по умолчанию `http://localhost:1337`)
+- `CMS_API_TOKEN` — server-side API token Strapi для Astro API routes
 - `PUBLIC_API_URL` — API URL для фронта
 - `OPENAPI_INPUT_URL` — URL OpenAPI документации Strapi
 - `PUBLIC_CMS_URL` — публичный базовый URL CMS для фронта

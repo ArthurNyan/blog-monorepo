@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_blocks_lead_forms",
+  "info": {
+    "displayName": "Lead form"
+  },
+  "options": {},
+  "attributes": {
+    "formName": {
+      "type": "string",
+      "required": true
+    },
+    "eyebrow": {
+      "type": "string"
+    },
+    "heading": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "submitLabel": {
+      "type": "string"
+    },
+    "successMessage": {
+      "type": "text"
+    },
+    "consentLabel": {
+      "type": "text"
+    }
+  }
+}

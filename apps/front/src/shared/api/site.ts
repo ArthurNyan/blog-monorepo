@@ -165,6 +165,7 @@ const appendPageBuilderPopulateParams = (url: URL) => {
 		"populate[blocks][on][blocks.numbered-points][populate][items]",
 		"true"
 	);
+	url.searchParams.set("populate[blocks][on][blocks.lead-form]", "true");
 };
 
 export const fetchGlobalContent = async (

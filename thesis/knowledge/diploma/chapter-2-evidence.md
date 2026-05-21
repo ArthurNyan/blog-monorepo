@@ -5,7 +5,7 @@
 Документ фиксирует подтвержденные по коду факты о текущем состоянии проекта, чтобы
 проектная глава ВКР опиралась на реальную реализацию, а не на абстрактный план.
 
-Дата актуализации: `2026-05-18`.
+Дата актуализации: `2026-05-21`.
 
 ## Методика фиксации фактов
 
@@ -71,6 +71,7 @@
 | `project` | `collectionType` | `src/api/project/content-types/project/schema.json` | кейсы/проекты со `slug`, обложкой, логотипом и rich text-контентом |
 | `vacancy` | `collectionType` | `src/api/vacancy/content-types/vacancy/schema.json` | вакансии с таксономиями, фильтрами и описанием |
 | `vacancy-application` | `collectionType` | `src/api/vacancy-application/content-types/vacancy-application/schema.json` | отклики на вакансии |
+| `lead-submission` | `collectionType` | `src/api/lead-submission/content-types/lead-submission/schema.json` | маркетинговые лиды из публичной формы витрины |
 | `industry` | `collectionType` | `src/api/industry/content-types/industry/schema.json` | отрасли для вакансий |
 | `job-role` | `collectionType` | `src/api/job-role/content-types/job-role/schema.json` | роли/категории вакансий |
 | `global` | `singleType` | `src/api/global/content-types/global/schema.json` | глобальные данные сайта |
@@ -83,8 +84,8 @@
   `home-page` используют `draftAndPublish`.
 - `article`, `author`, `project`, `vacancy`, `industry`, `job-role`, `global`,
   `home-page` используют `i18n`.
-- `vacancy-application` не использует `draftAndPublish` и не локализуется, что логично для
-  прикладной сущности отклика.
+- `vacancy-application` и `lead-submission` не используют `draftAndPublish` и не
+  локализуются, что логично для прикладных сущностей отправки пользовательских форм.
 
 Подтвержденные связи:
 
@@ -95,8 +96,10 @@
 
 Вывод для главы 2:
 
-- в CMS уже существует содержательная модель для статей, проектов, вакансий и откликов;
-- в CMS уже реализованы `pages`, переиспользуемые `components` и `Dynamic Zone`;
+- в CMS уже существует содержательная модель для статей, проектов, вакансий, откликов и
+  маркетинговых лидов;
+- в CMS уже реализованы `pages`, переиспользуемые `components` и `Dynamic Zone`, включая
+  отдельный блок `lead-form` для `home-page` и `pages`;
 - `global` хранит структуру навигации, CTA и футера, а `home-page` использует тот же page-builder-контур, что и `pages`.
 
 ### 1.3. Реализованные API и сервисные сценарии
@@ -104,7 +107,7 @@
 Подтвержденные факты:
 
 - Для `article`, `author`, `global`, `home-page`, `project`, `vacancy`,
-  `vacancy-application` используются стандартные `createCoreRouter`,
+  `vacancy-application`, `lead-submission` используются стандартные `createCoreRouter`,
   `createCoreController`, `createCoreService`.
 - Для `industry` и `job-role` в коде явно разрешены публичные `find` и `findOne`
   без авторизации.
@@ -120,7 +123,9 @@
 
 - CMS может выступать источником данных для публичной витрины;
 - frontend может генерировать типизированный клиент из OpenAPI;
-- модуль вакансий опирается на уже описанные в CMS таксономии и структуру откликов.
+- модуль вакансий опирается на уже описанные в CMS таксономии и структуру откликов;
+- в CMS зафиксирован отдельный прикладной контур сбора маркетинговых лидов без смешения
+  с карьерными откликами.
 
 Ограничения:
 
@@ -172,6 +177,7 @@
 | `/preview/[locale]/vacancies/[slug]` | `src/pages/preview/[locale]/vacancies/[slug].astro` | `fetchVacancyBySlug(..., draft)` | реализован как server-side preview вакансий |
 | `/api/preview` | `src/pages/api/preview.ts` | проверка `PREVIEW_SECRET`, установка preview cookie | реализован |
 | `/api/exit-preview` | `src/pages/api/exit-preview.ts` | очистка preview cookie и возврат на public URL | реализован |
+| `/api/lead-submissions` | `src/pages/api/lead-submissions.ts` | server-side валидация и запись маркетингового лида в `Strapi` | реализован |
 | `/articles` | `src/pages/articles/index.astro` | `getArticles()` из generated API | реализован |
 | `/articles/[slug]` | `src/pages/articles/[slug]/index.astro` | `getArticles()`, `getArticlesId()` | реализован |
 | `/projects` | `src/pages/projects/index.astro` | `getProjects()` из generated API | реализован |
@@ -187,6 +193,8 @@
   `projects` и `vacancies` через server-side маршруты `/preview/...`;
 - preview-контур теперь связан с CMS admin-конфигурацией и может формировать preview-ссылки
   на frontend на основании `documentId`, локали и статуса публикации;
+- `home-page` и `pages` теперь могут включать собственный маркетинговый блок формы без
+  внешнего embed;
 - frontend уже публикует статьи, проекты и вакансии;
 - детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
@@ -259,6 +267,44 @@
 - текущий сценарий вакансий использует рукописный API-слой, а не generated client, то есть
   в проекте пока сосуществуют два подхода к интеграции с CMS.
 
+#### Маркетинговые лиды
+
+Подтвержденные факты:
+
+- В [apps/cms/src/components/blocks/lead-form.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/components/blocks/lead-form.json)
+  зафиксирован отдельный block `lead-form` с редакторскими полями для `formName`,
+  заголовка, описания, текста consent и пользовательских сообщений.
+- В [apps/cms/src/api/page/content-types/page/schema.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/page/content-types/page/schema.json)
+  и [apps/cms/src/api/home-page/content-types/home-page/schema.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/home-page/content-types/home-page/schema.json)
+  block `lead-form` подключен к `Dynamic Zone` для `page` и `home-page`.
+- В [apps/front/src/shared/components/page-builder/blocks/LeadFormBlock.tsx](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/components/page-builder/blocks/LeadFormBlock.tsx)
+  и [apps/front/src/widgets/LeadCaptureForm/ui/LeadCaptureForm.tsx](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/LeadCaptureForm/ui/LeadCaptureForm.tsx)
+  реализован frontend-блок собственной маркетинговой формы.
+- В [apps/front/src/widgets/LeadCaptureForm/model/schema.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/LeadCaptureForm/model/schema.ts)
+  реализована локализуемая валидация через `zod` с ограничениями полей, consent и
+  `honeypot`.
+- В [apps/front/src/pages/api/lead-submissions.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/api/lead-submissions.ts)
+  реализован Astro API route, который повторно валидирует payload, проверяет `honeypot`
+  и создает запись `lead-submission` в `Strapi` через server-side `CMS_API_TOKEN`.
+- В [apps/front/src/shared/components/page-builder/DynamicZoneRenderer.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/components/page-builder/DynamicZoneRenderer.astro)
+  и [apps/front/src/shared/components/page-builder/PageBlock.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/components/page-builder/PageBlock.astro)
+  block подключен к общему renderer’у `home-page` и `pages`.
+
+Что это означает:
+
+- в проекте появился отдельный прикладной сценарий маркетингового лида, не смешанный с
+  `vacancy-application`;
+- форма встроена в CMS-first page builder и может размещаться как на главной витрине,
+  так и на произвольных CMS-страницах;
+- запись лида проходит через server-side прослойку frontend, а не через прямой browser
+  POST в `Strapi`.
+
+Ограничения:
+
+- в коде пока не подтвержден `rate limit` для маршрута `/api/lead-submissions`;
+- не реализованы CRM-интеграции, email automation и дальнейший workflow обработки лида;
+- для server-side записи требуется явный environment contract `CMS_API_TOKEN`.
+
 ### 2.4. Части frontend вне полного CMS/i18n-контура
 
 Подтвержденные факты:
@@ -312,8 +358,10 @@
 
 - monorepo `Nx + pnpm` с двумя приложениями `apps/cms` и `apps/front`;
 - CMS на `Strapi 5` с сущностями `article`, `project`, `vacancy`,
-  `vacancy-application`, `author`, `industry`, `job-role`, `global`, `home-page`, `page`;
+  `vacancy-application`, `lead-submission`, `author`, `industry`, `job-role`, `global`,
+  `home-page`, `page`;
 - компоненты `Strapi` для page builder, навигации, CTA и футера;
+- block `lead-form` в `Dynamic Zone` для `home-page` и `pages`;
 - OpenAPI-документацию backend и генерацию типизированного frontend-клиента;
 - локализованную главную витрину `/:locale/`, строящуюся по `home-page` из `Strapi`;
 - локализованные CMS-страницы `/:locale/:slug/`, строящиеся по `pages` и `Dynamic Zone`;
@@ -324,6 +372,7 @@
 - публичные разделы статей и проектов с детальными страницами;
 - модуль вакансий с фильтрацией, пагинацией, карточками и детальной страницей;
 - форму отклика на вакансию с валидацией, `honeypot`, consent и загрузкой резюме;
+- маркетинговую lead form с валидацией, `honeypot`, consent и Astro API route;
 - гибридный публикационный контур frontend: prerendered public routes + server-side preview.
 
 ## 4. Ограничения текущего состояния проекта
@@ -391,15 +440,17 @@
   типизированный OpenAPI-контур и отдельные frontend-fetchers для page builder и
   карьерного модуля;
 - существующую модель данных для `articles`, `projects`, `vacancies`,
-  `vacancy-applications`, `industry`, `job-role`, `global`, `home-page`, `page`;
-- использование `components` и `Dynamic Zone` для `pages` и `home-page`;
+  `vacancy-applications`, `lead-submissions`, `industry`, `job-role`, `global`,
+  `home-page`, `page`;
+- использование `components` и `Dynamic Zone` для `pages` и `home-page`, включая
+  собственный `lead-form` block;
 - locale-prefixed маршруты `/:locale/` и `/:locale/:slug/`;
 - вынос ключевых текстов навигации, футера и основной витрины в `Strapi`;
 - централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `twitter:*`, `noindex`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections;
-- пользовательский сценарий вакансий и откликов;
+- пользовательские сценарии вакансий/откликов и маркетинговых лидов;
 - ограничения текущего состояния проекта и перечень обязательных доработок.
 
 Пока рано писать как реализованный результат:

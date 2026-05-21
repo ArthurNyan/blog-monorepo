@@ -15,13 +15,18 @@ import { QuoteBlock } from "@/shared/components/page-builder/blocks/QuoteBlock";
 import { ChecklistBlock } from "@/shared/components/page-builder/blocks/ChecklistBlock";
 import ContentColumnsBlock from "@/shared/components/page-builder/blocks/ContentColumnsBlock.astro";
 import { NumberedPointsBlock } from "@/shared/components/page-builder/blocks/NumberedPointsBlock";
+import { LeadFormBlock } from "@/shared/components/page-builder/blocks/LeadFormBlock";
+import type { SiteLocale } from "@/shared/i18n/config";
 
 interface Props {
 	block: PageBlock;
 	locale?: string;
+	siteLocale?: SiteLocale;
+	pagePath?: string;
+	pageTitle?: string;
 }
 
-const { block, locale } = Astro.props as Props;
+const { block, locale, siteLocale, pagePath, pageTitle } = Astro.props as Props;
 ---
 
 {block.__component === "blocks.hero" && <HeroBlock block={block} client:visible />}
@@ -52,4 +57,13 @@ const { block, locale } = Astro.props as Props;
 {block.__component === "blocks.content-columns" && <ContentColumnsBlock block={block} />}
 {block.__component === "blocks.numbered-points" && (
 	<NumberedPointsBlock block={block} />
+)}
+{block.__component === "blocks.lead-form" && (
+	<LeadFormBlock
+		block={block}
+		pagePath={pagePath || "/"}
+		pageTitle={pageTitle}
+		siteLocale={siteLocale || "ru"}
+		client:load
+	/>
 )}
