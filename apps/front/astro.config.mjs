@@ -7,6 +7,9 @@ import vercel from '@astrojs/vercel';
 
 import react from '@astrojs/react';
 
+const isLegacyCollectionPath = (pathname) =>
+	/^\/(articles|projects)(\/|$)/.test(pathname);
+
 // https://astro.build/config
 export default defineConfig({
   site: process.env.SITE_URL ?? process.env.PUBLIC_SITE_URL ?? 'http://localhost:4321',
@@ -62,5 +65,10 @@ export default defineConfig({
     },
   },
 
-  integrations: [react(), sitemap()],
+  integrations: [
+    react(),
+    sitemap({
+      filter: (page) => !isLegacyCollectionPath(new URL(page).pathname),
+    }),
+  ],
 });

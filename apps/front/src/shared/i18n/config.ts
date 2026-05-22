@@ -1,6 +1,9 @@
 export const siteLocales = ["ru", "en"] as const;
 
 export type SiteLocale = (typeof siteLocales)[number];
+export const localizedCollectionRoutes = ["articles", "projects"] as const;
+export type LocalizedCollectionRoute =
+	(typeof localizedCollectionRoutes)[number];
 
 export const defaultSiteLocale: SiteLocale = "ru";
 
@@ -34,4 +37,17 @@ export const buildLocalizedPath = (
 	}
 
 	return `/${locale}/${normalizedPath}/`;
+};
+
+export const buildLocalizedCollectionPath = (
+	locale: SiteLocale = defaultSiteLocale,
+	collection: LocalizedCollectionRoute,
+	slug = ""
+) => {
+	const normalizedSlug = slug.replace(/^\/+|\/+$/g, "");
+	const path = normalizedSlug
+		? `${collection}/${normalizedSlug}`
+		: collection;
+
+	return buildLocalizedPath(locale, path);
 };

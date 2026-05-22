@@ -25,10 +25,10 @@ if (!slug) {
 }
 
 if (!hasValidPreviewCookie(Astro.cookies)) {
-	return Astro.redirect(buildPublicCollectionPath("project", slug));
+	return Astro.redirect(buildPublicCollectionPath("project", slug, locale));
 }
 
-const pathname = buildPublicCollectionPath("project", slug);
+const pathname = buildPublicCollectionPath("project", slug, locale);
 const project = await fetchProjectBySlug(
 	slug,
 	toCmsLocale(locale),

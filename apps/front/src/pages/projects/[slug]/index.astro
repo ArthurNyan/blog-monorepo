@@ -1,44 +1,40 @@
 ---
-import MainLayout from "@/layouts/main.astro";
-import { getProjects } from "@/shared/api/generated";
-import { fetchProjectBySlug } from "@/shared/api/pages";
-import { DetailHero } from "@/shared/components/DetailHero";
-import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { fetchProjectSlugs } from "@/shared/api/pages";
+import {
+	buildLocalizedCollectionPath,
+	defaultSiteLocale,
+} from "@/shared/i18n/config";
 
-export const getStaticPaths = async () => {
-    const response = await getProjects();
-    if (!response.data) {
-        return [];
-    }
-    return response.data.data?.map((project) => ({
-        params: { slug: project.slug },
-    }));
-};
+export const getStaticPaths = async () =>
+	(await fetchProjectSlugs()).map((slug) => ({
+		params: { slug },
+	}));
 
-const slug = Astro.params.slug as string;
-const projectData = await fetchProjectBySlug(slug);
+const slug = Astro.params.slug;
 
-if (!projectData) {
-	return new Response("Project not found.", { status: 404 });
+if (!slug) {
+	throw new Error("Project slug is required");
 }
+
+const redirectTo = buildLocalizedCollectionPath(
+	defaultSiteLocale,
+	"projects",
+	slug
+);
 ---
 
-<MainLayout
-    content={{ title: projectData?.name || "Проект" }}
-    className="flex flex-col"
->
-	<>
-		<DetailHero
-			title={projectData.name}
-			description={projectData.description}
-			date={projectData.date}
-			cover={projectData.cover || undefined}
-			logo={projectData.logo || undefined}
-		/>
-		<article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
-			<div class="max-w-4xl mx-auto">
-				{projectData.content && <MarkdownContent content={projectData.content} />}
-			</div>
-		</article>
-	</>
-</MainLayout>
+<!doctype html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="refresh" content={`0;url=${redirectTo}`} />
+		<link rel="canonical" href={redirectTo} />
+		<script is:inline>
+			window.location.replace({JSON.stringify(redirectTo)});
+		</script>
+		<title>Redirecting…</title>
+	</head>
+	<body>
+		<a href={redirectTo}>Перейти к локализованному проекту</a>
+	</body>
+</html>

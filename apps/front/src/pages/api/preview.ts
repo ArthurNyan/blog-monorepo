@@ -86,7 +86,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
 	if (type === "article" && slug) {
 		if (!useDraftPreview) {
 			clearPreviewCookie(cookies, url.protocol);
-			return redirect(buildPublicCollectionPath("article", slug));
+			return redirect(buildPublicCollectionPath("article", slug, locale));
 		}
 
 		const article = await fetchArticleBySlug(
@@ -106,7 +106,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
 	if (type === "project" && slug) {
 		if (!useDraftPreview) {
 			clearPreviewCookie(cookies, url.protocol);
-			return redirect(buildPublicCollectionPath("project", slug));
+			return redirect(buildPublicCollectionPath("project", slug, locale));
 		}
 
 		const project = await fetchProjectBySlug(

@@ -1,0 +1,88 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import {
+	fetchArticleBySlug,
+	fetchArticleSlugs,
+} from "@/shared/api/pages";
+import { DetailHero } from "@/shared/components/DetailHero";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import {
+	buildLocalizedCollectionPath,
+	isSiteLocale,
+	siteLocales,
+	toCmsLocale,
+} from "@/shared/i18n/config";
+import { getContentCollectionsCopy } from "@/shared/i18n/content-collections";
+
+export const getStaticPaths = async () => {
+	const localizedPaths = await Promise.all(
+		siteLocales.map(async (locale) => {
+			const slugs = await fetchArticleSlugs(toCmsLocale(locale));
+
+			return slugs.map((slug) => ({
+				params: { locale, slug },
+			}));
+		})
+	);
+
+	return localizedPaths.flat();
+};
+
+const locale = Astro.params.locale;
+const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	throw new Error(`Unsupported locale: ${locale}`);
+}
+
+if (!slug) {
+	throw new Error("Article slug is required");
+}
+
+const article = await fetchArticleBySlug(slug, toCmsLocale(locale));
+
+if (!article) {
+	return new Response(getContentCollectionsCopy(locale).articles.notFoundMessage, {
+		status: 404,
+	});
+}
+
+const copy = getContentCollectionsCopy(locale).articles;
+const pathname = buildLocalizedCollectionPath(locale, "articles", slug);
+const seo = buildSeoMetadata({
+	title: article.name,
+	description: article.description,
+	pathname,
+});
+---
+
+<MainLayout
+	content={{
+		title: article.name || copy.detailFallbackTitle,
+		description: article.description,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		cmsStatus: "published",
+	}}
+	className="flex flex-col"
+>
+	<DetailHero
+		title={article.name}
+		description={article.description}
+		date={article.date}
+		cover={article.cover || undefined}
+		authors={article.authors}
+	/>
+	{
+		article.content && (
+			<article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
+				<div class="max-w-4xl mx-auto">
+					<MarkdownContent content={article.content} />
+				</div>
+			</article>
+		)
+	}
+</MainLayout>

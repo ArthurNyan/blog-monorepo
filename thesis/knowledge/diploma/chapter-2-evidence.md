@@ -145,8 +145,9 @@
   используется `Astro 6.3.1`, `@astrojs/react`, `@astrojs/vercel`,
   `@astrojs/sitemap`, `Tailwind 4`, `react-hook-form`, `zod`.
 - В [apps/front/astro.config.mjs](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/astro.config.mjs)
-  frontend подключает `Vercel` adapter и `sitemap`,
-  а абсолютный `site` URL берется из `SITE_URL`.
+  frontend подключает `Vercel` adapter и `sitemap`, берет абсолютный `site` URL из
+  `SITE_URL` и дополнительно исключает legacy redirect routes `/articles/*` и
+  `/projects/*` из карты сайта.
 - Во frontend включена генерация типизированного API-клиента через
   [apps/front/openapi-ts.config.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/openapi-ts.config.ts),
   который берет схему из `CMS_URL/api/documentation/1.0.0/full_documentation`.
@@ -178,17 +179,32 @@
 | `/api/preview` | `src/pages/api/preview.ts` | проверка `PREVIEW_SECRET`, установка preview cookie | реализован |
 | `/api/exit-preview` | `src/pages/api/exit-preview.ts` | очистка preview cookie и возврат на public URL | реализован |
 | `/api/lead-submissions` | `src/pages/api/lead-submissions.ts` | server-side валидация и запись маркетингового лида в `Strapi` | реализован |
-| `/articles` | `src/pages/articles/index.astro` | `getArticles()` из generated API | реализован |
-| `/articles/[slug]` | `src/pages/articles/[slug]/index.astro` | `getArticles()`, `getArticlesId()` | реализован |
-| `/projects` | `src/pages/projects/index.astro` | `getProjects()` из generated API | реализован |
-| `/projects/[slug]` | `src/pages/projects/[slug]/index.astro` | `getProjects()`, `getProjectsId()` | реализован |
+| `/[locale]/articles` | `src/pages/[locale]/articles/index.astro` | `fetchArticlePreviews()` | реализован для `ru/en` |
+| `/[locale]/articles/[slug]` | `src/pages/[locale]/articles/[slug].astro` | `fetchArticleSlugs()`, `fetchArticleBySlug()` | реализован для `ru/en` |
+| `/[locale]/projects` | `src/pages/[locale]/projects/index.astro` | `fetchProjectPreviews()` | реализован для `ru/en` |
+| `/[locale]/projects/[slug]` | `src/pages/[locale]/projects/[slug].astro` | `fetchProjectSlugs()`, `fetchProjectBySlug()` | реализован для `ru/en` |
+| `/articles` | `src/pages/articles/index.astro` | redirect на `/ru/articles/` | реализован как legacy compatibility route |
+| `/articles/[slug]` | `src/pages/articles/[slug]/index.astro` | redirect на `/ru/articles/[slug]/` | реализован как legacy compatibility route |
+| `/projects` | `src/pages/projects/index.astro` | redirect на `/ru/projects/` | реализован как legacy compatibility route |
+| `/projects/[slug]` | `src/pages/projects/[slug]/index.astro` | redirect на `/ru/projects/[slug]/` | реализован как legacy compatibility route |
 | `/vacancies` | `src/pages/vacancies/index.astro` | клиентский `VacancyExplorer` | реализован |
 | `/vacancies/[slug]` | `src/pages/vacancies/[slug]/index.astro` | `fetchVacancies()`, `fetchVacancyBySlug()` | реализован |
+
+Маршрутная матрица локалей:
+
+| Сущность | Site locale | CMS locale | Production route | Preview route | Статус |
+|---|---|---|---|---|---|
+| `home-page` | `ru/en` | `ru-RU/en` | `/:locale/` | `/preview/:locale/` | входит в общий `ru/en` contour |
+| `page` | `ru/en` | `ru-RU/en` | `/:locale/:slug/` | `/preview/:locale/:slug/` | входит в общий `ru/en` contour |
+| `article` | `ru/en` | `ru-RU/en` | `/:locale/articles/:slug/` | `/preview/:locale/articles/:slug/` | входит в общий `ru/en` contour |
+| `project` | `ru/en` | `ru-RU/en` | `/:locale/projects/:slug/` | `/preview/:locale/projects/:slug/` | входит в общий `ru/en` contour |
+| `vacancy` | `ru/en` в CMS/preview | `ru-RU/en` | `/vacancies/:slug/` | `/preview/:locale/vacancies/:slug/` | осознанное ограничение production UI |
 
 Что это реально подтверждает:
 
 - frontend уже публикует локализованную главную витрину через `home-page` из `Strapi`;
 - frontend уже умеет генерировать локализованные CMS-страницы `pages` по маршруту `/:locale/:slug/`;
+- frontend уже публикует `articles` и `projects` в том же locale-prefixed production contour;
 - frontend уже умеет открывать draft-preview для `home-page`, `pages`, `articles`,
   `projects` и `vacancies` через server-side маршруты `/preview/...`;
 - preview-контур теперь связан с CMS admin-конфигурацией и может формировать preview-ссылки
@@ -196,16 +212,16 @@
 - `home-page` и `pages` теперь могут включать собственный маркетинговый блок формы без
   внешнего embed;
 - frontend уже публикует статьи, проекты и вакансии;
-- детальные страницы статей и проектов рендерятся статически через `getStaticPaths`;
+- детальные страницы статей и проектов рендерятся статически через locale-aware `getStaticPaths`;
 - каталог вакансий и страница вакансии уже существуют как отдельный прикладной модуль.
 
 Ограничения:
 
-- locale-prefixed маршрутный контур пока покрывает только главную витрину и CMS-страницы `pages`;
-- разделы `articles`, `projects` и `vacancies` пока остаются вне полной публичной маршрутной локализации;
-- locale-prefixed preview уже покрывает витрину первой очереди и ключевые content sections,
-  однако публичные production-маршруты `articles/projects/vacancies` все еще остаются вне
-  полного locale-prefixed контура.
+- locale-prefixed маршрутный контур теперь покрывает `home-page`, `pages`, `articles` и
+  `projects`;
+- карьерный модуль `vacancies` пока остается вне общего locale-prefixed production contour;
+- locale-prefixed preview уже покрывает витрину и ключевые content sections, включая
+  `vacancies`, но публичный карьерный UI все еще остается отдельным ограничением.
 
 ### 2.3. Реально используемые сценарии frontend
 
@@ -213,14 +229,18 @@
 
 Подтвержденные факты:
 
-- списки статей и проектов получают данные через generated SDK;
-- детальные страницы строятся по `slug`, а затем загружают сущность по `documentId`;
+- списки и детальные страницы статей и проектов получают данные через собственный
+  locale-aware data-layer [apps/front/src/shared/api/pages.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/api/pages.ts);
+- статические пути для статей и проектов строятся отдельно для `ru` и `en`;
+- карточки и preview-блоки используют общий route helper для `/:locale/articles/...` и
+  `/:locale/projects/...`;
 - rich text-контент выводится через `MarkdownContent`.
 
 Что это означает:
 
-- для `articles` и `projects` уже существует связка `Strapi -> OpenAPI -> generated client -> Astro`;
-- CMS реально используется как источник контента для двух публичных разделов.
+- для `articles` и `projects` уже существует связка `Strapi i18n -> shared fetch layer ->
+  locale-aware Astro routes`;
+- CMS реально используется как источник контента для двух двуязычных публичных разделов.
 
 Ограничение:
 
@@ -337,8 +357,15 @@
 - В [apps/front/src/widgets/Header/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Header/model/const.ts)
   и [apps/front/src/widgets/Footer/model/const.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/Footer/model/const.ts)
   локальные константы сохранены как fallback, но больше не являются основным источником данных для витрины первой очереди.
-- Списки и детальные страницы `articles`, `projects`, `vacancies` по-прежнему содержат
-  локальные UI-тексты и не переведены на locale-prefixed public routes.
+- В [apps/front/src/shared/i18n/content-collections.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/i18n/content-collections.ts)
+  зафиксирована локализованная copy для list/detail контуров `articles` и `projects`.
+- Legacy-маршруты [apps/front/src/pages/articles/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/articles/index.astro),
+  [apps/front/src/pages/articles/[slug]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/articles/[slug]/index.astro),
+  [apps/front/src/pages/projects/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/projects/index.astro)
+  и [apps/front/src/pages/projects/[slug]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/projects/[slug]/index.astro)
+  переведены в redirect compatibility layer на `/ru/...`.
+- Карьерный модуль `vacancies` по-прежнему содержит локальные UI-тексты и не переведен на
+  locale-prefixed production routes.
 
 Что это означает:
 
@@ -349,8 +376,8 @@
   preview-сценарий `draft -> server-side preview`;
 - preview-сценарий уже связан с `Strapi Admin` через генерацию целевых preview-ссылок на
   frontend по `documentId`, локали и статусу публикации;
-- неполнота проекта теперь связана не с отсутствием CMS-интеграции как таковой, а с ее
-  неполным охватом остальных публичных разделов и эксплуатационных сценариев.
+- неполнота проекта теперь связана не с отсутствием CMS-интеграции как таковой, а с
+  осознанной границей карьерного модуля и незавершенными эксплуатационными сценариями.
 
 ## 3. Уже реализованные части системы
 
@@ -365,6 +392,7 @@
 - OpenAPI-документацию backend и генерацию типизированного frontend-клиента;
 - локализованную главную витрину `/:locale/`, строящуюся по `home-page` из `Strapi`;
 - локализованные CMS-страницы `/:locale/:slug/`, строящиеся по `pages` и `Dynamic Zone`;
+- locale-prefixed публичные разделы `/:locale/articles/` и `/:locale/projects/`;
 - вынос ключевых текстов header/footer/main showcase из frontend в `global` и `home-page`;
 - CMS-управляемые `SEO/Open Graph` метаданные для `home-page` и `pages`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
@@ -417,9 +445,10 @@
 
 ### 4.3. Что уже является осознанным допустимым ограничением final scope
 
-- публичный locale-prefixed контур ограничен маршрутами `/:locale/` и `/:locale/:slug/`;
-- списковые и детальные production-маршруты `articles`, `projects` и `vacancies` могут
-  оставаться вне той же route-схемы `ru/en`;
+- публичный locale-prefixed контур ограничен маршрутами `/:locale/`, `/:locale/:slug/`,
+  `/:locale/articles/...` и `/:locale/projects/...`;
+- списковые и детальные production-маршруты `vacancies` могут оставаться вне той же
+  route-схемы `ru/en`;
 - CMS-управляемый `SEO` по отдельной `seo`-схеме остается ограниченным `home-page` и `pages`;
 - для `articles/projects/vacancies` допустим более простой meta-layer, строящийся в основном
   из самих контентных полей;
@@ -429,8 +458,8 @@
 
 ### 4.4. Дополнительные технические ограничения текущей версии
 
-- отсутствует единый подход к frontend-интеграции с CMS: статьи и проекты используют
-  generated SDK, вакансии используют рукописный API-слой;
+- отсутствует единый подход к frontend-интеграции с CMS: `pages/articles/projects`
+  используют собственный shared fetch-layer, вакансии используют отдельный рукописный API-слой;
 - полная prerender-сборка публичной витрины по-прежнему зависит от доступности `Strapi`
   во время build;
 - часть production-path зависит от внешней инфраструктуры `Vercel` и сетевой доступности
@@ -468,14 +497,16 @@
   `home-page`, `page`;
 - использование `components` и `Dynamic Zone` для `pages` и `home-page`, включая
   собственный `lead-form` block;
-- locale-prefixed маршруты `/:locale/` и `/:locale/:slug/`;
+- locale-prefixed маршруты `/:locale/`, `/:locale/:slug/`, `/:locale/articles/...`,
+  `/:locale/projects/...`;
 - вынос ключевых текстов навигации, футера и основной витрины в `Strapi`;
 - централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `twitter:*`, `noindex`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
 - публикационный contour `publish/unpublish -> admin-managed webhook -> rebuild` как реализованный кодовый механизм;
 - deployment-архитектуру `frontend на Vercel + CMS в Docker/PostgreSQL` с versioned env contract;
-- публичные маршруты статей, проектов и вакансий как уже существующие content sections;
+- публичные маршруты статей, проектов и вакансий как уже существующие content sections,
+  с отдельной route-границей для карьерного модуля.
 - пользовательские сценарии вакансий/откликов и маркетинговых лидов;
 - ограничения текущего состояния проекта и перечень обязательных доработок.
 

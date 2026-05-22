@@ -349,6 +349,33 @@ Source of truth:
 - подтверждение, что canonical/sitemap logic не сломана.
 ```
 
+### Фактический статус после закрытия multilingual contour
+
+Зафиксировано как реализованный результат:
+
+- трехслойная locale model `site locale (ru/en) -> CMS locale (ru-RU/en) -> public route pattern`;
+- locale-prefixed production routes для `home-page`, `page`, `articles`, `projects`;
+- locale-aware preview для `home-page`, `page`, `article`, `project`, `vacancy`;
+- locale-aware links и route helpers на стороне frontend;
+- redirect compatibility для legacy `/articles/*` и `/projects/*`;
+- исключение legacy `articles/projects` маршрутов из `sitemap`, чтобы не плодить дубли;
+- осознанное ограничение по `vacancies`: locale-ready CMS и preview без полного
+  двуязычного production-контура карьерного UI.
+
+Локально доказано:
+
+- `articles` и `projects` строятся по `/:locale/articles/...` и `/:locale/projects/...`;
+- preview для `article/project` возвращает на новые locale-aware public URLs;
+- `canonical` строится от новых locale-prefixed path helpers;
+- `sitemap` фильтрует legacy redirect routes и оставляет индексируемыми только финальные
+  public URLs.
+
+Не следует заявлять как реализованный результат:
+
+- двуязычный `VacancyExplorer` и форма отклика;
+- полный locale-prefixed production contour для `vacancies`;
+- единый editor-managed `SEO` schema для всех content sections.
+
 ## Этап 3. Единый CMS-managed `SEO/Open Graph`
 
 ### Цель

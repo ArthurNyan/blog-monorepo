@@ -1,0 +1,88 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import {
+	fetchProjectBySlug,
+	fetchProjectSlugs,
+} from "@/shared/api/pages";
+import { DetailHero } from "@/shared/components/DetailHero";
+import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import {
+	buildLocalizedCollectionPath,
+	isSiteLocale,
+	siteLocales,
+	toCmsLocale,
+} from "@/shared/i18n/config";
+import { getContentCollectionsCopy } from "@/shared/i18n/content-collections";
+
+export const getStaticPaths = async () => {
+	const localizedPaths = await Promise.all(
+		siteLocales.map(async (locale) => {
+			const slugs = await fetchProjectSlugs(toCmsLocale(locale));
+
+			return slugs.map((slug) => ({
+				params: { locale, slug },
+			}));
+		})
+	);
+
+	return localizedPaths.flat();
+};
+
+const locale = Astro.params.locale;
+const { slug } = Astro.params;
+
+if (!isSiteLocale(locale)) {
+	throw new Error(`Unsupported locale: ${locale}`);
+}
+
+if (!slug) {
+	throw new Error("Project slug is required");
+}
+
+const project = await fetchProjectBySlug(slug, toCmsLocale(locale));
+
+if (!project) {
+	return new Response(getContentCollectionsCopy(locale).projects.notFoundMessage, {
+		status: 404,
+	});
+}
+
+const copy = getContentCollectionsCopy(locale).projects;
+const pathname = buildLocalizedCollectionPath(locale, "projects", slug);
+const seo = buildSeoMetadata({
+	title: project.name,
+	description: project.description,
+	pathname,
+});
+---
+
+<MainLayout
+	content={{
+		title: project.name || copy.detailFallbackTitle,
+		description: project.description,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		cmsStatus: "published",
+	}}
+	className="flex flex-col"
+>
+	<DetailHero
+		title={project.name}
+		description={project.description}
+		date={project.date}
+		cover={project.cover || undefined}
+		logo={project.logo || undefined}
+	/>
+	{
+		project.content && (
+			<article class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 lg:py-20">
+				<div class="max-w-4xl mx-auto">
+					<MarkdownContent content={project.content} />
+				</div>
+			</article>
+		)
+	}
+</MainLayout>

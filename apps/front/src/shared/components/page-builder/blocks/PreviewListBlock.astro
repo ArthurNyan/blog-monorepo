@@ -12,9 +12,10 @@ import { VacancyCard } from "@/widgets/VacancyCard";
 interface Props {
 	block: PreviewListBlockType;
 	locale?: string;
+	siteLocale?: import("@/shared/i18n/config").SiteLocale;
 }
 
-const { block, locale } = Astro.props as Props;
+const { block, locale, siteLocale = "ru" } = Astro.props as Props;
 const limit = block.limit || 3;
 
 const articles =
@@ -49,7 +50,7 @@ const vacancies =
 		{block.source === "articles" && articles.length > 0 && (
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
 				{articles.map((article) => (
-					<ArticleCard article={article as never} client:load />
+					<ArticleCard article={article} locale={siteLocale} client:load />
 				))}
 			</div>
 		)}
@@ -57,7 +58,7 @@ const vacancies =
 		{block.source === "projects" && projects.length > 0 && (
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
 				{projects.map((project) => (
-					<ProjectCard project={project as never} client:load />
+					<ProjectCard project={project} locale={siteLocale} client:load />
 				))}
 			</div>
 		)}

@@ -24,14 +24,16 @@
   `author`, `project`, `vacancy`, `industry`, `job-role`, `vacancy-application`,
   `lead-submission`.
 - `Dynamic Zone` и библиотека block-компонентов уже реализованы для `home-page` и `page`.
-- Публичный locale-prefixed контур уже реализован для `/:locale/` и `/:locale/:slug/`.
+- Публичный locale-prefixed контур уже реализован для `/:locale/`, `/:locale/:slug/`,
+  `/:locale/articles/:slug/` и `/:locale/projects/:slug/`.
 - Защищенный `preview mode` уже реализован для `home-page`, `page`, `article`, `project`,
   `vacancy`.
 - Полноценный CMS-managed `SEO/Open Graph` контур уже реализован только для
   `home-page` и `page`.
 - `@astrojs/sitemap` и `@astrojs/vercel` уже подключены.
-- В репозитории на текущий момент не зафиксированы versioned `Docker`-файлы для CMS,
-  оформленный `webhook -> rebuild` и формальная матрица `roles/permissions`.
+- В репозитории уже зафиксированы versioned `Docker`-файлы для CMS и оформленный
+  `webhook -> rebuild` contour; незакрытым обязательным блоком остается прежде всего
+  формальная матрица `roles/permissions` и reproducible verification pack.
 - `lint` и `test` цели в `apps/front` и `apps/cms` пока остаются заглушками.
 
 ## 2. Final Scope
@@ -56,28 +58,35 @@
 
 - `/:locale/` для главной витрины на основе `home-page`;
 - `/:locale/:slug/` для CMS-страниц `page`;
-- locale-aware `Header`, `Footer`, `lang`, `canonical` и `SEO` для этого storefront-core;
+- `/:locale/articles/` и `/:locale/articles/:slug/` для `article`;
+- `/:locale/projects/` и `/:locale/projects/:slug/` для `project`;
+- locale-aware `Header`, `Footer`, `lang`, `canonical` и `SEO` для этого storefront-core
+  и для `articles/projects`;
 - locale-aware `preview` для `home-page`, `page`, `article`, `project`, `vacancy`.
 
 #### Уже реализовано
 
 - `Strapi i18n` уже включен для всех перечисленных CMS-сущностей.
-- Публичные маршруты `/:locale/` и `/:locale/:slug/` уже работают.
+- Публичные маршруты `/:locale/`, `/:locale/:slug/`, `/:locale/articles/...` и
+  `/:locale/projects/...` уже работают.
 - Главная витрина, `pages`, навигация и футер уже завязаны на локаль.
+- `articles` и `projects` уже используют locale-aware route helpers и локализованные
+  public list/detail pages.
 - `preview` уже принимает локаль для всех ключевых сущностей.
 
 #### Обязательно реализовать
 
 - не расширять дипломную формулировку до тезиса о "полностью локализованном всем публичном
-  сайте";
+  сайте", включая карьерный модуль;
 - в следующих этапах последовательно описывать `ru/en` как storefront-core для `global`,
-  `home-page`, `page` плюс локализуемые CMS-модели;
-- в тестовой матрице отдельно подтвердить работу `ru/en` именно для storefront-core.
+  `home-page`, `page` плюс locale-prefixed content collections `article/project`;
+- в тестовой матрице отдельно подтвердить работу `ru/en` для storefront-core,
+  `articles` и `projects`.
 
 #### Останется допустимым ограничением
 
-- `articles`, `projects` и `vacancies` могут остаться вне locale-prefixed production routes;
-- для этих разделов допускается наличие локализованных записей в `Strapi` и localized
+- `vacancies` могут остаться вне locale-prefixed production routes;
+- для карьерного модуля допускается наличие локализованных записей в `Strapi` и localized
   preview без обязательного переноса публичных URL на `/:locale/...`;
 - `vacancy-application` и `lead-submission` не входят в `ru/en` как локализуемые прикладные
   записи и остаются нелокализованными.
@@ -156,7 +165,8 @@
 
 - успешная сборка `apps/front` и `apps/cms`;
 - создание, preview и публикация страницы `page` без правки frontend-кода;
-- проверка `ru/en` для `global`, `home-page` и хотя бы одной `page`;
+- проверка `ru/en` для `global`, `home-page`, хотя бы одной `page`, хотя бы одной
+  `article` и хотя бы одного `project`;
 - проверка preview для `home-page`, `page`, `article`, `project`, `vacancy`;
 - проверка `SEO/Open Graph` и canonical для `home-page` и `page`;
 - проверка наличия `noindex` на preview-страницах;
@@ -199,23 +209,25 @@
 
 - `pages`, `Dynamic Zone` и page builder для `home-page/page`;
 - storefront-core `ru/en` для `global`, `home-page`, `page`;
+- locale-prefixed public routes `ru/en` для `articles` и `projects`;
 - `preview mode` для `home-page`, `page`, `article`, `project`, `vacancy`;
 - CMS-managed `SEO/Open Graph` для `home-page` и `page`;
 - `sitemap` на стороне `Astro`;
+- versioned `webhook -> rebuild` contour;
+- versioned `Docker`-контур для `apps/cms`;
 - маркетинговая lead form и форма отклика на вакансию с `consent` и `honeypot`;
 - `Vercel` adapter и environment contract для `SITE_URL`, `PUBLIC_URL`, `IS_PROXIED`,
   `PREVIEW_SECRET`.
 
 ### Обязательно реализовать
 
-- `webhook -> rebuild`;
-- versioned `Docker`-контур для `apps/cms`;
 - формальную матрицу `roles/permissions`;
 - воспроизводимую матрицу проверок и набор итоговых метрик.
 
 ### Останется допустимым ограничением даже в финальной версии
 
-- locale-prefixed production routes ограничены storefront-core (`home-page` и `page`);
+- locale-prefixed production routes ограничены storefront-core плюс `articles/projects`,
+  а карьерный модуль `vacancies` остается отдельным ограничением;
 - полный editor-managed `SEO` ограничен `home-page` и `page`;
 - тестовый контур может остаться в основном ручным;
 - публикация может оставаться rebuild-based без real-time обновлений;

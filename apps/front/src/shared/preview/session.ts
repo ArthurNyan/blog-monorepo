@@ -1,7 +1,12 @@
 import { createHash } from "node:crypto";
 import type { AstroCookies } from "astro";
 import type { CmsRequestOptions } from "@/shared/api/cms";
-import { buildLocalizedPath, type SiteLocale } from "@/shared/i18n/config";
+import {
+	buildLocalizedCollectionPath,
+	buildLocalizedPath,
+	defaultSiteLocale,
+	type SiteLocale,
+} from "@/shared/i18n/config";
 
 export const previewCookieName = "__cms_preview";
 export type PreviewEntryType = "page" | "article" | "project" | "vacancy";
@@ -93,10 +98,20 @@ export const buildPublicPath = (locale: SiteLocale, slug?: string) =>
 
 export const buildPublicCollectionPath = (
 	type: Exclude<PreviewEntryType, "page">,
-	slug?: string
+	slug?: string,
+	locale?: SiteLocale
 ) => {
 	const normalizedSlug = slug?.replace(/^\/+|\/+$/g, "");
 	const segment = previewCollectionSegments[type];
+
+	if (type === "article" || type === "project") {
+		const route = type === "article" ? "articles" : "projects";
+		return buildLocalizedCollectionPath(
+			locale || defaultSiteLocale,
+			route,
+			normalizedSlug || ""
+		);
+	}
 
 	if (!normalizedSlug) {
 		return `/${segment}/`;

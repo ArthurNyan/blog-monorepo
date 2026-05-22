@@ -268,6 +268,7 @@ export type CmsPage = {
 export type ArticlePreview = {
 	id?: string | number;
 	documentId?: string;
+	locale?: string;
 	name: string;
 	description: string;
 	slug: string;
@@ -277,6 +278,7 @@ export type ArticlePreview = {
 export type ProjectPreview = {
 	id?: string | number;
 	documentId?: string;
+	locale?: string;
 	name: string;
 	description: string;
 	slug: string;
@@ -493,6 +495,7 @@ export const fetchArticlePreviews = async (
 		.map((item) => ({
 			id: item.id,
 			documentId: item.documentId,
+			locale: item.locale,
 			name: item.name || "",
 			description: item.description || "",
 			slug: item.slug || "",
@@ -520,11 +523,26 @@ export const fetchProjectPreviews = async (
 		.map((item) => ({
 			id: item.id,
 			documentId: item.documentId,
+			locale: item.locale,
 			name: item.name || "",
 			description: item.description || "",
 			slug: item.slug || "",
 			cover: item.cover,
 		}));
+};
+
+export const fetchArticleSlugs = async (
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+) => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/articles"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("fields[0]", "slug");
+	url.searchParams.set("pagination[pageSize]", "100");
+	url.searchParams.set("sort[0]", "slug:asc");
+
+	const items = await fetchCmsList<{ slug?: string }>(url, options);
+	return items.map((item) => item.slug).filter(Boolean) as string[];
 };
 
 export const fetchArticleBySlug = async (
@@ -593,6 +611,20 @@ export const fetchProjectBySlug = async (
 		logo: resolveCmsMedia(project.logo),
 		content: project.content,
 	};
+};
+
+export const fetchProjectSlugs = async (
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+) => {
+	const url = applyCmsRequestOptions(buildCmsUrl("/projects"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("fields[0]", "slug");
+	url.searchParams.set("pagination[pageSize]", "100");
+	url.searchParams.set("sort[0]", "slug:asc");
+
+	const items = await fetchCmsList<{ slug?: string }>(url, options);
+	return items.map((item) => item.slug).filter(Boolean) as string[];
 };
 
 export const fetchVacancyPreviews = async (

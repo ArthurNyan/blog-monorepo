@@ -1,0 +1,74 @@
+---
+import MainLayout from "@/layouts/main.astro";
+import { fetchArticlePreviews } from "@/shared/api/pages";
+import { ArticleCard } from "@/widgets/ArticleCard";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
+import {
+	buildLocalizedCollectionPath,
+	isSiteLocale,
+	siteLocales,
+	toCmsLocale,
+} from "@/shared/i18n/config";
+import { getContentCollectionsCopy } from "@/shared/i18n/content-collections";
+
+export const getStaticPaths = async () =>
+	siteLocales.map((locale) => ({
+		params: { locale },
+	}));
+
+const locale = Astro.params.locale;
+
+if (!isSiteLocale(locale)) {
+	throw new Error(`Unsupported locale: ${locale}`);
+}
+
+const copy = getContentCollectionsCopy(locale).articles;
+const pathname = buildLocalizedCollectionPath(locale, "articles");
+const seo = buildSeoMetadata({
+	title: copy.listTitle,
+	description: copy.listDescription,
+	pathname,
+});
+const articles = await fetchArticlePreviews(100, toCmsLocale(locale));
+---
+
+<MainLayout
+	content={{
+		title: copy.listTitle,
+		description: copy.listDescription,
+		seo,
+		pathname,
+		locale,
+		lang: locale,
+		cmsStatus: "published",
+	}}
+	className="flex flex-col"
+>
+	<div class="container mx-auto px-4 py-12 md:py-16">
+		<div class="mb-8 md:mb-12">
+			<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-3 md:mb-4">
+				{copy.listTitle}
+			</h1>
+			<p class="text-base md:text-lg text-muted-foreground">
+				{copy.listDescription}
+			</p>
+		</div>
+
+		{
+			articles.length > 0 ? (
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+					{articles.map((article) => (
+						<ArticleCard article={article} locale={locale} client:load />
+					))}
+				</div>
+			) : (
+				<EmptyState
+					title={copy.emptyTitle}
+					description={copy.emptyDescription}
+					client:load
+				/>
+			)
+		}
+	</div>
+</MainLayout>

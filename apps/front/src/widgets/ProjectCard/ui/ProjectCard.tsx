@@ -1,4 +1,3 @@
-import { Badge } from "@/shared/components/ui/badge";
 import {
 	Card,
 	CardImage,
@@ -6,20 +5,43 @@ import {
 	CardTitle,
 	CardDescription,
 } from "@/shared/components/ui/card";
-import type { Project } from "@/shared/api/generated/types.gen";
+import type { ProjectPreview } from "@/shared/api/pages";
+import {
+	buildLocalizedCollectionPath,
+	defaultSiteLocale,
+	type SiteLocale,
+} from "@/shared/i18n/config";
 
 interface ProjectCardProps {
-	project: Project;
-	baseUrl?: string;
+	project: ProjectPreview;
+	locale?: SiteLocale;
 }
 
 const cmsBaseUrl = import.meta.env.PUBLIC_CMS_URL ?? "http://localhost:1337";
 
-export const ProjectCard = ({ project, baseUrl = cmsBaseUrl }: ProjectCardProps) => {
-	const coverUrl = project.cover?.url ? `${baseUrl}${project.cover.url}` : "/placeholder-image.svg";
+const resolveCoverUrl = (url?: string) => {
+	if (!url) {
+		return "/placeholder-image.svg";
+	}
+
+	return url.startsWith("http://") || url.startsWith("https://")
+		? url
+		: `${cmsBaseUrl}${url}`;
+};
+
+export const ProjectCard = ({
+	project,
+	locale = defaultSiteLocale,
+}: ProjectCardProps) => {
+	const coverUrl = resolveCoverUrl(
+		project.cover?.formats?.small?.url || project.cover?.url
+	);
 
 	return (
-		<a href={`/projects/${project.slug}`} className="block group h-full">
+		<a
+			href={buildLocalizedCollectionPath(locale, "projects", project.slug)}
+			className="block group h-full"
+		>
 			<Card className="h-full flex flex-col hover:border-primary/70 transition-all duration-300">
 				<CardImage
 					src={coverUrl}
