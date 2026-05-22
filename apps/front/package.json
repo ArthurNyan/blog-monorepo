@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "python3 -m http.server ${PORT:-4321} --bind ${HOST:-127.0.0.1} -d dist/client",
     "astro": "astro",
     "generate:api": "openapi-ts",
     "smoke:acceptance": "node scripts/acceptance-smoke.mjs"
