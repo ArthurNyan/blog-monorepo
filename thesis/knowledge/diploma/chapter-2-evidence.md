@@ -49,7 +49,12 @@
   который для публичных `GET /api/*` принудительно выставляет `status=published`,
   если запрос не содержит корректный `x-preview-secret`.
 - В [apps/cms/src/index.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/index.ts)
-  `bootstrap` предупреждает об отсутствии `PUBLIC_URL` и `PREVIEW_SECRET`.
+  `bootstrap` предупреждает об отсутствии `PUBLIC_URL` и `PREVIEW_SECRET`, а также
+  синхронизирует versioned security model.
+- В
+  [apps/cms/src/utils/security-model.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/security-model.ts)
+  зафиксирован source of truth для admin roles `Marketer / Content Manager`, `Editor`,
+  `HR` и для content API roles `public` и `authenticated`.
 
 Вывод для главы 2:
 
@@ -108,9 +113,12 @@
 
 - Для `article`, `author`, `global`, `home-page`, `project`, `vacancy`,
   `vacancy-application`, `lead-submission` используются стандартные `createCoreRouter`,
-  `createCoreController`, `createCoreService`.
-- Для `industry` и `job-role` в коде явно разрешены публичные `find` и `findOne`
-  без авторизации.
+  `createCoreController`, `createCoreService`, но content API routes урезаны до
+  минимально нужных действий:
+  - `global` и `home-page`: только `find`;
+  - `page`, `article`, `author`, `project`, `vacancy`, `industry`, `job-role`:
+    только `find` и `findOne`;
+  - `lead-submission` и `vacancy-application`: только `create`.
 - В [apps/cms/src/api/doc-api/routes/doc-api.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/doc-api/routes/doc-api.ts)
   реализован кастомный маршрут `GET /api/documentation/:version/:slug`.
 - В [apps/cms/src/api/doc-api/controllers/doc-api.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/doc-api/controllers/doc-api.ts)
@@ -125,12 +133,14 @@
 - frontend может генерировать типизированный клиент из OpenAPI;
 - модуль вакансий опирается на уже описанные в CMS таксономии и структуру откликов;
 - в CMS зафиксирован отдельный прикладной контур сбора маркетинговых лидов без смешения
-  с карьерными откликами.
+  с карьерными откликами;
+- границы editor roles и public content API теперь синхронизируются из versioned source of
+  truth, а не только из ручного состояния локальной БД.
 
 Ограничения:
 
-- в коде не зафиксированы экспортируемые настройки `roles/permissions` для всех публичных
-  маршрутов; часть разрешений может зависеть от состояния БД и настроек админки;
+- секреты `PREVIEW_SECRET` и `CMS_API_TOKEN` по-прежнему не versioned и должны
+  настраиваться вручную в окружении;
 - runtime-подтверждение запуска Docker-контейнеров зависит от внешней доступности registry.
 
 ## 2. Текущее состояние `apps/front`
@@ -441,7 +451,6 @@
 
 ### 4.2. Что пока не реализовано, но обязательно для финального результата
 
-- формальная матрица `roles/permissions`;
 - воспроизводимая тестовая матрица вместо заглушек `lint/test`, включая фиксацию метрик
   `SEO`, `accessibility` и `performance`.
 
@@ -467,8 +476,10 @@
   во время build;
 - часть production-path зависит от внешней инфраструктуры `Vercel` и сетевой доступности
   registry во время Docker build;
+- secrets и фактические учетные записи пользователей остаются эксплуатационной настройкой,
+  а не versioned артефактом репозитория;
 - значительная часть project chapter уже может писаться как описание завершенной
-  реализации, кроме блоков `roles/permissions` и метрик.
+  реализации, кроме блока финальных метрик.
 
 ## 5. Минимальный практический набор обязательных доработок
 
@@ -477,7 +488,6 @@
 
 | Обязательная доработка | Почему это критично именно для главы 2 | Что уже есть в коде | Что нужно довести |
 |---|---|---|---|
-| `roles/permissions` | без role matrix раздел безопасности и editor workflow остается декларативным | `users-permissions` уже установлен, карьерный и маркетинговый контуры в модели данных уже отделимы | зафиксировать роли `administrator`, `marketer/content-manager`, `editor`, `hr` и их права |
 | Тестовая матрица и метрики | без нее диплом теряет доказательность результата | storefront-core, preview, sitemap и формы уже можно проверять по коду | оформить воспроизводимые проверки, зафиксировать `SEO`, `accessibility`, `performance` и rebuild |
 
 Почему именно этот набор минимален:
@@ -508,6 +518,8 @@
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
 - публикационный contour `publish/unpublish -> admin-managed webhook -> rebuild` как реализованный кодовый механизм;
 - deployment-архитектуру `frontend на Vercel + CMS в Docker/PostgreSQL` с versioned env contract;
+- versioned security model для `administrator`, `marketer/content-manager`, `editor`,
+  `hr`, а также read-only public API contour и preview boundary;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections,
   с отдельной route-границей для карьерного модуля.
 - пользовательские сценарии вакансий/откликов и маркетинговых лидов;
@@ -515,6 +527,5 @@
 
 Пока рано писать как реализованный результат:
 
-- редакторские роли и публикационные ограничения как завершенный функционал;
 - полную end-to-end воспроизводимость внешнего `Vercel` rebuild внутри локальной среды;
 - финальные измеренные метрики `SEO`, `accessibility` и `performance`.

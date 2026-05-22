@@ -544,6 +544,34 @@ Source of truth:
 - если что-то нельзя versioned-экспортировать, сделать точную матрицу и инструкцию воспроизведения.
 ```
 
+### Фактический статус после закрытия `roles/permissions` и editor workflow
+
+Зафиксировано как реализованный результат:
+
+- versioned source of truth для editor roles и content API roles в
+  [security-model.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/security-model.ts);
+- bootstrap-синхронизация admin roles `Marketer / Content Manager`, `Editor`, `HR`
+  и content API roles `public` / `authenticated`;
+- route-level ограничение content API до минимально нужных действий;
+- отдельные knowledge-артефакты по formal security model и editor workflow.
+
+Что доказано локально:
+
+- `npm run build` для `apps/cms` проходит после добавления role sync;
+- повторный `Strapi load` воспроизводимо поднимает CMS с новой security model;
+- `public` role после синхронизации содержит только read-only действия для storefront и preview.
+
+Что остается manual even after implementation:
+
+- создание реальных admin users и назначение им ролей;
+- выпуск секретного значения `CMS_API_TOKEN`;
+- установка `PREVIEW_SECRET` в окружение `apps/cms` и `apps/front`.
+
+Source of truth:
+
+- [security-model.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/security-model.md)
+- [editor-workflow.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/editor-workflow.md)
+
 ## Этап 5. Testing, Metrics And Acceptance Evidence
 
 ### Цель

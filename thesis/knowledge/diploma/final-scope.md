@@ -152,20 +152,22 @@
 #### Уже реализовано
 
 - в проекте установлен `@strapi/plugin-users-permissions`;
-- в knowledge уже зафиксирована необходимость role-based разграничения.
+- в `apps/cms` уже реализован versioned bootstrap sync для admin roles
+  `Marketer / Content Manager`, `Editor`, `HR`;
+- `public` role уже приведена к read-only content API contour, а `authenticated`
+  role оставлена без permissions;
+- в knowledge уже существуют отдельные документы `security-model.md` и
+  `editor-workflow.md`.
 
 #### Обязательно реализовать
 
-- формальную матрицу `roles/permissions` без двусмысленности;
-- разграничение маркетингового и карьерного контура;
-- явное закрепление `lead-submission` за маркетинговым контуром;
-- явное правило, кто имеет право публикации и кто имеет право просмотра откликов;
-- описание ролей в knowledge и в тексте ВКР как части editor workflow.
+- описание ролей в knowledge и в тексте ВКР как части editor workflow;
+- привязку этих ролей к воспроизводимой test/evidence matrix.
 
 #### Останется допустимым ограничением
 
-- роли могут остаться формализованными на уровне knowledge-матрицы и reproducible manual setup,
-  а не обязательно экспортируемыми как полностью автоматизированный seed ролей;
+- secrets, API token values и фактические учетные записи пользователей могут оставаться
+  manual environment/setup step и не обязаны versioned-экспортироваться в репозиторий;
 - сложный workflow согласования материалов между несколькими редакционными этапами не входит
   в итоговый объем.
 

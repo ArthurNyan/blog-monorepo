@@ -4,6 +4,7 @@ import {
   getPublicationWebhookConfig,
   syncManagedPublicationWebhook,
 } from './utils/publication-webhook';
+import { syncSecurityModel } from './utils/security-model';
 
 export default {
   /**
@@ -38,6 +39,24 @@ export default {
       strapi.log.warn(
         'PUBLIC_URL is not set. Generated documentation and absolute CMS links will fall back to localhost values.'
       );
+    }
+
+    const securityModelResult = await syncSecurityModel(strapi);
+
+    for (const result of securityModelResult.adminRoleResults) {
+      if (result.action !== 'noop') {
+        strapi.log.info(
+          `Security model ${result.action}: ${result.target} (${result.changes.join(', ')}).`
+        );
+      }
+    }
+
+    for (const result of securityModelResult.contentApiRoleResults) {
+      if (result.action !== 'noop') {
+        strapi.log.info(
+          `Content API role ${result.action}: ${result.target} (${result.changes.join(', ')}).`
+        );
+      }
     }
 
     const rebuildConfig = getPublicationWebhookConfig();

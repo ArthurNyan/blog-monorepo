@@ -4,7 +4,10 @@
 
 import { factories } from '@strapi/strapi';
 
-// Strapi's generated ContentType union lags behind new schema files until a full rebuild.
 export default factories.createCoreRouter(
-	'api::lead-submission.lead-submission' as any
+  // Strapi's generated ContentType union lags behind new schema files until a full rebuild.
+  'api::lead-submission.lead-submission' as any,
+  {
+    only: ['create'],
+  }
 );
