@@ -1,0 +1,16 @@
+.git
+.nx
+node_modules
+**/node_modules
+**/.pnpm-store
+**/.cache
+**/.tmp
+**/.strapi
+**/.vscode
+**/build
+**/dist
+**/.env
+**/.env.docker
+apps/front
+research
+thesis

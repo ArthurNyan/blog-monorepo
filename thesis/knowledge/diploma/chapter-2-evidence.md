@@ -5,7 +5,7 @@
 Документ фиксирует подтвержденные по коду факты о текущем состоянии проекта, чтобы
 проектная глава ВКР опиралась на реальную реализацию, а не на абстрактный план.
 
-Дата актуализации: `2026-05-21`.
+Дата актуализации: `2026-05-22`.
 
 ## Методика фиксации фактов
 
@@ -57,8 +57,8 @@
 - в репозитории есть база для REST API и OpenAPI-контракта;
 - в коде зафиксирована базовая конфигурация для схемы `CMS в Docker за proxy`
   и защищенного draft-preview;
-- production-конфигурация `Docker` на текущем этапе все еще не зафиксирована как
-  versioned deployment bundle.
+- backend уже дополнен versioned publication/deployment contour, включая rebuild hook и
+  Docker bundle.
 
 ### 1.2. Существующие сущности CMS
 
@@ -131,7 +131,7 @@
 
 - в коде не зафиксированы экспортируемые настройки `roles/permissions` для всех публичных
   маршрутов; часть разрешений может зависеть от состояния БД и настроек админки;
-- нет versioned-конфигурации `Docker` для production-запуска CMS.
+- runtime-подтверждение запуска Docker-контейнеров зависит от внешней доступности registry.
 
 ## 2. Текущее состояние `apps/front`
 
@@ -374,6 +374,8 @@
 - форму отклика на вакансию с валидацией, `honeypot`, consent и загрузкой резюме;
 - маркетинговую lead form с валидацией, `honeypot`, consent и Astro API route;
 - гибридный публикационный контур frontend: prerendered public routes + server-side preview.
+- versioned admin-managed webhook `publish/unpublish -> rebuild`;
+- versioned Docker contour CMS с `Dockerfile`, `compose.yml` и production-like env contract.
 
 ## 4. Ограничения текущего состояния проекта
 
@@ -384,15 +386,36 @@
   [final-scope.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/final-scope.md)
   не считаются провалом итоговой версии.
 
-### 4.1. Что пока не реализовано, но обязательно для финального результата
+### 4.1. Что уже закрыто как обязательная часть final scope
 
-- production-сценарий `webhook -> rebuild`;
+- production-oriented сценарий `publish/unpublish -> webhook -> rebuild` на стороне CMS;
 - versioned-конфигурация CMS в `Docker`;
+- формализованный env-contract для preview, rebuild hook и Docker contour.
+
+Подробный source of truth по этому участку вынесен в
+[publication-deployment-contour.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/publication-deployment-contour.md).
+
+Локально доказано:
+
+- `TypeScript`-компиляция CMS;
+- production build CMS;
+- создание managed webhook в `strapi_webhooks` при старте CMS;
+- валидность `compose.yml` при наличии корректного `.env.docker`.
+
+Локально не доказано end-to-end:
+
+- конечный внешний `Vercel` rebuild после production hook;
+- полный `docker build` как завершенный результат текущей сессии, потому что проверка
+  уперлась во внешний сетевой сбой загрузки `pnpm` через `corepack`, а не в ошибку
+  versioned Docker bundle.
+
+### 4.2. Что пока не реализовано, но обязательно для финального результата
+
 - формальная матрица `roles/permissions`;
 - воспроизводимая тестовая матрица вместо заглушек `lint/test`, включая фиксацию метрик
   `SEO`, `accessibility` и `performance`.
 
-### 4.2. Что уже является осознанным допустимым ограничением final scope
+### 4.3. Что уже является осознанным допустимым ограничением final scope
 
 - публичный locale-prefixed контур ограничен маршрутами `/:locale/` и `/:locale/:slug/`;
 - списковые и детальные production-маршруты `articles`, `projects` и `vacancies` могут
@@ -404,15 +427,16 @@
 - публикация может оставаться rebuild-based без real-time обновлений;
 - формы могут оставаться без `rate limit`, CRM-интеграции и email automation.
 
-### 4.3. Дополнительные технические ограничения текущей версии
+### 4.4. Дополнительные технические ограничения текущей версии
 
 - отсутствует единый подход к frontend-интеграции с CMS: статьи и проекты используют
   generated SDK, вакансии используют рукописный API-слой;
 - полная prerender-сборка публичной витрины по-прежнему зависит от доступности `Strapi`
   во время build;
-- значительная часть проектной главы пока не может быть написана как описание завершенной
-  реализации, но уже может быть написана как описание существующей архитектурной базы и
-  конкретных точек доработки.
+- часть production-path зависит от внешней инфраструктуры `Vercel` и сетевой доступности
+  registry во время Docker build;
+- значительная часть project chapter уже может писаться как описание завершенной
+  реализации, кроме блоков `roles/permissions` и метрик.
 
 ## 5. Минимальный практический набор обязательных доработок
 
@@ -421,9 +445,7 @@
 
 | Обязательная доработка | Почему это критично именно для главы 2 | Что уже есть в коде | Что нужно довести |
 |---|---|---|---|
-| `webhook -> rebuild` | замыкает публикационный контур `Strapi -> publish -> rebuild -> Astro/Vercel` | публичная витрина уже prerendered, есть `SITE_URL`, `sitemap` и preview | оформить deploy hook, вызвать его после публикации и зафиксировать проверку |
-| `Docker` для CMS | deployment в `Docker` входит в практический результат ВКР | backend уже учитывает `PUBLIC_URL`, `IS_PROXIED`, production-like окружение и отдельный запуск CMS | добавить versioned deployment bundle и подтвердить воспроизводимый запуск |
-| `roles/permissions` | без role matrix раздел безопасности и editor workflow остается декларативным | `users-permissions` уже установлен, карьерный и маркетинговый контуры в модели данных уже отделимы | зафиксировать роли `administrator`, `content-manager`, `editor`, `hr` и их права |
+| `roles/permissions` | без role matrix раздел безопасности и editor workflow остается декларативным | `users-permissions` уже установлен, карьерный и маркетинговый контуры в модели данных уже отделимы | зафиксировать роли `administrator`, `marketer/content-manager`, `editor`, `hr` и их права |
 | Тестовая матрица и метрики | без нее диплом теряет доказательность результата | storefront-core, preview, sitemap и формы уже можно проверять по коду | оформить воспроизводимые проверки, зафиксировать `SEO`, `accessibility`, `performance` и rebuild |
 
 Почему именно этот набор минимален:
@@ -451,12 +473,14 @@
 - централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `twitter:*`, `noindex`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
+- публикационный contour `publish/unpublish -> admin-managed webhook -> rebuild` как реализованный кодовый механизм;
+- deployment-архитектуру `frontend на Vercel + CMS в Docker/PostgreSQL` с versioned env contract;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections;
 - пользовательские сценарии вакансий/откликов и маркетинговых лидов;
 - ограничения текущего состояния проекта и перечень обязательных доработок.
 
 Пока рано писать как реализованный результат:
 
-- production deployment pipeline;
-- редакторские роли и публикационные ограничения как завершенный функционал.
-- `webhook -> rebuild` как проверенный production-сценарий.
+- редакторские роли и публикационные ограничения как завершенный функционал;
+- полную end-to-end воспроизводимость внешнего `Vercel` rebuild внутри локальной среды;
+- финальные измеренные метрики `SEO`, `accessibility` и `performance`.

@@ -203,3 +203,48 @@
   усиливает пропорционально аргументацию ВКР. Freeze-контракт нужен именно затем, чтобы
   следующие агенты не раздували тему и не называли ограничение незавершенностью, если оно
   сознательно оставлено допустимым в финальной версии.
+
+### 28. Гранулярность publication rebuild contour
+
+- Решение: rebuild hook должен срабатывать не только для `home-page` и `page`, но для всех
+  `draft/publish` сущностей, изменение которых влияет на уже существующие static public routes:
+  `global`, `home-page`, `page`, `article`, `project`, `vacancy`, `author`, `industry`,
+  `job-role`.
+- Альтернативы: ограничивать rebuild только маркетинговыми страницами storefront-core или
+  вызывать rebuild на любые `Strapi` публикации без фильтрации.
+- Почему выбрано: текущий frontend baseline уже prerender-ит не только `/:locale/` и
+  `/:locale/:slug/`, но и `articles`, `projects`, `vacancies` с их связанными авторами и
+  карьерными справочниками. Если rebuild вызывать только для части контента, публичная
+  витрина будет расходиться с опубликованным состоянием CMS. Если же триггерить rebuild на
+  любые сущности, в contour попадут формы и служебные записи, которые не влияют на
+  prerendered output.
+
+### 29. Versioned deployment contract для publication contour
+
+- Решение: закрепить publication/deployment как versioned bundle из трех частей:
+  admin-managed `Strapi` webhook с `entry.publish/entry.unpublish`, внешний `FRONTEND_REBUILD_*`
+  contract и Docker contour `apps/cms` c `Dockerfile + compose.yml + .env.docker.example`.
+- Альтернативы: полагаться на ручную настройку deploy hooks вне репозитория или описывать
+  deployment только текстом без versioned-файлов.
+- Почему выбрано: диплому нужен инженерный результат, а не только архитектурный тезис.
+  Пока rebuild hook и Docker contour не зафиксированы в коде и конфигурации репозитория,
+  публикационный процесс остается проектным намерением. Versioned bundle позволяет писать
+  про deployment как про самостоятельный артефакт.
+
+### 30. Граница доказанности publication/deployment результата
+
+- Решение: в тексте диплома явно разделять локально доказанный contour и внешний production
+  segment.
+- Что считается доказанным:
+  - компиляция и production build CMS;
+  - создание managed webhook в `strapi_webhooks` при старте CMS;
+  - валидность `compose.yml` и env-contract.
+- Что не следует описывать как воспроизведенное end-to-end:
+  - внешний `Vercel` rebuild после production hook;
+  - полный `docker build`, если его срывает внешний registry/network path, а не ошибка
+    versioned bundle.
+- Альтернативы: либо объявлять весь production path завершенным без локального доказательства,
+  либо вообще не включать publication/deployment как завершенный раздел второй главы.
+- Почему выбрано: первая альтернатива ослабляет достоверность ВКР, вторая теряет сильный
+  инженерный результат. Правильнее зафиксировать реализованный contour честно и отдельно
+  обозначить внешние участки, которые зависят от инфраструктуры за пределами репозитория.

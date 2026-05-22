@@ -210,6 +210,30 @@
 - сценарий публикации;
 - подтверждение того, что rebuild запускается без ручного `frontend build`.
 
+### Фактический статус после закрытия publication/deployment contour
+
+Зафиксировано как реализованный результат:
+
+- versioned admin-managed webhook `Strapi entry.publish/entry.unpublish -> rebuild hook`;
+- versioned Docker contour `apps/cms`;
+- отдельный env-contract для preview, rebuild hook и Docker deployment;
+- материалы для главы 2 по publication flow и deployment architecture.
+
+Локально доказано:
+
+- `TypeScript`-компиляция и production build CMS;
+- создание webhook-записи в `strapi_webhooks` при старте CMS;
+- валидность `compose.yml` при корректном `.env.docker`.
+
+Не доказано как end-to-end локальный факт:
+
+- внешний `Vercel` rebuild после production hook;
+- полный `docker build`, если он срывается внешней сетью/registry path, а не ошибкой bundle.
+
+Source of truth:
+
+- [publication-deployment-contour.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/publication-deployment-contour.md)
+
 ### Промпт для агента
 
 ```text

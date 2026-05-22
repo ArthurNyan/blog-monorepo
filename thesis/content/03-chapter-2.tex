@@ -369,8 +369,55 @@ URL-контракта. Следовательно, для публичных pr
 техническая база для автоматической генерации карты сайта и корректной публикации
 абсолютных метаданных.
 
-% TODO: Добавить подраздел о webhook -> rebuild и production deployment
-% после появления versioned-конфигурации Vercel/Docker и проверяемого публикационного контура.
+\subsection{Публикационный контур и rebuild frontend}
+
+После завершения базового CMS-first контура в проекте оформлен отдельный publication flow,
+который связывает редакторскую публикацию в \texttt{Strapi} с обновлением prerendered
+витрины на \texttt{Astro}. Для этого во время \texttt{bootstrap} backend автоматически
+синхронизирует versioned webhook-запись в системной таблице \texttt{strapi\_webhooks},
+а значит и в разделе \texttt{Settings -> Webhooks} административной панели. Эта запись
+подписывается на события \texttt{entry.publish} и \texttt{entry.unpublish} и указывает на
+внешний rebuild hook frontend.
+
+На стороне frontend этот сценарий опирается на уже существующую конфигурацию
+\texttt{Astro} с \texttt{Vercel} adapter, prerendered публичными маршрутами и отдельным
+server-side preview-контуром. Тем самым формируется воспроизводимая схема
+\texttt{Strapi -> publish -> webhook -> rebuild -> Astro/Vercel}, в которой редактору не
+требуется вручную инициировать frontend-сборку после публикации контента.
+
+Локально в рамках работы было подтверждено, что при старте \texttt{Strapi} webhook
+автоматически создается в \texttt{strapi\_webhooks}: это было проверено как по логу
+\texttt{bootstrap}, так и прямым чтением временной \texttt{sqlite}-базы. Следовательно,
+webhook не является скрытой ручной настройкой в интерфейсе, а выступает versioned частью
+репозитория. Однако конечный production rebuild на \texttt{Vercel} относится к внешнему
+инфраструктурному участку и в пределах репозитория не воспроизводился как end-to-end путь.
+Поэтому в дипломе корректно утверждать, что publication hook реализован и локально
+доказан, но не заявлять, что весь внешний production deployment был повторен внутри
+локальной среды.
+
+\subsection{Deployment-архитектура CMS}
+
+Для CMS в проекте добавлен versioned deployment bundle на основе \texttt{Docker}. Он
+состоит из \texttt{Dockerfile}, \texttt{compose.yml} и отдельного production-like
+environment contract. Внутри \texttt{compose}-контура выделяются два сервиса:
+\texttt{cms} с приложением \texttt{Strapi} и \texttt{cms-db} с \texttt{PostgreSQL}. Для
+медиа-данных предусмотрен отдельный persistent volume \texttt{uploads}. Такой вариант
+лучше соответствует инженерной трактовке ВКР, чем неформальный локальный запуск CMS без
+versioned deployment-файлов.
+
+Environment contract этого контура фиксирует не только базовые публичные параметры
+\texttt{PUBLIC\_URL}, \texttt{SITE\_URL} и \texttt{IS\_PROXIED}, но и переменные доступа
+к БД, ключи \texttt{Strapi} и параметры rebuild-hook. В результате deployment-описание
+становится частью репозитория и может использоваться как отдельный проектный артефакт
+второй главы, а не как устная инструкция по ручной настройке.
+
+Локально был подтвержден корректный синтаксис и связность \texttt{compose}-контура через
+валидацию итоговой конфигурации. Дополнительно production build самого приложения
+\texttt{Strapi} был выполнен успешно. При этом полная сборка Docker-образа в текущей
+среде не была доведена до конца из-за внешнего сетевого сбоя на этапе загрузки
+\texttt{pnpm} через \texttt{corepack}, а не из-за ошибки versioned Docker bundle. Поэтому
+данный результат корректно описывать как versioned и config-validated deployment contour,
+но не как полностью воспроизведенный локальный production image build.
 
 \section{Безопасность публичных сценариев}
 
@@ -441,6 +488,13 @@ URL-контракта. Следовательно, для публичных pr
 Тем не менее сама архитектура и набор маршрутов уже допускают проверку редакторских и
 публичных пользовательских сценариев по реальному коду, а не по проектному описанию.
 
+Для publication/deployment contour в рамках работы были отдельно подтверждены:
+компиляция и production build \texttt{Strapi}, фактический вызов rebuild webhook на
+локальный тестовый endpoint, а также валидность versioned \texttt{Docker Compose}
+конфигурации. В то же время внешний участок \texttt{Vercel deploy hook -> production
+rebuild} и полный Docker image build не следует трактовать как локально воспроизведенный
+end-to-end сценарий, поскольку они зависят от внешней инфраструктуры и сетевой среды.
+
 \section{Выводы по проектной главе}
 
 Текущая реализация проекта уже образует рабочий \texttt{CMS-first} контур, в котором
@@ -460,8 +514,14 @@ OpenAPI-контур интеграции между backend и frontend.
 page builder уже поддерживает собственный блок маркетинговой формы и отдельный сценарий
 сбора лидов через frontend server route.
 
+Дополнительным результатом текущего этапа стало оформление publication/deployment contour
+как отдельного инженерного слоя. В репозитории зафиксированы versioned admin-managed
+webhook \texttt{publish/unpublish -> rebuild}, внешний rebuild contract для frontend и
+Docker bundle для CMS. За счет этого вторая глава может описывать не только CMS-модель и
+маршруты витрины, но и воспроизводимый эксплуатационный процесс публикации и deployment.
+
 Таким образом, вторая глава уже описывает не абстрактный замысел, а реальную
 архитектуру и реализованные механизмы управления маркетинговым контентом: разделение CMS и
 витрины, предметную модель данных, page builder на основе \texttt{Dynamic Zone},
-locale-prefixed витрину первой очереди, управляемый мета-контур и безопасный доступ к
-черновому контенту через \texttt{preview}.
+locale-prefixed витрину первой очереди, управляемый мета-контур, publication/deployment
+contour и безопасный доступ к черновому контенту через \texttt{preview}.

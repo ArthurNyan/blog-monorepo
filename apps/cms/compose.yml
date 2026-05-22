@@ -1,0 +1,39 @@
+services:
+  cms:
+    image: app-monorepo-cms:${CMS_IMAGE_TAG:-0.1.0}
+    build:
+      context: ../..
+      dockerfile: apps/cms/Dockerfile
+      args:
+        APP_VERSION: ${CMS_IMAGE_TAG:-0.1.0}
+    env_file:
+      - .env.docker
+    ports:
+      - "${PORT:-1337}:1337"
+    depends_on:
+      cms-db:
+        condition: service_healthy
+    volumes:
+      - cms-uploads:/app/apps/cms/public/uploads
+    restart: unless-stopped
+
+  cms-db:
+    image: postgres:16-bookworm
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-strapi}
+      POSTGRES_USER: ${POSTGRES_USER:-strapi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strapi}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-strapi} -d ${POSTGRES_DB:-strapi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    volumes:
+      - cms-postgres:/var/lib/postgresql/data
+
+volumes:
+  cms-postgres:
+  cms-uploads:
