@@ -27,6 +27,8 @@
 - вынос ключевых текстов шапки, футера и главной страницы в `Strapi`.
 - locale-prefixed публичный контур `/:locale/` и `/:locale/:slug/` для `home-page` и `pages`.
 - `SEO/Open Graph` для `home-page` и `pages` через отдельную `seo` component-схему.
+- расширенный editor-managed `SEO/Open Graph` detail contour для `article`, `project`,
+  `vacancy` через тот же `shared.seo`.
 - `sitemap` на стороне `Astro`.
 - защищенный `preview mode` для:
   - `home-page`;
@@ -42,8 +44,8 @@
 
 - `ru/en` уже работает для storefront-core и локализуемых CMS-моделей, но это нужно
   дальше последовательно удерживать в thesis как финальную границу, а не расширять до всего сайта.
-- `SEO` и `preview` уже есть для content sections, но полноценная CMS-управляемая SEO-модель
-  по финальному scope остается обязательной только для `home-page` и `pages`.
+- `SEO` и `preview` уже есть для content sections; detail pages `article/project/vacancy`
+  уже переведены на CMS-managed `SEO`, а section list pages остаются route-owned.
 - deployment-контур frontend частично подготовлен через `@astrojs/vercel`, но не доведен до
   полноценно оформленного production bundle с `webhook -> rebuild`.
 

@@ -302,6 +302,7 @@ export type ArticleDetail = {
 	cover?: CmsMedia | null;
 	authors?: CmsAuthor[];
 	content?: string;
+	seo?: PageSeo | null;
 };
 
 export type ProjectDetail = {
@@ -315,6 +316,7 @@ export type ProjectDetail = {
 	cover?: CmsMedia | null;
 	logo?: CmsMedia | null;
 	content?: string;
+	seo?: PageSeo | null;
 };
 
 type PageRaw = {
@@ -332,6 +334,7 @@ type ArticleRaw = {
 	cover?: CmsMedia | null;
 	authors?: CmsAuthor[];
 	content?: string;
+	seo?: PageSeo | null;
 };
 
 type ProjectRaw = {
@@ -342,6 +345,7 @@ type ProjectRaw = {
 	cover?: CmsMedia | null;
 	logo?: CmsMedia | null;
 	content?: string;
+	seo?: PageSeo | null;
 };
 
 type PreviewEntity = {
@@ -557,6 +561,7 @@ export const fetchArticleBySlug = async (
 	url.searchParams.set("pagination[pageSize]", "1");
 	url.searchParams.set("populate[cover]", "true");
 	url.searchParams.set("populate[authors]", "true");
+	url.searchParams.set("populate[seo][populate][ogImage]", "true");
 
 	const items = await fetchCmsList<ArticleRaw>(url, options);
 	const article = items[0];
@@ -576,6 +581,7 @@ export const fetchArticleBySlug = async (
 		cover: resolveCmsMedia(article.cover),
 		authors: Array.isArray(article.authors) ? article.authors : [],
 		content: article.content,
+		seo: article.seo || null,
 	};
 };
 
@@ -591,6 +597,7 @@ export const fetchProjectBySlug = async (
 	url.searchParams.set("pagination[pageSize]", "1");
 	url.searchParams.set("populate[cover]", "true");
 	url.searchParams.set("populate[logo]", "true");
+	url.searchParams.set("populate[seo][populate][ogImage]", "true");
 
 	const items = await fetchCmsList<ProjectRaw>(url, options);
 	const project = items[0];
@@ -610,6 +617,7 @@ export const fetchProjectBySlug = async (
 		cover: resolveCmsMedia(project.cover),
 		logo: resolveCmsMedia(project.logo),
 		content: project.content,
+		seo: project.seo || null,
 	};
 };
 

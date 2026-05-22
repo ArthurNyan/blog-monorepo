@@ -61,6 +61,7 @@ if (!vacancy) {
 }
 
 const seo = buildSeoMetadata({
+	seo: vacancy.seo,
 	title: vacancy.title,
 	description: vacancy.description || vacancy.location,
 	pathname,

@@ -7,6 +7,7 @@ import {
 	buildServerCmsUrl,
 	createServerCmsHeaders,
 } from "@/shared/api/strapi-server";
+import type { PageSeo } from "@/shared/api/pages";
 import type {
 	EmploymentType,
 	TaxonomyItem,
@@ -38,6 +39,7 @@ type StrapiListResponse<T> = {
 type VacancyRaw = {
 	title?: string;
 	slug?: string;
+	locale?: string;
 	location?: string;
 	workFormat?: WorkFormat;
 	employmentType?: EmploymentType;
@@ -47,6 +49,7 @@ type VacancyRaw = {
 	currency?: string;
 	description?: string;
 	publishedAt?: string;
+	seo?: PageSeo | null;
 	industry?: {
 		name?: string;
 		slug?: string;
@@ -78,6 +81,7 @@ const mapTaxonomy = (item?: TaxonomyRaw | null): TaxonomyItem | null => {
 const mapVacancy = (item: StrapiEntity<VacancyRaw>): Vacancy => ({
 	id: item.id,
 	documentId: item.documentId,
+	locale: item.locale,
 	title: item.title || "",
 	slug: item.slug || "",
 	location: item.location || "",
@@ -89,6 +93,7 @@ const mapVacancy = (item: StrapiEntity<VacancyRaw>): Vacancy => ({
 	currency: item.currency,
 	description: item.description,
 	publishedAt: item.publishedAt,
+	seo: item.seo || null,
 	industry: mapTaxonomy(item.industry),
 	role: mapTaxonomy(item.role),
 });
@@ -175,6 +180,7 @@ export const fetchCmsVacancyBySlug = async (
 	url.searchParams.set("filters[slug][$eq]", slug);
 	url.searchParams.set("pagination[page]", "1");
 	url.searchParams.set("pagination[pageSize]", "1");
+	url.searchParams.set("populate[seo][populate][ogImage]", "true");
 
 	if (!options.includeInactive) {
 		url.searchParams.set("filters[isActive][$eq]", "true");

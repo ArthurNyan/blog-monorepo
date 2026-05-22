@@ -408,6 +408,23 @@ Source of truth:
 - preview и public rendering понимают эти поля одинаково;
 - ограничения и fallback rules зафиксированы.
 
+### Фактический статус после расширения SEO contour
+
+Зафиксировано как реализованный результат:
+
+- `shared.seo` расширен с `home-page/page` на `article`, `project`, `vacancy`;
+- detail routes `article/project/vacancy` в public и preview используют единый
+  metadata pipeline;
+- fallback rules формализованы отдельно от editor-managed модели;
+- отдельный knowledge baseline вынесен в
+  [seo-content-contour.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/seo-content-contour.md).
+
+Остается осознанным ограничением:
+
+- list pages `/:locale/articles/`, `/:locale/projects/`, `/vacancies/` не получили
+  отдельный CMS-managed `SEO` schema и остаются route-owned слоем;
+- карьерный модуль по-прежнему не переведен на locale-prefixed production routes.
+
 ### Артефакты для защиты
 
 - таблица SEO-полей по сущностям;

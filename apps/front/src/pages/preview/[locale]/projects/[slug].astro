@@ -40,11 +40,13 @@ if (!project) {
 }
 
 const seo = buildSeoMetadata({
+	seo: project.seo,
 	title: project.name,
 	description: project.description,
 	pathname,
 	noIndex: true,
 	status: "draft",
+	fallbackOgImage: project.cover,
 });
 ---
 

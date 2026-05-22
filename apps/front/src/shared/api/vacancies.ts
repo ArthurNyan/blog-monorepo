@@ -1,4 +1,5 @@
 import type { CmsRequestOptions } from "@/shared/api/cms";
+import type { PageSeo } from "@/shared/api/pages";
 
 const defaultLocale = "ru-RU";
 
@@ -10,6 +11,7 @@ export type TaxonomyItem = {
 export type Vacancy = {
 	id?: string | number;
 	documentId?: string;
+	locale?: string;
 	title: string;
 	slug: string;
 	location: string;
@@ -21,6 +23,7 @@ export type Vacancy = {
 	currency?: string;
 	description?: string;
 	publishedAt?: string;
+	seo?: PageSeo | null;
 	industry?: TaxonomyItem | null;
 	role?: TaxonomyItem | null;
 };

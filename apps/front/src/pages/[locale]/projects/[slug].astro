@@ -51,9 +51,11 @@ if (!project) {
 const copy = getContentCollectionsCopy(locale).projects;
 const pathname = buildLocalizedCollectionPath(locale, "projects", slug);
 const seo = buildSeoMetadata({
+	seo: project.seo,
 	title: project.name,
 	description: project.description,
 	pathname,
+	fallbackOgImage: project.cover,
 });
 ---
 

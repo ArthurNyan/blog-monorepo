@@ -2,10 +2,12 @@
 import MainLayout from "@/layouts/main.astro";
 import { Badge } from "@/shared/components/ui/badge";
 import { MarkdownContent } from "@/shared/components/MarkdownContent";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
 import {
 	fetchCmsVacancies,
 	fetchCmsVacancyBySlug,
 } from "@/shared/api/vacancies-cms";
+import { buildPublicCollectionPath } from "@/shared/preview/session";
 import { VacancyApplicationForm } from "@/widgets/VacancyApplicationForm";
 
 export const getStaticPaths = async () => {
@@ -47,6 +49,13 @@ const LEVEL_LABELS: Record<string, string> = {
 const slug = Astro.params.slug as string;
 const vacancy = await fetchCmsVacancyBySlug(slug).catch(() => null);
 const isNotFound = !vacancy;
+const pathname = buildPublicCollectionPath("vacancy", slug);
+const seo = buildSeoMetadata({
+	seo: vacancy?.seo,
+	title: vacancy?.title || "Вакансия",
+	description: vacancy?.description || vacancy?.location || "Карьерная страница вакансии.",
+	pathname,
+});
 
 const salary = (() => {
 	if (!vacancy) return "По договоренности";
@@ -63,7 +72,16 @@ const salary = (() => {
 })();
 ---
 
-<MainLayout content={{ title: vacancy?.title || "Вакансия" }} className="flex flex-col">
+<MainLayout
+	content={{
+		title: vacancy?.title || "Вакансия",
+		description: vacancy?.description || vacancy?.location,
+		seo,
+		pathname,
+		cmsStatus: "published",
+	}}
+	className="flex flex-col"
+>
 	<section class="container mx-auto px-4 py-10 md:py-14">
 		<a href="/vacancies" class="inline-flex text-sm text-primary mb-6 hover:underline">
 			← Все вакансии

@@ -28,8 +28,8 @@
   `/:locale/articles/:slug/` и `/:locale/projects/:slug/`.
 - Защищенный `preview mode` уже реализован для `home-page`, `page`, `article`, `project`,
   `vacancy`.
-- Полноценный CMS-managed `SEO/Open Graph` контур уже реализован только для
-  `home-page` и `page`.
+- `CMS-managed SEO/Open Graph` уже реализован для `home-page`, `page` и detail entities
+  `article`, `project`, `vacancy`, при отдельном route-owned fallback-слое для list pages.
 - `@astrojs/sitemap` и `@astrojs/vercel` уже подключены.
 - В репозитории уже зафиксированы versioned `Docker`-файлы для CMS и оформленный
   `webhook -> rebuild` contour; незакрытым обязательным блоком остается прежде всего
@@ -91,12 +91,15 @@
 - `vacancy-application` и `lead-submission` не входят в `ru/en` как локализуемые прикладные
   записи и остаются нелокализованными.
 
-### 2.2. Граница полноценного `SEO`-контура
+### 2.2. Граница `SEO`-контура
 
-#### Получают полноценный CMS-managed `SEO/Open Graph`
+#### Получают CMS-managed `SEO/Open Graph`
 
 - `home-page`;
 - `page`.
+- detail pages `article`;
+- detail pages `project`;
+- detail pages `vacancy`.
 
 Под полноценным контуром в рамках ВКР понимаются:
 
@@ -107,25 +110,32 @@
 - автоматическое `noindex` для preview-режима;
 - генерация `sitemap` из публичного storefront-контура.
 
+Для `article`, `project` и `vacancy` эта схема относится именно к detail entries и не
+распространяется автоматически на section list pages.
+
 #### Уже реализовано
 
-- `shared.seo` уже подключен к `home-page` и `page`.
+- `shared.seo` уже подключен к `home-page`, `page`, `article`, `project`, `vacancy`.
 - `MainLayout` уже рендерит canonical, `og:*`, `twitter:*` и `robots`.
+- public и preview detail routes для `article/project/vacancy` уже используют тот же
+  metadata builder, что и storefront-core.
 - Preview-страницы уже получают `noindex`.
 - `sitemap` на стороне `Astro` уже подключен.
 
 #### Обязательно реализовать
 
-- не расширять текст диплома до утверждения, что все публичные сущности имеют одинаковый
-  CMS-managed `SEO` editing flow;
-- в проверках явно валидировать `SEO` именно для `home-page` и `page`;
-- в итоговом тексте разводить `полный SEO-контур` и `базовые метаданные`.
+- не расширять текст диплома до утверждения, что list pages `articles/projects/vacancies`
+  получили отдельный CMS-managed `SEO` editing flow;
+- в проверках явно валидировать `SEO` для `home-page`, `page` и хотя бы одного detail entry
+  из `article/project/vacancy`;
+- в итоговом тексте разводить реализованную модель и fallback behavior.
 
 #### Останется допустимым ограничением
 
-- `article`, `project`, `vacancy` могут остаться без отдельного `seo` component;
-- для `article`, `project`, `vacancy` допустим derived meta-layer из собственных полей
-  маршрута без полного editor-managed `SEO`-контура;
+- section list pages `/:locale/articles/`, `/:locale/projects/`, `/vacancies/` могут
+  оставаться route-owned SEO-поверхностью без отдельного `seo` component;
+- для `article`, `project`, `vacancy` допустим fallback из собственных полей сущности,
+  если `seo` component не заполнен полностью;
 - `sitemap` не обязан отражать нелокализованные content sections как двуязычные маршруты.
 
 ### 2.3. Обязательные роли
@@ -168,7 +178,8 @@
 - проверка `ru/en` для `global`, `home-page`, хотя бы одной `page`, хотя бы одной
   `article` и хотя бы одного `project`;
 - проверка preview для `home-page`, `page`, `article`, `project`, `vacancy`;
-- проверка `SEO/Open Graph` и canonical для `home-page` и `page`;
+- проверка `SEO/Open Graph` и canonical для `home-page`, `page` и хотя бы одной detail
+  content entity;
 - проверка наличия `noindex` на preview-страницах;
 - проверка генерации `sitemap`;
 - проверка сценария `webhook -> rebuild`;
@@ -211,7 +222,8 @@
 - storefront-core `ru/en` для `global`, `home-page`, `page`;
 - locale-prefixed public routes `ru/en` для `articles` и `projects`;
 - `preview mode` для `home-page`, `page`, `article`, `project`, `vacancy`;
-- CMS-managed `SEO/Open Graph` для `home-page` и `page`;
+- CMS-managed `SEO/Open Graph` для `home-page`, `page` и detail entities
+  `article/project/vacancy`;
 - `sitemap` на стороне `Astro`;
 - versioned `webhook -> rebuild` contour;
 - versioned `Docker`-контур для `apps/cms`;
@@ -228,7 +240,8 @@
 
 - locale-prefixed production routes ограничены storefront-core плюс `articles/projects`,
   а карьерный модуль `vacancies` остается отдельным ограничением;
-- полный editor-managed `SEO` ограничен `home-page` и `page`;
+- отдельный CMS-managed `SEO` для section list pages не обязателен и может оставаться
+  route-owned;
 - тестовый контур может остаться в основном ручным;
 - публикация может оставаться rebuild-based без real-time обновлений;
 - формы могут оставаться без `rate limit`, CRM-интеграции и email automation;

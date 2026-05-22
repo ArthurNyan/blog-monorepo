@@ -371,7 +371,8 @@
 
 - ключевые тексты навигации, футера и основной витрины уже вынесены в `Strapi`;
 - `global`, `home-page` и `pages` образуют рабочий CMS-first контур публичной витрины первой очереди;
-- для `home-page` и `pages` уже реализован управляемый `SEO/Open Graph` контур из CMS;
+- для `home-page`, `pages` и detail entities `article/project/vacancy` уже реализован
+  управляемый `SEO/Open Graph` контур из CMS;
 - для `home-page`, `pages`, `articles`, `projects` и `vacancies` уже реализован защищенный
   preview-сценарий `draft -> server-side preview`;
 - preview-сценарий уже связан с `Strapi Admin` через генерацию целевых preview-ссылок на
@@ -394,7 +395,8 @@
 - локализованные CMS-страницы `/:locale/:slug/`, строящиеся по `pages` и `Dynamic Zone`;
 - locale-prefixed публичные разделы `/:locale/articles/` и `/:locale/projects/`;
 - вынос ключевых текстов header/footer/main showcase из frontend в `global` и `home-page`;
-- CMS-управляемые `SEO/Open Graph` метаданные для `home-page` и `pages`;
+- CMS-управляемые `SEO/Open Graph` метаданные для `home-page`, `pages` и detail entities
+  `article/project/vacancy`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` для публичных prerendered маршрутов;
 - публичные разделы статей и проектов с детальными страницами;
@@ -449,7 +451,8 @@
   `/:locale/articles/...` и `/:locale/projects/...`;
 - списковые и детальные production-маршруты `vacancies` могут оставаться вне той же
   route-схемы `ru/en`;
-- CMS-управляемый `SEO` по отдельной `seo`-схеме остается ограниченным `home-page` и `pages`;
+- отдельный CMS-managed `SEO` для section list pages `articles/projects/vacancies`
+  не реализован и осознанно остается route-owned fallback-слоем;
 - для `articles/projects/vacancies` допустим более простой meta-layer, строящийся в основном
   из самих контентных полей;
 - тестовый контур может оставаться преимущественно ручным;

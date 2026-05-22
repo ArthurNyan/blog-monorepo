@@ -40,11 +40,13 @@ if (!article) {
 }
 
 const seo = buildSeoMetadata({
+	seo: article.seo,
 	title: article.name,
 	description: article.description,
 	pathname,
 	noIndex: true,
 	status: "draft",
+	fallbackOgImage: article.cover,
 });
 ---
 

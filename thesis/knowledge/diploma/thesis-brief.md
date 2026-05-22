@@ -38,8 +38,9 @@
    (`global`, `home-page`, `page`), а также locale-prefixed production routes для
    `articles` и `projects`, при отдельной фиксации границы карьерного модуля `vacancies`.
 8. Реализовать `preview mode`, `SEO`, `Open Graph`, `sitemap` и публикацию через `webhook -> rebuild`,
-   при этом полноценный CMS-managed `SEO` трактовать как обязательный прежде всего для
-   `home-page` и `pages`.
+   при этом editor-managed `SEO` трактовать как обязательный для `home-page`, `pages`
+   и detail-контуров `article/project/vacancy`, с отдельной фиксацией fallback-слоя
+   для section-level маршрутов.
 9. Настроить роли и права редакторов в `Strapi`, а также базовые механизмы защиты форм и публикации.
 10. Выполнить деплой системы с frontend на `Vercel` и CMS в `Docker`.
 11. Провести функциональное тестирование, проверку локализации, производительности, `SEO` и `accessibility`.
@@ -70,8 +71,9 @@
   а для `vacancies` граница публичного языкового контура зафиксирована отдельно;
 - работает предварительный просмотр перед публикацией;
 - публикация запускает обновление фронтенда через `webhook -> rebuild`;
-- настроены `SEO`, `Open Graph` и `sitemap`, причем полный editor-managed `SEO` обязателен
-  для `home-page` и `pages`;
+- настроены `SEO`, `Open Graph` и `sitemap`, причем editor-managed `SEO` покрывает
+  `home-page`, `pages` и detail pages `article/project/vacancy`, а list pages остаются
+  отдельным route-owned слоем;
 - проект развернут с frontend на `Vercel`, а CMS запускается в `Docker`.
 
 ## Набор блоков для `pages`
@@ -101,7 +103,9 @@
 - `Preview mode` показывает корректную предварительную версию страницы.
 - После публикации или снятия с публикации публичного контента CMS вызывает rebuild-пайплайн
   без ручного запуска frontend-команд.
-- `SEO`-метаданные и `Open Graph` управляются из CMS для `home-page` и `pages`.
+- `SEO`-метаданные и `Open Graph` управляются из CMS для `home-page`, `pages` и
+  detail pages `article/project/vacancy`, а fallback behavior для section-level routes
+  явно зафиксирован.
 - `sitemap` генерируется автоматически.
 - deployment-контур CMS описывается versioned `Docker` bundle, а не только ручной инструкцией.
 - Ключевые пользовательские сценарии проходят функциональную проверку.

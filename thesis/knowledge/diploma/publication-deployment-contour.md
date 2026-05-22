@@ -212,5 +212,5 @@ Versioned webhook-запись содержит:
 - опираться на внешний `Vercel` deploy hook вместо самостоятельного runtime-rebuild сервиса;
 - сохранять тестовый contour преимущественно ручным;
 - не расширять locale-prefixed public routes дальше карьерного модуля `vacancies`;
-- не вводить отдельный полноценный CMS-managed `SEO` schema для всех сущностей;
+- не вводить отдельный CMS-managed `SEO` schema для всех section list pages;
 - не добавлять `CRM`, `email automation`, `rate limit` и более тяжелый editorial workflow.
