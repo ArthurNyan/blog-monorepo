@@ -20,6 +20,11 @@
 Если возможность следует только из используемого фреймворка, но не подтверждена текущим
 кодом проекта, она не считается реализованной частью системы.
 
+Отдельный воспроизводимый testing baseline и матрица приемки вынесены в:
+
+- [acceptance-matrix.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/acceptance-matrix.md)
+- [testing-evidence-pack.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-evidence-pack.md)
+
 ## 1. Текущее состояние `apps/cms`
 
 ### 1.1. Платформа и конфигурация
