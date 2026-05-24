@@ -10,9 +10,12 @@
 2. `thesis/knowledge/diploma/decision-log.md`
 3. `thesis/knowledge/diploma/thesis-structure.md`
 4. `thesis/knowledge/diploma/reference-theses-analysis.md`
-5. текущий код в `apps/cms` и `apps/front`
-6. требования оформления в `thesis/knowledge/requirements-herzen-vkr.md`
-7. рабочие ограничения шаблона в `thesis/agent.md`
+5. `thesis/knowledge/bibliography-map.md`
+6. `thesis/knowledge/bibliography-fulltext-status.md`
+7. `thesis/references.bib`
+8. текущий код в `apps/cms` и `apps/front`
+9. требования оформления в `thesis/knowledge/requirements-herzen-vkr.md`
+10. рабочие ограничения шаблона в `thesis/agent.md`
 
 Если между источниками есть конфликт, агент должен явно его зафиксировать и не подменять решение догадками.
 
@@ -77,6 +80,7 @@
 ## Поведение агента при дальнейшей работе
 
 - Перед новыми текстами или правками сверяться с `decision-log.md`.
+- Перед работой с литературой, цитатами и теоретическими утверждениями сверяться с `bibliography-map.md` и `bibliography-fulltext-status.md`.
 - При работе над структурой главы, аргументацией и уровнем технической глубины сверяться с `reference-theses-analysis.md`.
 - При появлении новой важной договоренности сначала фиксировать ее в markdown-документах, а потом вносить изменения в диплом или код.
 - Если агент предлагает новую доработку проекта, он должен объяснить, как она поддерживает тему ВКР и какую задачу диплома закрывает.

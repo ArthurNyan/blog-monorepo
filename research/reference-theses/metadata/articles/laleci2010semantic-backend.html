@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="tr"><head id="j_idt6">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        
+        <meta name="google-site-verification" content="0dvog55wzQfGVUJhgCTATFyMhqmVMsmr0qKJ777c_z8" />
+        <meta name="apple-mobile-web-app-capable" content="yes" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/theme.css.xhtml?ln=primefaces-olympia-bluegrey-teal&amp;v=10.0.0-RC1" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/primeicons/primeicons.css.xhtml?ln=primefaces&amp;v=10.0.0-RC1" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/fa/font-awesome.css.xhtml?ln=primefaces&amp;v=10.0.0-RC1" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/components.css.xhtml?ln=primefaces&amp;v=10.0.0-RC1" /><script type="text/javascript" src="/javax.faces.resource/jquery/jquery.js.xhtml?ln=primefaces&amp;v=10.0.0-RC1"></script><script type="text/javascript" src="/javax.faces.resource/jquery/jquery-plugins.js.xhtml?ln=primefaces&amp;v=10.0.0-RC1"></script><script type="text/javascript" src="/javax.faces.resource/core.js.xhtml?ln=primefaces&amp;v=10.0.0-RC1"></script><script type="text/javascript" src="/javax.faces.resource/components.js.xhtml?ln=primefaces&amp;v=10.0.0-RC1"></script><script type="text/javascript" src="/javax.faces.resource/touch/touchswipe.js.xhtml?ln=primefaces&amp;v=10.0.0-RC1"></script><link type="text/css" rel="stylesheet" href="/javax.faces.resource/animate.css.xhtml?ln=css" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/css/nanoscroller.css.xhtml?ln=olympia-layout" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/css/layout-bluegrey-teal.css.xhtml?ln=olympia-layout" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/bbsStyle.css.xhtml?ln=css" /><link type="text/css" rel="stylesheet" href="/javax.faces.resource/core.css.xhtml?ln=css" /><script type="text/javascript">if(window.PrimeFaces){PrimeFaces.settings.locale='en_US';PrimeFaces.settings.viewId='/handle.xhtml';PrimeFaces.settings.contextPath='';PrimeFaces.settings.cookiesSecure=false;}</script>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link type="application/opensearchdescription+xml" rel="search" href="https://open.metu.edu.tr/open-search/description.xml" title="OpenMETU" />
+
+    <link rel="shortcut icon" href="https://www.metu.edu.tr/sites/all/themes/odtu/favicon.ico" type="image/vnd.microsoft.icon" />
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/solid.css" integrity="sha384-rdyFrfAIC05c5ph7BKz3l5NG5yEottvO/DQ0dCrwD8gzeQDjYBHNr1ucUpQuljos" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/regular.css" integrity="sha384-z3ccjLyn+akM2DtvRQCXJwvT5bGZsspS4uptQKNXNg778nyzvdMqiGcqHVGiAUyY" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/fontawesome.css" integrity="sha384-u5J7JghGz0qUrmEsWzBQkfvc8nK3fUT7DCaQzNQ+q4oEXhGSx+P2OqjWsfIRB8QT" crossorigin="anonymous" />
+        <script>
+           (function (d, s, idScript, idRec, userInput) {
+                var coreAddress = 'https://core.ac.uk/';
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(idScript))
+                    return;
+                js = d.createElement(s);
+                js.id = idScript;
+                js.src = coreAddress + 'recommender/embed.js';
+                fjs.parentNode.insertBefore(js, fjs);
+
+                localStorage.setItem('idRecommender', idRec);
+                localStorage.setItem('userInput', JSON.stringify(userInput));
+                // To force the recommender to output in a specific lanuage, uncomment the field below
+                // localStorage.setItem('overridelocale', "en_GB");
+                var link = d.createElement('link');
+                link.setAttribute('rel', 'stylesheet');
+                link.setAttribute('type', 'text/css');
+                link.setAttribute('href', '/javax.faces.resource/core.css.xhtml?ln=css');
+                d.getElementsByTagName('head')[0].appendChild(link);
+                /*alert(idRec);
+                alert(JSON.stringify(userInput));*/
+            }(document, 'script', 'recommender-embed', 'acbe7c', {}));
+
+        </script>
+        <title>
+            A semantic backend for content management systems
+        </title>
+        <link rel="schema.DCTERMS" href="http://purl.org/dc/terms/" />
+        <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+            <meta name="DC.creator" content="LALECİ ERTÜRKMEN, GÖKÇE BANU" />
+            <meta name="DC.creator" content="Aluc, G." />
+            <meta name="DC.creator" content="Dogac, A." />
+            <meta name="DC.creator" content="SINACI, ALİ ANIL" />
+            <meta name="DC.creator" content="Kılıç, Özgün Ozan" />
+            <meta name="DC.creator" content="Tuncer, F." />
+            <meta name="DCTERMS.dateAccepted,DCTERMS.W3CDTF" content="2020-09-27T10:54:36Z" />
+            <meta name="DCTERMS.available,DCTERMS.W3CDTF" content="2020-09-27T10:54:36Z" />
+            <meta name="DCTERMS.issued,DCTERMS.W3CDTF" content="2010-12-01" />
+            <meta name="DCTERMS.abstract" content="The users of a content repository express the semantics they have in mind while defining the content items and their properties, and forming them into a particular hierarchy. However, this valuable semantics is not formally expressed, and hence cannot be used to discover meaningful relationships among the content items in an automated way. Although the need is apparent, there are several challenges in explicating this semantics in a fully automated way: first, it is difficult to distinguish between data and the metadata in the repository and secondly, not all the metadata defined, such as the file size or encoding type, contribute to the meaning. More importantly, for the developed solution to have practical value, it must address the constraints of the content management system (CMS) industry: CMS industry cannot change their repositories in production use and they need a generic solution not limited to a specific repository architecture. In this article, we address all these challenges through a set of tools developed which first semi-automatically explicate the content repository semantics to a knowledge-base and establish semantic bridges between this backend knowledge-base and the content repository. The repository content is dynamic; to be able to maintain the content repository semantics while new content is created, the changes in the repository semantics are reflected onto the knowledge-base through the semantic bridges. The tool set is complemented with a search engine that make use of the explicated semantics. " />
+            <meta name="DCTERMS.bibliographicCitation" content="LALECİ ERTÜRKMEN G. B. , Aluc G., Dogac A., SINACI A. A. , KILIÇ Ö. O. , Tuncer F., &quot;A semantic backend for content management systems&quot;, KNOWLEDGE-BASED SYSTEMS, cilt.23, ss.832-843, 2010" />
+            <meta name="DC.identifier" content="10.1016/j.knosys.2010.05.008" />
+            <meta name="DC.identifier,DCTERMS.URI" content="https://hdl.handle.net/11511/29923" />
+            <meta name="DC.rights" content="Attribution-NonCommercial-NoDerivatives 4.0 International" />
+            <meta name="DC.rights,DCTERMS.URI" content="http://creativecommons.org/licenses/by-nc-nd/4.0/" />
+            <meta name="DC.subject" content="Semantic content discovery" />
+            <meta name="DC.subject" content="Content management systems" />
+            <meta name="DC.subject" content="Knowledge-base" />
+            <meta name="DC.subject" content="Content repository semantics" />
+            <meta name="DC.title" content="A semantic backend for content management systems" />
+            <meta name="DC.type" content="Journal Article" />
+            <meta name="citation_keywords" content="Semantic content discovery; Content management systems; Knowledge-base; Content repository semantics" />
+            <meta name="citation_title" content="A semantic backend for content management systems" />
+            <meta name="citation_issn" content="0950-7051" />
+            <meta name="citation_publisher" />
+            <meta name="citation_language" />
+            <meta name="description" />
+            <meta name="citation_date" content="2010-12-01" />
+            <meta name="title" content="A semantic backend for content management systems" />
+            <meta name="citation_author" content="LALECİ ERTÜRKMEN, GÖKÇE BANU" />
+            <meta name="citation_author" content="Aluc, G." />
+            <meta name="citation_author" content="Dogac, A." />
+            <meta name="citation_author" content="SINACI, ALİ ANIL" />
+            <meta name="citation_author" content="Kılıç, Özgün Ozan" />
+            <meta name="citation_author" content="Tuncer, F." />
+            <meta name="citation_abstract_html_url" content="https://open.metu.edu.tr/handle/11511/29923" /><script type="text/javascript" src="/javax.faces.resource/js/nanoscroller.js.xhtml?ln=olympia-layout"></script><script type="text/javascript" src="/javax.faces.resource/js/layout.js.xhtml?ln=olympia-layout"></script></head><body id="bodyID">
+
+        <div id="layout-wrapperID" class="layout-wrapper layout-horizontal layout-menu-light layout-topbar-bluegrey">
+    <div id="layout-topbarID" class="layout-topbar">
+        <input id="localestr" type="hidden" value="en" /><a id="layout-topbar-logoID" name="layout-topbar-logoID" href="/" class="layout-topbar-logo"><img id="j_idt31" src="/javax.faces.resource/img/odtu_kisa_logo.png.xhtml?pfdrid_c=true" alt="" class="bbs_odtu_logo" /></a>
+
+        <a id="layout-menu-button" class="layout-menu-button" href="#"><div id="menuButtonOP" class="ui-outputpanel ui-widget">
+                <i id="bbs_menuBarsIconID" class="fa fa-bars bbs_menuBarsIcon"></i></div>
+        </a><div id="menuButtonToolTip" class="ui-tooltip ui-widget ui-tooltip-bottom" role="tooltip"><div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all">Show/Hide Menu</div></div><script id="menuButtonToolTip_s" type="text/javascript">$(function(){PrimeFaces.cw("Tooltip","widget_menuButtonToolTip",{id:"menuButtonToolTip",showEffect:"blind",hideEffect:"fade",hideDelay:100,target:"menuButtonOP",position:"bottom"});});</script>
+
+        <a id="options-menu-button" href="#"><div id="mobileMenuButtonOP" class="ui-outputpanel ui-widget">
+                <span class="fa fa-ellipsis-h"></span></div>
+        </a><div id="mobileMenuButtonToolTip" class="ui-tooltip ui-widget ui-tooltip-bottom" role="tooltip"><div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all">Hide/Show Apps</div></div><script id="mobileMenuButtonToolTip_s" type="text/javascript">$(function(){PrimeFaces.cw("Tooltip","widget_mobileMenuButtonToolTip",{id:"mobileMenuButtonToolTip",showEffect:"blind",hideEffect:"fade",hideDelay:100,target:"mobileMenuButtonOP",position:"bottom"});});</script>
+
+
+        <ul id="layout-topbar-usermenuID" class="layout-topbar-usermenu">
+            <li class="layout-topbar-usermenu-header" style="background: url(/javax.faces.resource/backgrounds/bg5.jpg.xhtml?ln=img) ;">
+                <a class="bbs_anasayfa_topbar_name_href" href="/handle/">
+                <i class="fa fa-user bbs_userAvatar"></i>
+                <div class="layout-topbar-usermenu-info">
+                    <div class="layout-topbar-usermenu-name"></div>
+                    <div class="layout-topbar-usermenu-role" style="font-size:11px;"> </div>
+                </div>
+                </a>
+            </li>
+
+            <li><a href="/logout" class="ui-link ui-widget">
+                    <i class="fa fa-sign-out-alt"></i>
+                    <span>Logout</span></a>
+            </li>
+        </ul>
+
+
+
+        <ul class="layout-topbar-icons">
+            <li id="localizationDesktop"><div id="localizationOP" class="ui-outputpanel ui-widget"><a id="j_idt42" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;j_idt42&quot;});return false;">
+                        <span class="topbar-item-text bbs_topbar_text">
+                                <span>Türkçe</span>
+                        </span></a></div>
+            </li>
+            <li id="localizationMobile">
+                <div align="center" style="display: inline-block;"><div id="localizationMobileOP" class="ui-outputpanel ui-widget">
+                        <a class="layout-topbar-icon-bbs">
+                            <i class="fas fa-flag"></i>
+                        </a><a id="j_idt48" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;j_idt48&quot;});return false;">
+                            <span class="topbar-item-text bbs_topbar_text">
+                                <span>Türkçe</span>
+                            </span><label style="font-weight: bold;"></label></a></div>
+                </div>
+            </li>
+            <li id="searchIconDesktop" class="layout-topbar-search-item"><div id="searchOP" class="ui-outputpanel ui-widget"><a id="searchLink" href="/discover" class="ui-link ui-widget layout-topbar-icon-bbs">
+                        <i class="fas fa-search"></i></a><div id="searchToolTip" class="ui-tooltip ui-widget ui-tooltip-bottom" role="tooltip"><div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all">Search</div></div><script id="searchToolTip_s" type="text/javascript">$(function(){PrimeFaces.cw("Tooltip","widget_searchToolTip",{id:"searchToolTip",showEffect:"blind",hideEffect:"fade",hideDelay:100,target:"searchOP",position:"bottom"});});</script></div>
+            </li>
+            <li id="searchIconMobile" class="layout-topbar-search-item">
+                <div align="center" style="display: inline-block; width: 150px;"><a href="/discover" class="ui-link ui-widget layout-topbar-icon-bbs">
+                        <i class="fas fa-search"></i></a><a href="/discover" class="ui-link ui-widget">
+                        <span class="topbar-item-text bbs_topbar_text">
+                            <span>Search</span>
+                        </span></a>
+                </div>
+            </li><div id="j_idt63" class="ui-outputpanel ui-widget" style="float: right !important;">
+                <li id="girisIconDesktop"><a id="signInLinkDesktop" href="/myDspace" class="ui-link ui-widget layout-topbar-icon-bbs">
+                        <i class="fas fa-sign-in-alt"></i></a><div id="girisToolTipDesktop" class="ui-tooltip ui-widget ui-tooltip-bottom" role="tooltip"><div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all">Login</div></div><script id="girisToolTipDesktop_s" type="text/javascript">$(function(){PrimeFaces.cw("Tooltip","widget_girisToolTipDesktop",{id:"girisToolTipDesktop",showEffect:"blind",hideEffect:"fade",hideDelay:100,target:"signInLinkDesktop",position:"bottom"});});</script>
+                </li></div><div id="j_idt69" class="ui-outputpanel ui-widget">
+                <li id="girisIconMobile"><a href="/myDspace" class="ui-link ui-widget layout-topbar-icon-bbs">
+                        <i class="fas fa-sign-in-alt"></i></a><a href="/myDspace" class="ui-link ui-widget">
+                        <span class="topbar-item-text bbs_topbar_text">
+                            <span>Login</span>
+                        </span></a>
+                </li></div>
+            <li id="userDesktop" class="layout-topbar-user">
+            </li>
+            <li id="userMobile" class="layout-topbar-user">
+            </li>
+
+        </ul>
+    </div>
+    <div id="layout-menu-containerID" class="layout-menu-container bbs_menuContainerLayout">
+        <div class="nano">
+            <div class="nano-content menu-scroll-content">
+<form id="anaMenuForm" name="anaMenuForm" method="post" action="/handle/11511/29923" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="anaMenuForm" value="anaMenuForm" />
+<ul id="anaMenuForm:j_idt82" class="layout-menu"><li id="anaMenuForm:openMetuSubMenu" role="menuitem"><a href="#"><i class="fas fa-unlock animated swing layout-menuitem-icon"></i><span class="layout-menuitem-text">OpenMETU</span><i class="fa fa-fw layout-submenu-toggler fa-angle-down"></i></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">OpenMETU</div></div><ul role="menu"><li id="anaMenuForm:j_idt83" role="menuitem"><a href="/about"><i class="fas fa-newspaper layout-menuitem-icon"></i><span class="layout-menuitem-text">About</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">About</div></div></li><li id="anaMenuForm:j_idt84" role="menuitem"><a href="/opensciencepolicy"><i class="fas fa-flask layout-menuitem-icon"></i><span class="layout-menuitem-text">Open Science Policy</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Open Science Policy</div></div></li><li id="anaMenuForm:j_idt85" role="menuitem"><a href="/openaccessguideline"><i class="fas fa-book-open layout-menuitem-icon"></i><span class="layout-menuitem-text">Open Access Guideline</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Open Access Guideline</div></div></li><li id="anaMenuForm:j_idt86" role="menuitem"><a href="/postgraduatethesisguidelines"><i class="fas fa-pen-fancy layout-menuitem-icon"></i><span class="layout-menuitem-text">Postgraduate Thesis Guideline</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Postgraduate Thesis Guideline</div></div></li></ul></li><li id="anaMenuForm:j_idt87" role="menuitem"><a href="/community-list"><i class="fas fa-sitemap layout-menuitem-icon"></i><span class="layout-menuitem-text">Communities &amp; Collections</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Communities &amp; Collections</div></div></li><li id="anaMenuForm:help" role="menuitem"><a href="#"><i class="fas fa-info-circle layout-menuitem-icon"></i><span class="layout-menuitem-text">Help</span><i class="fa fa-fw layout-submenu-toggler fa-angle-down"></i></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Help</div></div><ul role="menu"><li id="anaMenuForm:j_idt95" role="menuitem"><a href="/faq"><i class="fas fa-question-circle layout-menuitem-icon"></i><span class="layout-menuitem-text">Frequently Asked Questions</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Frequently Asked Questions</div></div></li><li id="anaMenuForm:videoSubMenu" role="menuitem"><a href="#"><i class="fas fa-film layout-menuitem-icon"></i><span class="layout-menuitem-text">Guides</span><i class="fa fa-fw layout-submenu-toggler fa-angle-down"></i></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Guides</div></div><ul role="menu"><li id="anaMenuForm:j_idt96" role="menuitem"><a href="/thesisvideo"><span class="layout-menuitem-text">Thesis submission</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Thesis submission</div></div></li><li id="anaMenuForm:j_idt99" role="menuitem"><a href="https://open.metu.edu.tr/bitstream/handle/11511/92036/Term%20Project%20Upload%20Guide.pdf"><span class="layout-menuitem-text">MS without thesis term project submission</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">MS without thesis term project submission</div></div></li><li id="anaMenuForm:j_idt100" role="menuitem"><a href="/publicationdoivideo"><span class="layout-menuitem-text">Publication submission with DOI</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Publication submission with DOI</div></div></li><li id="anaMenuForm:j_idt101" role="menuitem"><a href="/publicationvideo"><span class="layout-menuitem-text">Publication submission</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Publication submission</div></div></li></ul></li><li id="anaMenuForm:supinfoMenu" role="menuitem"><a href="#"><i class="fas fa-info-circle layout-menuitem-icon"></i><span class="layout-menuitem-text">Supporting Information</span><i class="fa fa-fw layout-submenu-toggler fa-angle-down"></i></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Supporting Information</div></div><ul role="menu"><li id="anaMenuForm:j_idt102" role="menuitem"><a href="/generalinfo"><span class="layout-menuitem-text">General Information</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">General Information</div></div></li><li id="anaMenuForm:j_idt103" role="menuitem"><a href="/copyright"><span class="layout-menuitem-text">Copyright, Embargo and License</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Copyright, Embargo and License</div></div></li></ul></li><li id="anaMenuForm:j_idt104" role="menuitem"><a href="/contact"><i class="fas fa-envelope layout-menuitem-icon"></i><span class="layout-menuitem-text">Contact us</span></a><div class="layout-menu-tooltip"><div class="layout-menu-tooltip-arrow"></div><div class="layout-menu-tooltip-text">Contact us</div></div></li></ul></li></ul><script id="anaMenuForm:j_idt82_s" type="text/javascript">$(function(){PrimeFaces.cw("Olympia","widget_anaMenuForm_j_idt82",{id:"anaMenuForm:j_idt82"});});</script><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:0" value="-975020487603209293:2561962846867982285" autocomplete="off" />
+</form>
+            </div>
+
+        </div>
+    </div>
+    <style>
+    .layout-menuitem-icon {
+        min-width: 16px;
+        text-align: center;
+    }
+
+    </style>
+
+            <div id="layout-mainID" class="layout-main">
+                <div id="header">
+
+        <script src="https://badge.dimensions.ai/badge.js" charset="utf-8"></script>
+
+        <style type="text/css">
+            .white-button.ui-button.ui-state-default {
+                background-color: #ffffff;
+                color: #222222;
+                border-color: #d6d6d6;
+                /* with the exported variables from Nova and Luna Themes*/
+                border-color: var(--input-border-color, #d6d6d6);
+            }
+
+            .white-button.ui-button.ui-state-default:enabled:hover,
+            .white-button.ui-button.ui-state-default:focus {
+                background-color: #f2f2f2;
+                border-color: #ccc;
+                color: #373a3c;
+                /* with the exported variables from Nova and Luna Themes*/
+                border-color: var(--input-hover-border-color, #ccc);
+            }
+
+            .stats_wrapper {
+                background: #fff;
+                display: block;
+                float: left;
+                width: 100%;
+                color: #333;
+                margin-bottom: 25px;
+                border-bottom: 4px solid #a2c5de;
+            }
+
+            .stats_wrapper .stats-count {
+                font-size: 14px;
+                font-weight: normal;
+            }
+
+            .stats_wrapper .stats-type {
+                font-size: 14px;
+                font-weight: normal;
+            }
+
+            #socialMedia .fa {
+                padding: 12px;
+                font-size: 14px;
+                width: 40px;
+                text-align: center;
+                text-decoration: none;
+                font-weight: unset;
+                margin: 2px 1px;
+                border-radius: 50%;
+                font: normal normal normal 14px/1 FontAwesome
+            }
+
+            .fa:hover {
+                opacity: 0.7;
+            }
+
+            .fa-facebook {
+                background: #4f5965;
+                color: white;
+            }
+
+            .fa-twitter {
+                background: #4f5965;
+                color: white;
+
+            }
+
+            .fa-pinterest {
+                background: #4f5965;
+                color: white;
+            }
+
+            .fa-envelope {
+                background: #4f5965;
+                /*background: #7dbcde;*/
+                color: white;
+            }
+
+            .fa-tumblr {
+                background: #4f5965;
+                color: white;
+            }
+
+            .fa-linkedin {
+                background: #4f5965;
+                color: white;
+            }
+
+            .dataList {
+                border: transparent !important;
+                background: transparent;
+                background-image: none;
+                line-height: 1 !important;
+            }
+
+            .dataList .ui-datalist-content {
+                border: transparent !important;
+                background: transparent;
+                background-image: none;
+                margin-left: 30px;
+                line-height: 1 !important;
+            }
+
+            .fa-reddit {
+                background: #4f5965;
+                color: white;
+            }
+
+            .fa-rss {
+                background: #4f5965;
+                color: white;
+            }
+        </style>
+                </div>
+                <div id="content" class="layout-content bbs_contentLayout">
+<form id="form" name="form" method="post" action="/handle/11511/29923" enctype="application/x-www-form-urlencoded">
+<input type="hidden" name="form" value="form" />
+
+            <div class="ui-fluid">
+                <div class="ui-g">
+                    <div class="ui-g-12"><div id="form:itemPanel" class="ui-outputpanel ui-widget"><span id="form:showSimplePanel">
+
+                                <div class="card card-w-title">
+                                    <h1>A semantic backend for content management systems</h1>
+                                    <div class="ui-g">
+                                        <div class="ui-g-12 ui-lg-3">
+                                            
+                                            <div class="ui-g">
+
+                                                
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label id="form:j_idt200" class="ui-outputlabel ui-widget">Date</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell">2010-12-01
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label id="form:j_idt204" class="ui-outputlabel ui-widget">Author</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell">LALECİ ERTÜRKMEN, GÖKÇE BANU
+                                                            <br />Aluc, G.
+                                                            <br />Dogac, A.
+                                                            <br />SINACI, ALİ ANIL
+                                                            <br /><a id="form:j_idt206:4:authorLink" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt206:4:authorLink&quot;,f:&quot;form&quot;,p:&quot;form:j_idt206:4:authorLink&quot;});return false;">Kılıç, Özgün Ozan</a>
+                                                            <br />Tuncer, F.
+                                                            <br />
+                                                    </div>
+                                                </div>
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label id="form:j_idt210" class="ui-outputlabel ui-widget">Metadata</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell"><a id="form:j_idt212" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt212&quot;,f:&quot;form&quot;,u:&quot;form:itemPanel&quot;});return false;">Show full item record</a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-nd/4.0/88x31.png"/></a><br/>This work is licensed under a <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/4.0/">Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License</a>.
+                                                    </div>
+                                                </div>
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label>Item Usage Stats</label>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><a id="form:j_idt218" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt218&quot;,f:&quot;form&quot;});return false;">
+                                                            <div class="ui-g-6">
+                                                                <div class="stats_wrapper">
+                                                                    <span class="stats-count">468</span>
+                                                                    <br />
+                                                                    <span class="stats-type">views</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="ui-g-6">
+                                                                <div class="stats_wrapper">
+                                                                    <span class="stats-count">0</span>
+                                                                    <br />
+                                                                    <span class="stats-type">downloads</span>
+                                                                </div>
+                                                            </div></a>
+                                                    </div>
+                                                </div>
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><button id="form:j_idt221" name="form:j_idt221" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" onclick="PrimeFaces.ab({s:&quot;form:j_idt221&quot;,f:&quot;form&quot;,p:&quot;form:showSimplePanel&quot;,u:&quot;form:showSimplePanel&quot;,onco:function(xhr,status,args,data){PF('atifDialogWidget').show();;}});return false;" style=" float: left; width: 50%!important;" type="submit"><span class="ui-button-text ui-c">Cite This</span></button><script id="form:j_idt221_s" type="text/javascript">$(function(){PrimeFaces.cw("CommandButton","widget_form_j_idt221",{id:"form:j_idt221"});});</script>
+
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        <div class="ui-g-12 ui-lg-9">
+                                            <div class="ui-g">
+                                                <div class="ui-g-12">
+                                                    <div id="socialMedia" class=" ui-panelgrid-cell">
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="http://www.tumblr.com/share/link?url=https://open.metu.edu.tr/handle/11511/29923&amp;description=A semantic backend for content management systems" target="_blank" style="display:block !important" title="Share on Tumblr" class="fa fa-tumblr"></a>
+                                                        </div>
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="http://pinterest.com/pin/create/button/?url=https://open.metu.edu.tr/handle/11511/29923&amp;description=A semantic backend for content management systems" target="_blank" style="display:block !important" title="Share on Pinterest" class="fa fa-pinterest"></a>
+                                                        </div>
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="mailto:?subject=A semantic backend for content management systems&amp;body=https://open.metu.edu.tr/handle/11511/29923" target="_blank" style="display:block !important" title="Share on Mail" class="fa fa-envelope"></a>
+                                                        </div>
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://open.metu.edu.tr/handle/11511/29923&amp;title=A semantic backend for content management systems" target="_blank" style="display:block !important" title="Share on LinkedIn" class="fa fa-linkedin"></a>
+                                                        </div>
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="https://twitter.com/share?url=https://open.metu.edu.tr/handle/11511/29923&amp;text=A semantic backend for content management systems" target="_blank" style="display:block !important" class="fa fa-twitter" title="Share on Twitter"></a>
+                                                        </div>
+
+                                                        <div style="display:inline-block;vertical-align:top; float: right;">
+                                                            <a href="https://www.facebook.com/sharer/sharer.php?u=https://open.metu.edu.tr/handle/11511/29923" target="_blank" class="fa fa-facebook" title="Share on Facebook" style="display:block !important"></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell">The users of a content repository express the semantics they have in mind while defining the content items and their properties, and forming them into a particular hierarchy. However, this valuable semantics is not formally expressed, and hence cannot be used to discover meaningful relationships among the content items in an automated way. Although the need is apparent, there are several challenges in explicating this semantics in a fully automated way: first, it is difficult to distinguish between data and the metadata in the repository and secondly, not all the metadata defined, such as the file size or encoding type, contribute to the meaning. More importantly, for the developed solution to have practical value, it must address the constraints of the content management system (CMS) industry: CMS industry cannot change their repositories in production use and they need a generic solution not limited to a specific repository architecture. In this article, we address all these challenges through a set of tools developed which first semi-automatically explicate the content repository semantics to a knowledge-base and establish semantic bridges between this backend knowledge-base and the content repository. The repository content is dynamic; to be able to maintain the content repository semantics while new content is created, the changes in the repository semantics are reflected onto the knowledge-base through the semantic bridges. The tool set is complemented with a search engine that make use of the explicated semantics. 
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label>Subject Keywords</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell"><a id="form:j_idt228:0:subjectLink" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt228:0:subjectLink&quot;,f:&quot;form&quot;});return false;">Semantic content discovery</a>, <a id="form:j_idt228:1:subjectLink" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt228:1:subjectLink&quot;,f:&quot;form&quot;});return false;">Content management systems</a>, <a id="form:j_idt228:2:subjectLink" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt228:2:subjectLink&quot;,f:&quot;form&quot;});return false;">Knowledge-base</a>, <a id="form:j_idt228:3:subjectLink" href="#" class="ui-commandlink ui-widget" onclick="PrimeFaces.ab({s:&quot;form:j_idt228:3:subjectLink&quot;,f:&quot;form&quot;});return false;">Content repository semantics</a>
+                                                    </div>
+                                                </div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label id="form:j_idt231" class="ui-outputlabel ui-widget">URI</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell"><a href="https://hdl.handle.net/11511/29923" class="ui-link ui-widget" target="_blank">https://hdl.handle.net/11511/29923</a>
+                                                            <br />
+                                                    </div>
+                                                </div><div id="form:j_idt237" class="ui-outputpanel ui-widget ui-g-12"><div id="form:j_idt238" class="ui-outputpanel ui-widget">
+
+                                                        <div class="ui-panelgrid-cell"><label id="form:j_idt240" class="ui-outputlabel ui-widget">Journal</label>
+                                                        </div>
+                                                        <div class="ui-panelgrid-cell">KNOWLEDGE-BASED SYSTEMS
+                                                                <br />
+                                                            
+                                                        </div></div><div id="form:j_idt247" class="ui-outputpanel ui-widget">
+
+                                                        <div class="ui-panelgrid-cell"><label id="form:j_idt249" class="ui-outputlabel ui-widget">DOI</label>
+                                                        </div>
+                                                        <div class="ui-panelgrid-cell"><a href="https://doi.org/10.1016/j.knosys.2010.05.008" class="ui-link ui-widget" target="_blank">https://doi.org/10.1016/j.knosys.2010.05.008</a>
+                                                        </div></div></div>
+
+                                                <div class="ui-g-12">
+                                                    <div class="ui-panelgrid-cell"><label id="form:j_idt278" class="ui-outputlabel ui-widget">Collections</label>
+                                                    </div>
+                                                    <div class="ui-panelgrid-cell"><a href="/handle/11511/28672" class="ui-link ui-widget">Graduate School of Informatics, Article</a>
+                                                    </div><div id="form:j_idt282" class="ui-outputpanel ui-widget">
+                                                        <div class="ui-panelgrid-cell">
+                                                            <span class="__dimensions_badge_embed__" data-doi="10.1016/j.knosys.2010.05.008" data-legend="hover-right" data-hide-zero-citations="true" data-style="small_circle"></span>
+                                                        </div></div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                </div></span></div><div id="form:journalOutputPanel" class="ui-outputpanel ui-widget"></div><div id="form:volumeOutputPanel" class="ui-outputpanel ui-widget"></div><div id="form:issueOutputPanel" class="ui-outputpanel ui-widget"></div><div id="form:metuConferenceOutputPanel" class="ui-outputpanel ui-widget"></div><div id="form:ProceedingsBookOutputPanel" class="ui-outputpanel ui-widget"></div>
+
+
+                    </div>
+                    <div class="ui-g-12"><div id="form:recommendationsPanel" class="ui-outputpanel ui-widget">
+                            <div class="card card-w-title">
+                                <h1>Suggestions</h1>
+                                <div class="ui-g"><div id="form:j_idt770" class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-hidden-container ui-tabs-top" style="padding: 10px; width: 100% !important;" data-widget="widget_form_j_idt770"><ul class="ui-tabs-nav ui-helper-reset ui-widget-header ui-corner-all" role="tablist"><li class="ui-tabs-header ui-state-default ui-tabs-selected ui-state-active ui-corner-top" role="tab" aria-expanded="true" aria-selected="true" data-index="0"><a href="#form:j_idt770:j_idt773" tabindex="-1">OpenMETU</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="1"><a href="#form:j_idt770:j_idt782" tabindex="-1">Core</a></li></ul><div class="ui-tabs-panels"><div id="form:j_idt770:j_idt773" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="false" data-index="0"><div id="form:j_idt770:j_idt774" class="ui-datalist ui-widget dataList"><div id="form:j_idt770:j_idt774_content" class="ui-datalist-content ui-widget-content"><dl id="form:j_idt770:j_idt774_list" class="ui-datalist-data"><dt class="ui-datalist-item"><table cellpadding="1">
+<tbody>
+<tr>
+<td><a href="/handle/11511/17938" class="ui-link ui-widget">An ontology-based multimedia information management system</a></td>
+</tr>
+<tr>
+<td>Tarakçı, Hilal; Çiçekli, Fehime Nihan; Department of Computer Engineering (2008) </td>
+</tr>
+<tr>
+<td>In order to manage the content of multimedia data, the content must be annotated. Although any user-defined annotation is acceptable, it is preferable if systems agree on the same annotation format. MPEG-7 is a widely accepted standard for multimedia content annotation. However, in MPEG-7, semantically identical metadata can be represented in multiple ways due to lack of precise semantics in its XML-based syntax. Unfortunately this prevents metadata interoperability. To overcome this problem, MPEG-7 standar...</td>
+</tr>
+</tbody>
+</table>
+</dt><dt class="ui-datalist-item"><table cellpadding="1">
+<tbody>
+<tr>
+<td><a href="/handle/11511/45995" class="ui-link ui-widget">A Genetic Algorithms Based Classifier for Object Classification in Images</a></td>
+</tr>
+<tr>
+<td>Yilmaz, Turgay; Yildirim, Yakup; Yazıcı, Adnan (2011-09-28) </td>
+</tr>
+<tr>
+<td>Increase in the use of digital images has shown the need for modeling and querying the semantic content, which is usually defined using the objects in the images. In this paper, a Genetic Algorithm (GA) based object classification mechanism is developed for extracting the content of images. Objects are defined by using the Best Representative and Discriminative Feature (BRDF) model, where features are MPEG-7 descriptors. The classifier improves itself in time, with the genetic operations of GA.</td>
+</tr>
+</tbody>
+</table>
+</dt><dt class="ui-datalist-item"><table cellpadding="1">
+<tbody>
+<tr>
+<td><a href="/handle/11511/18365" class="ui-link ui-widget">A knowledge based product line for semantic modeling of web service families</a></td>
+</tr>
+<tr>
+<td>Orhan, Umut; Doğru, Ali Hikmet; Department of Computer Engineering (2008) </td>
+</tr>
+<tr>
+<td>Some mechanisms to enable an effective transition from domain models to web service descriptions are developed. The introduced domain modeling support provides verification and correction on the customization part. An automated mapping mechanism from the domain model to web service ontologies is also developed. The proposed approach is based on Feature-Oriented Domain Analysis (FODA), Semantic Web technologies and ebXML Business Process Specification Schema (ebBP). Major contributions of this work are the c...</td>
+</tr>
+</tbody>
+</table>
+</dt><dt class="ui-datalist-item"><table cellpadding="1">
+<tbody>
+<tr>
+<td><a href="/handle/11511/62509" class="ui-link ui-widget">A monolithic approach to automated composition of semantic web services with the Event Calculus</a></td>
+</tr>
+<tr>
+<td>Okutan, Cagla; Çiçekli, Fehime Nihan (Elsevier BV, 2010-07-01) </td>
+</tr>
+<tr>
+<td>In this paper, a web service composition and execution framework is presented for semantically -annotated web services. A monolithic approach to automated web service composition and execution problem is chosen, which provides some benefits by separating composition and execution phases. An AI planning method using a logical formalism, namely Abductive Event Calculus, is chosen for the composition phase. This formalism allows one to generate a narrative of actions and temporal orderings using abductive plan...</td>
+</tr>
+</tbody>
+</table>
+</dt><dt class="ui-datalist-item"><table cellpadding="1">
+<tbody>
+<tr>
+<td><a href="/handle/11511/65649" class="ui-link ui-widget">A TV Content Augmentation System Exploiting Rule Based Named Entity Recognition Method</a></td>
+</tr>
+<tr>
+<td>Isiklar, Yunus Emre; Cicekli, Nihan (2015-09-24) </td>
+</tr>
+<tr>
+<td>This paper presents a TV content augmentation system that enhances the contents of TVprograms by retrieving context related data and presenting them to the viewers without the necessity of another device. The paper presents both the conceptual description of the system and a prototype implementation. The implementation utilizes program descriptions crawled from web resources in order to extract named entities such as person names, locations, organizations, etc. For this purpose, a rule based Named Entity Re...</td>
+</tr>
+</tbody>
+</table>
+</dt></dl></div></div><script id="form:j_idt770:j_idt774_s" type="text/javascript">$(function(){PrimeFaces.cw("DataList","widget_form_j_idt770_j_idt774",{id:"form:j_idt770:j_idt774"});});</script></div><div id="form:j_idt770:j_idt782" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="1">
+                                            <div id="coreRecommenderOutput" style="width: auto!important;"></div></div></div><input type="hidden" id="form:j_idt770_activeIndex" name="form:j_idt770_activeIndex" value="0" autocomplete="off" /></div><script id="form:j_idt770_s" type="text/javascript">$(function(){PrimeFaces.cw("TabView","widget_form_j_idt770",{id:"form:j_idt770",effectDuration:"normal",scrollable:false});});</script>
+
+                                </div>
+
+                            </div></div>
+                    </div>
+
+                </div>
+            </div><div id="form:atifDialog" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-shadow ui-hidden-container" style="min-width: 40%; !important; max-width: 50% !important;"><div class="ui-dialog-titlebar ui-widget-header ui-helper-clearfix ui-corner-top"><span id="form:atifDialog_title" class="ui-dialog-title">Citation Formats</span><a href="#" class="ui-dialog-titlebar-icon ui-dialog-titlebar-close ui-corner-all" aria-label="Close"><span class="ui-icon ui-icon-closethick"></span></a></div><div class="ui-dialog-content ui-widget-content" id="form:atifDialog_content">
+                <div class="card card-w-title"><div id="form:j_idt787" class="ui-tabs ui-widget ui-widget-content ui-corner-all ui-hidden-container ui-tabs-top" data-widget="widget_form_j_idt787"><ul class="ui-tabs-nav ui-helper-reset ui-widget-header ui-corner-all" role="tablist"><li class="ui-tabs-header ui-state-default ui-tabs-selected ui-state-active ui-corner-top" role="tab" aria-expanded="true" aria-selected="true" data-index="0"><a href="#form:j_idt787:j_idt788" tabindex="-1">IEEE</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="1"><a href="#form:j_idt787:j_idt789" tabindex="-1">ACM</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="2"><a href="#form:j_idt787:j_idt791" tabindex="-1">APA</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="3"><a href="#form:j_idt787:j_idt793" tabindex="-1">CHICAGO</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="4"><a href="#form:j_idt787:j_idt795" tabindex="-1">MLA</a></li><li class="ui-tabs-header ui-state-default ui-corner-top" role="tab" aria-expanded="false" aria-selected="false" data-index="5"><a href="#form:j_idt787:j_idt797" tabindex="-1">BibTeX</a></li></ul><div class="ui-tabs-panels"><div id="form:j_idt787:j_idt788" class="ui-tabs-panel ui-widget-content ui-corner-bottom" role="tabpanel" aria-hidden="false" data-index="0"><span id="form:j_idt787:aid"><div class="csl-bib-body">
+  <div class="csl-entry">
+    <div class="csl-left-margin"></div><div class="csl-right-inline">G. B. LALECİ ERT&Uuml;RKMEN, G. Aluc, A. Dogac, A. A. SINACI, &Ouml;. O. Kılı&ccedil;, and F. Tuncer, &ldquo;A semantic backend for content management systems,&rdquo; <span style="font-style: italic">KNOWLEDGE-BASED SYSTEMS</span>, pp. 832&ndash;843, 2010, Accessed: 00, 2020. [Online]. Available: https://hdl.handle.net/11511/29923.</div>
+  </div>
+</div></span></div><div id="form:j_idt787:j_idt789" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="1"></div><div id="form:j_idt787:j_idt791" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="2"></div><div id="form:j_idt787:j_idt793" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="3"></div><div id="form:j_idt787:j_idt795" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="4"></div><div id="form:j_idt787:j_idt797" class="ui-tabs-panel ui-widget-content ui-corner-bottom ui-helper-hidden" role="tabpanel" aria-hidden="true" data-index="5"></div></div><input type="hidden" id="form:j_idt787_activeIndex" name="form:j_idt787_activeIndex" value="0" autocomplete="off" /></div><script id="form:j_idt787_s" type="text/javascript">$(function(){PrimeFaces.cw("TabView","widget_form_j_idt787",{id:"form:j_idt787",dynamic:true,cache:true,effectDuration:"normal",scrollable:false,behaviors:{tabChange:function(ext,event) {PrimeFaces.ab({s:"form:j_idt787",e:"tabChange",f:"form",p:"form:j_idt787"},ext);}}});});</script><img id="form:j_idt799" width="1" height="1" alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==" />
+                </div></div></div><script id="form:atifDialog_s" type="text/javascript">$(function(){PrimeFaces.cw("Dialog","atifDialogWidget",{id:"form:atifDialog",resizable:false,modal:true});});</script><input type="hidden" name="javax.faces.ViewState" id="j_id1:javax.faces.ViewState:1" value="-975020487603209293:2561962846867982285" autocomplete="off" />
+</form>
+                </div>
+                <div id="configDiv" class="layout-config">
+                </div>
+            </div>
+
+            <div class="layout-footer bbs_footer">
+
+    <div class="ui-g">
+        <div class="ui-g-6"><div id="destekOP" class="ui-outputpanel ui-widget">
+                <span style="display: block;">METU IIS - Integrated Information Service</span>
+                <a href="mailto:open@metu.edu.tr" target="_blank">
+                    <span>open@metu.edu.tr</span>
+                </a></div><div id="destekToolTip" class="ui-tooltip ui-widget ui-tooltip-top" role="tooltip"><div class="ui-tooltip-arrow"></div><div class="ui-tooltip-text ui-shadow ui-corner-all">You can transmit your request, problems about OpenMETU.</div></div><script id="destekToolTip_s" type="text/javascript">$(function(){PrimeFaces.cw("Tooltip","widget_destekToolTip",{id:"destekToolTip",showEffect:"blind",hideEffect:"fade",hideDelay:100,target:"destekOP",position:"top"});});</script>
+        </div>
+    </div>
+            </div>
+        </div><div id="j_idt809" class="bbs_spinner"><div id="j_idt809_start" style="display:none"><img src="/javax.faces.resource/loading_spinner.gif.xhtml?ln=img" class="bbs_spinnerImage" /></div><div id="j_idt809_complete" style="display:none"></div></div><script id="j_idt809_s" type="text/javascript">$(function(){PrimeFaces.cw("AjaxStatus","widget_j_idt809",{id:"j_idt809",delay:0});});</script></body>
+
+    <script type="text/javascript">
+        function scrollToElement(elementId) {
+            var elmnt = document.getElementById(elementId);
+            var headerHeight = 100; // layout-main stylelinin 90px lik padding degerini notrlemek icin kullaniliyor
+            // scroll to your element
+            elmnt.scrollIntoView(true);
+            // now account for fixed header
+            var scrolledY = window.scrollY;
+            if (scrolledY) {
+                window.scroll(0, scrolledY - headerHeight);
+            }
+        }
+
+        
+        var _paq = window._paq || [];
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u="//ainos.cc.metu.edu.tr:9443/";
+            _paq.push(['setTrackerUrl', u+'matomo.php']);
+            _paq.push(['setSiteId', '1']);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+        })();
+        
+    </script>
+</html>
