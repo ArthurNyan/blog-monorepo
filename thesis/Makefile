@@ -30,13 +30,23 @@ FONTCHECK_POS_LOG := $(LINT_DIR)/fontcheck-positive.log
 FONTCHECK_NEG_LOG := $(LINT_DIR)/fontcheck-negative.log
 FONTCHECK_NEG_CODE_LOG := $(LINT_DIR)/fontcheck-negative-code.log
 PDFTEXT_REPORT := $(LINT_DIR)/main.txt
+PY_VENDOR_DIR := .vendor-py
+MARP_CMD := npx -y @marp-team/marp-cli@latest
+MARP_BROWSER := /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
+PRESENTATION_MD := presentation/diploma-presentation.md
+PRESENTATION_THEME := presentation/theme/herzen-marp.css
+PRESENTATION_PPTX := presentation/diploma-presentation.pptx
+PRESENTATION_PDF := presentation/diploma-presentation.pdf
 
-.PHONY: help build rebuild clean distclean watch lint check fontcheck ci release-check diagrams diagrams-clean bibliography-pdf
+.PHONY: help build rebuild clean distclean watch lint check fontcheck ci release-check diagrams diagrams-clean bibliography-pdf presentation presentation-pdf presentation-assets
 
 help:
 	@echo "Доступные цели:"
 	@echo "  build         - собрать $(MAIN).pdf через latexmk (lualatex + biber)"
 	@echo "  bibliography-pdf - экспортировать отдельный PDF только со списком литературы"
+	@echo "  presentation  - собрать draft-презентацию диплома в PPTX через Marp"
+	@echo "  presentation-pdf - собрать отдельный PDF презентации через Marp"
+	@echo "  presentation-assets - подготовить PNG-версии thesis-диаграмм для слайдов"
 	@echo "  diagrams      - сгенерировать Mermaid/PlantUML диаграммы в SVG + PDF"
 	@echo "  diagrams-clean - удалить сгенерированные диаграммы из assets/diagrams"
 	@echo "  rebuild       - полная очистка и пересборка"
@@ -54,6 +64,15 @@ build:
 
 bibliography-pdf: build
 	@bash scripts/export-bibliography-pdf.sh "$(MAIN).pdf" "bibliography.pdf"
+
+presentation-assets:
+	@bash scripts/prepare-presentation-assets.sh
+
+presentation: presentation-assets
+	@$(MARP_CMD) --pptx --allow-local-files --browser-path "$(MARP_BROWSER)" --theme-set "$(PRESENTATION_THEME)" --output "$(PRESENTATION_PPTX)" "$(PRESENTATION_MD)"
+
+presentation-pdf: presentation-assets
+	@$(MARP_CMD) --pdf --allow-local-files --browser-path "$(MARP_BROWSER)" --theme-set "$(PRESENTATION_THEME)" --output "$(PRESENTATION_PDF)" "$(PRESENTATION_MD)"
 
 diagrams:
 	@bash scripts/render-diagrams.sh
