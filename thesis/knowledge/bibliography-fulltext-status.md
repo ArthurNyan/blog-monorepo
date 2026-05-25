@@ -55,6 +55,20 @@
 | `holcik2025headless-cloud` | `full-text-local` | [PDF](../../research/reference-theses/downloads/vut-headless-cms-in-cloud.pdf) |
 | `solovev2023multilingual-web-app` | `full-text-local` | [PDF](../../research/reference-theses/downloads/tpu-multilingual-news-web-application.pdf) |
 
+### Русскоязычный supporting layer
+
+| Key | Статус | Что есть локально | Комментарий |
+|---|---|---|---|
+| `voroniuk2020retail-cms-needs` | `full-text-local` | [PDF](../../research/reference-theses/downloads/itmo-voroniuk-retail-cms-needs.pdf) | Полезен для постановки бизнес-требований к `CMS` в маркетинговом и retail-контексте. |
+| `mashina2022centralized-cms-knowledge` | `full-text-local` | [PDF](../../research/reference-theses/downloads/itmo-mashina-centralized-cms-knowledge.pdf) | Полезен для тезиса о централизованном контентном ядре и knowledge-management слое. |
+| `shumikhina2019online-media-portfolio` | `full-text-local` | [PDF](../../research/reference-theses/downloads/tpu-online-media-portfolio.pdf) | Прикладной русскоязычный аналог контентной платформы с редакционным контуром. |
+| `kuznetsov2017cms-sto` | `metadata-only` | [HTML](../../research/reference-theses/metadata/spbpu-cms-sto-info.html) | Есть стабильная карточка СПбПУ, но не локальный full PDF. |
+| `mikhailova2016content-navigation` | `metadata-only` | [HTML](../../research/reference-theses/metadata/spbpu-navigation-content-info.html) | Полезен для IA/navigation, но локально сохранена только карточка. |
+| `torgunakova2023marketing-website` | `full-text-local` | [PDF](../../research/reference-theses/downloads/articles/ru-torgunakova2023-marketing-website.pdf) | Сильный русскоязычный источник по роли сайта в маркетинговых коммуникациях, юзабилити и конверсии. |
+| `belyaev2009website-navigation` | `full-text-local` | [PDF](../../research/reference-theses/downloads/articles/ru-belyaev2009-website-navigation.pdf) | Полезен для навигации и информационной архитектуры веб-сайта. |
+| `yesikov2013cms-comparative-analysis` | `full-text-local` | [PDF](../../research/reference-theses/downloads/articles/ru-yesikov2013-cms-comparative-analysis.pdf) | Русскоязычный supporting source по сравнению классических `CMS`. |
+| `gorlo2010secure-cms` | `full-text-local` | [PDF](../../research/reference-theses/downloads/articles/ru-gorlo2010-secure-cms.pdf) | Полезен для базового блока про security, access control и риски типовых движков. |
+
 ### Официальные документы и стандарты
 
 | Key | Статус | Локальный файл |
@@ -82,6 +96,10 @@
 - [gkantouna2019-cms-oriented-modeling-languages.pdf](../../research/reference-theses/downloads/articles/gkantouna2019-cms-oriented-modeling-languages.pdf)
 - [filipe2016-xis-cms.pdf](../../research/reference-theses/downloads/articles/filipe2016-xis-cms.pdf)
 - [priefer2021-applying-mdd-cms-domain.html](../../research/reference-theses/downloads/articles/priefer2021-applying-mdd-cms-domain.html)
+- [ru-torgunakova2023-marketing-website.pdf](../../research/reference-theses/downloads/articles/ru-torgunakova2023-marketing-website.pdf)
+- [ru-belyaev2009-website-navigation.pdf](../../research/reference-theses/downloads/articles/ru-belyaev2009-website-navigation.pdf)
+- [ru-yesikov2013-cms-comparative-analysis.pdf](../../research/reference-theses/downloads/articles/ru-yesikov2013-cms-comparative-analysis.pdf)
+- [ru-gorlo2010-secure-cms.pdf](../../research/reference-theses/downloads/articles/ru-gorlo2010-secure-cms.pdf)
 
 И официальные abstract snapshots:
 

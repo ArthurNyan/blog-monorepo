@@ -87,15 +87,19 @@
 
 ### 3. Русскоязычный supporting layer
 
-Эти источники не обязаны быть центром итогового списка, но они полезны как supporting layer по предметной области, структуре ВКР и прикладной постановке.
+Эти источники не обязаны быть центром итогового списка, но они полезны как supporting layer по предметной области, структуре ВКР, маркетинговому контексту и русскоязычной аргументации.
 
-| Источник | Почему использовать | Внешняя ссылка | Локальная копия |
-|---|---|---|---|
-| ИТМО — анализ задач для `CMS` в retail-контексте | Хорош для аргумента про бизнес-потребности `CMS`: роли, версии, интеграции, централизованное управление. | [ITMO](https://kmu.itmo.ru/file/download/application/11149) | [PDF](../../research/reference-theses/downloads/itmo-voroniuk-retail-cms-needs.pdf) |
-| ИТМО — централизованная `CMS` как основа knowledge management | Полезен для тезиса о централизованном контентном ядре, но не надо перегружать им тему. | [ITMO](https://kmu.itmo.ru/file/download/application/24737) | [PDF](../../research/reference-theses/downloads/itmo-mashina-centralized-cms-knowledge.pdf) |
-| ТПУ — онлайн-СМИ для портфолио | Полезен по связке контентной платформы, требований и проектирования. | [TPU repository](https://earchive.tpu.ru/jspui/handle/11683/55021) | [PDF](../../research/reference-theses/downloads/tpu-online-media-portfolio.pdf) |
-| РГПУ — Жуков | Скорее образец постановки задачи, требований и внедрения, чем современный техреференс. | нет внешней стабильной ссылки | [PDF](../../research/reference-theses/downloads/rgpu-zhukov-employment-system.pdf) |
-| РГПУ — Вехова | Полезна как образец инженерной подачи: требования, архитектура, тестирование, внедрение. | нет внешней стабильной ссылки | [PDF](../../research/reference-theses/downloads/rgpu-vekhova-huff-gis-dss.pdf) |
+| Key | Тип | Почему использовать | Куда встраивать | Внешняя ссылка | Локальная копия |
+|---|---|---|---|---|---|
+| `voroniuk2020retail-cms-needs` | тезисы доклада | Хорош для аргумента про бизнес-потребности `CMS` в маркетинге и retail-контексте: роли, версии, интеграции, публикации, омниканальность. | Введение и Глава 1: прикладная постановка задачи. | [ITMO](https://kmu.itmo.ru/file/download/application/11149) | [PDF](../../research/reference-theses/downloads/itmo-voroniuk-retail-cms-needs.pdf) |
+| `mashina2022centralized-cms-knowledge` | тезисы доклада | Полезен для тезиса о централизованном контентном ядре и накоплении знаний, но не стоит делать его центральным источником. | Глава 1: централизованное хранение и управление контентом. | [ITMO](https://kmu.itmo.ru/file/download/application/24737) | [PDF](../../research/reference-theses/downloads/itmo-mashina-centralized-cms-knowledge.pdf) |
+| `shumikhina2019online-media-portfolio` | bachelor thesis | Полезен по связке контентной платформы, требований и проектирования сайта с редакционным контуром. | Глава 1: прикладные аналоги; Глава 2: структура требований. | [TPU repository](https://earchive.tpu.ru/jspui/handle/11683/55021) | [PDF](../../research/reference-theses/downloads/tpu-online-media-portfolio.pdf) |
+| `kuznetsov2017cms-sto` | bachelor thesis | Классический русскоязычный референс по проектированию собственной `CMS` для сайта. | Глава 1: анализ классических `CMS`; Глава 2: модель CMS-ядра. | [SPbPU](https://elib.spbstu.ru/dl/2/v17-3821.pdf/info) | [HTML card](../../research/reference-theses/metadata/spbpu-cms-sto-info.html) |
+| `mikhailova2016content-navigation` | bachelor thesis | Полезен для информационной архитектуры, навигации и структурирования контента в корпоративном сайте. | Глава 1 и 2: IA, меню, структура разделов. | [SPbPU](https://elib.spbstu.ru/dl/2/v16-1111.pdf/info) | [HTML card](../../research/reference-theses/metadata/spbpu-navigation-content-info.html) |
+| `torgunakova2023marketing-website` | journal article | Сильный русскоязычный источник именно по роли сайта в комплексе маркетинговых коммуникаций, юзабилити и конверсии. | Введение и Глава 1: маркетинговый контекст и требования к сайту. | [CyberLeninka](https://cyberleninka.ru/article/n/veb-sayt-organizatsii-kak-instrument-realizatsii-kompleksa-marketingovyh-kommunikatsiy) | [PDF](../../research/reference-theses/downloads/articles/ru-torgunakova2023-marketing-website.pdf) |
+| `belyaev2009website-navigation` | journal article | Полезен для аргументации информационной архитектуры и роли устойчивой навигации в структуре сайта. | Глава 1 и 2: структура сайта, меню, пользовательские сценарии. | [CyberLeninka](https://cyberleninka.ru/article/n/navigatsiya-kak-klyuchevoy-komponent-vizualnoy-organizatsii-veb-sayta) | [PDF](../../research/reference-theses/downloads/articles/ru-belyaev2009-website-navigation.pdf) |
+| `yesikov2013cms-comparative-analysis` | journal article | Полезен как русскоязычный supporting source для блока о классических и коробочных `CMS`, их классификации и критериях выбора. | Глава 1: традиционные `CMS`, ограничения и сравнение. | [CyberLeninka](https://cyberleninka.ru/article/n/sravnitelnyy-analiz-sistem-upravleniya-kontentom-sontent-management-system-cms) | [PDF](../../research/reference-theses/downloads/articles/ru-yesikov2013-cms-comparative-analysis.pdf) |
+| `gorlo2010secure-cms` | journal article | Дает русскоязычную опору для разговора о защите `CMS`, аутентификации, разграничении прав и рисках стандартных движков. | Глава 2: базовые требования безопасности и доступа. | [CyberLeninka](https://cyberleninka.ru/article/n/podhody-k-postroeniyu-zaschischennoy-sistemy-upravleniya-kontentom) | [PDF](../../research/reference-theses/downloads/articles/ru-gorlo2010-secure-cms.pdf) |
 
 ## Официальные документы и стандарты
 
@@ -145,6 +149,10 @@
 - `gracia2012multilingual-web-data.pdf`
 - `gkantouna2019-cms-oriented-modeling-languages.pdf`
 - `filipe2016-xis-cms.pdf`
+- `ru-torgunakova2023-marketing-website.pdf`
+- `ru-belyaev2009-website-navigation.pdf`
+- `ru-yesikov2013-cms-comparative-analysis.pdf`
+- `ru-gorlo2010-secure-cms.pdf`
 
 И один полноценный open-access HTML full text:
 
@@ -186,13 +194,14 @@ Exact full text по части статей `Elsevier` и `IEEE` все еще 
 
 - для сравнения традиционного `CMS` и `headless CMS`: `santahuhta2022headless-cms`, `laleci2010semantic-backend`, `trias2012cms-model-driven`, `bandirmali2018mtcmf`, `priefer2021cms-mdd-domain`, `gkantouna2019cms-oriented-modeling`, `filipe2016xis-cms`;
 - для multilingual-контуров: `oleary2008multilingual-kms`, `gracia2012multilingual-web-data`, `solovev2023multilingual-web-app`;
+- для русскоязычной прикладной и предметной рамки: `voroniuk2020retail-cms-needs`, `shumikhina2019online-media-portfolio`, `torgunakova2023marketing-website`, `belyaev2009website-navigation`, `yesikov2013cms-comparative-analysis`;
 - для обоснования `Strapi`, `Astro`, `Nx`: `strapi-cms-docs`, `astro-on-demand`, `astro-strapi-guide`, `nx-monorepos`.
 
 ### Проектная глава
 
 - для `i18n`, routes и `SEO`: `astro-i18n-routing`, `google-international-sites`, `sitemaps-protocol`;
 - для deployment: `vercel-astro-docs`, `docker-overview`, `holcik2025headless-cloud`;
-- для security: `cigoj2019wcms-vulnerability`;
+- для security: `cigoj2019wcms-vulnerability`, `gorlo2010secure-cms`;
 - для accessibility и тестирования: `wcag22`.
 
 ## Практический вывод

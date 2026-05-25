@@ -31,11 +31,12 @@ FONTCHECK_NEG_LOG := $(LINT_DIR)/fontcheck-negative.log
 FONTCHECK_NEG_CODE_LOG := $(LINT_DIR)/fontcheck-negative-code.log
 PDFTEXT_REPORT := $(LINT_DIR)/main.txt
 
-.PHONY: help build rebuild clean distclean watch lint check fontcheck ci release-check diagrams diagrams-clean
+.PHONY: help build rebuild clean distclean watch lint check fontcheck ci release-check diagrams diagrams-clean bibliography-pdf
 
 help:
 	@echo "Доступные цели:"
 	@echo "  build         - собрать $(MAIN).pdf через latexmk (lualatex + biber)"
+	@echo "  bibliography-pdf - экспортировать отдельный PDF только со списком литературы"
 	@echo "  diagrams      - сгенерировать Mermaid/PlantUML диаграммы в SVG + PDF"
 	@echo "  diagrams-clean - удалить сгенерированные диаграммы из assets/diagrams"
 	@echo "  rebuild       - полная очистка и пересборка"
@@ -50,6 +51,9 @@ help:
 
 build:
 	$(LATEXMK) -pdf -lualatex $(MAIN).tex
+
+bibliography-pdf: build
+	@bash scripts/export-bibliography-pdf.sh "$(MAIN).pdf" "bibliography.pdf"
 
 diagrams:
 	@bash scripts/render-diagrams.sh
