@@ -1,0 +1,241 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.0cm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{array}
+
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+\setmainfont[
+  Path=../fonts/,
+  UprightFont=pt-astra-serif_regular.ttf,
+  BoldFont=pt-astra-serif_bold.ttf,
+  ItalicFont=pt-astra-serif_italic.ttf,
+  BoldItalicFont=pt-astra-serif_bold-italic.ttf
+]{PT Astra Serif}
+
+\setmonofont[
+  Path=../fonts/fira-code/,
+  UprightFont=FiraCode-Regular.ttf,
+  BoldFont=FiraCode-Bold.ttf
+]{Fira Code}
+
+\hypersetup{
+  hidelinks,
+  pdfauthor={Нахатакян Артур Романович},
+  pdftitle={Раздаточный материал к ВКР}
+}
+
+\setlist[itemize]{leftmargin=1.4cm}
+\setlist[enumerate]{leftmargin=1.4cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlength{\tabcolsep}{6pt}
+\renewcommand{\arraystretch}{1.2}
+\emergencystretch=2em
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Раздаточный материал к выпускной квалификационной работе}}\\[0.8em]
+{\normalsize \textbf{Тема:} «Разработка системы управления контентом в сфере маркетинга на базе Strapi и Astro»}\\[0.4em]
+{\normalsize \textbf{Обучающийся:} Нахатакян Артур Романович}\\
+{\normalsize \textbf{Научный руководитель:} Государев Илья Борисович, к.п.н., доцент}\\
+{\normalsize Санкт-Петербург, 2026}
+\end{center}
+
+\section*{1. Актуальность, объект и предмет исследования}
+
+Актуальность темы обусловлена тем, что корпоративный маркетинговый сайт сегодня является не
+только представительской витриной, но и рабочим инструментом бизнеса. Через него
+публикуются контентные страницы, статьи, проекты, вакансии, формы захвата лидов и другие
+элементы, влияющие на маркетинговую активность компании.
+
+На практике такие сайты часто развиваются быстрее, чем их контентная архитектура. В
+результате часть данных остается зашитой во frontend-коде, публикация изменений требует
+участия разработчика, а локализация, предпросмотр и \texttt{SEO}-настройки оказываются
+фрагментированными.
+
+\textbf{Объект исследования:} процессы управления контентом корпоративного маркетингового
+сайта.
+
+\textbf{Предмет исследования:} архитектурные и программные решения для построения
+\texttt{CMS-first} веб-платформы на базе \texttt{Strapi} и \texttt{Astro}.
+
+\section*{2. Краткая характеристика работы}
+
+\begin{longtable}{|p{5.0cm}|p{9.0cm}|}
+\hline
+\textbf{Показатель} & \textbf{Значение} \\
+\hline
+Тип разрабатываемого решения & \texttt{CMS-first} платформа для корпоративного маркетингового сайта \\
+\hline
+Основной backend стек & \texttt{Strapi 5}, \texttt{SQLite}, \texttt{OpenAPI}, \texttt{Docker} \\
+\hline
+Основной frontend стек & \texttt{Astro 6}, \texttt{React}, \texttt{Tailwind}, \texttt{Vercel adapter}, \texttt{sitemap} \\
+\hline
+Архитектурная схема & \texttt{Strapi -> API -> Astro} \\
+\hline
+Основные контентные сущности & \texttt{global}, \texttt{home-page}, \texttt{page}, \texttt{article}, \texttt{author}, \texttt{project}, \texttt{vacancy}, \texttt{industry}, \texttt{job-role} \\
+\hline
+Прикладные сущности & \texttt{lead-submission}, \texttt{vacancy-application} \\
+\hline
+Основной функциональный результат & Управляемая контентная модель, публичная витрина, \texttt{preview}, \texttt{SEO}, формы и публикационный контур \\
+\hline
+Публикационный подход & \texttt{publish -> webhook -> rebuild} \\
+\hline
+\end{longtable}
+
+\section*{3. Цель и задачи работы}
+
+\textbf{Цель работы} --- разработать систему управления контентом для корпоративного
+маркетингового сайта на базе \texttt{Strapi} и \texttt{Astro}, обеспечивающую управление
+страницами, статьями, проектами и вакансиями, поддержку локалей \texttt{ru/en},
+предварительного просмотра, \texttt{SEO}-контур и воспроизводимый сценарий публикации.
+
+Для достижения цели решались следующие задачи:
+\begin{enumerate}
+  \item проанализировать особенности маркетинговых сайтов и обосновать выбор
+  \texttt{CMS-first} архитектуры;
+  \item спроектировать модель данных и маршрутный контур системы;
+  \item реализовать управление страницами и ключевыми контентными сущностями через
+  \texttt{Strapi};
+  \item реализовать публичную витрину на \texttt{Astro} с локализацией, \texttt{preview},
+  \texttt{SEO} и \texttt{sitemap};
+  \item организовать публикационный и эксплуатационный контур, включая
+  \texttt{webhook -> rebuild};
+  \item провести проверку ключевых пользовательских и редакторских сценариев.
+\end{enumerate}
+
+\section*{4. Архитектурная схема и логика системы}
+
+В работе реализован монорепозиторий на базе \texttt{Nx + pnpm}, включающий два основных
+приложения:
+\begin{itemize}
+  \item \textbf{CMS-слой} на \texttt{Strapi 5}, отвечающий за хранение и редактирование
+  контента;
+  \item \textbf{frontend-слой} на \texttt{Astro 6}, отвечающий за публикацию контента на
+  публичной витрине.
+\end{itemize}
+
+Контентная модель включает:
+\begin{itemize}
+  \item глобальные данные сайта: \texttt{global};
+  \item главную страницу: \texttt{home-page};
+  \item локализуемые CMS-страницы: \texttt{page};
+  \item контентные коллекции: \texttt{article}, \texttt{author}, \texttt{project};
+  \item карьерный модуль: \texttt{vacancy}, \texttt{industry}, \texttt{job-role};
+  \item прикладные формы: \texttt{lead-submission}, \texttt{vacancy-application}.
+\end{itemize}
+
+Для \texttt{home-page} и \texttt{page} реализован конструктор страниц на основе
+\texttt{Dynamic Zone}, который позволяет собирать страницу из переиспользуемых блоков без
+правки frontend-кода.
+
+На стороне frontend реализован locale-prefixed маршрутный контур:
+\begin{itemize}
+  \item \texttt{/:locale/};
+  \item \texttt{/:locale/:slug/};
+  \item \texttt{/:locale/articles/...};
+  \item \texttt{/:locale/projects/...};
+  \item отдельный карьерный контур \texttt{/vacancies/...};
+  \item серверные preview-маршруты \texttt{/preview/...}.
+\end{itemize}
+
+\section*{5. Реализованный функциональный результат}
+
+По состоянию текущего baseline подтверждены следующие результаты:
+\begin{enumerate}
+  \item реализовано управление главной страницей, CMS-страницами, статьями, проектами,
+  вакансиями, маркетинговыми лидами и откликами через \texttt{Strapi};
+  \item реализован безопасный \texttt{preview mode} для \texttt{home-page}, \texttt{page},
+  \texttt{article}, \texttt{project}, \texttt{vacancy};
+  \item реализован \texttt{SEO/Open Graph}-контур для ключевых сущностей и генерация
+  \texttt{sitemap};
+  \item реализованы server-side маршруты для форм \texttt{lead-submission} и
+  \texttt{vacancy-application};
+  \item реализован публикационный контур \texttt{publish -> webhook -> rebuild};
+  \item реализована ролевая модель с разделением маркетингового и карьерного контуров.
+\end{enumerate}
+
+\section*{6. Контуры доступа и роли}
+
+В системе выделены следующие роли:
+\begin{itemize}
+  \item \texttt{administrator} --- полный административный доступ;
+  \item \texttt{marketer/content-manager} --- публикация и управление маркетинговым контентом;
+  \item \texttt{editor} --- подготовка маркетинговых черновиков без права публикации;
+  \item \texttt{hr} --- управление вакансиями и обработка откликов.
+\end{itemize}
+
+Это позволяет разделить редакторские процессы:
+\begin{itemize}
+  \item маркетинговый контур: \texttt{global}, \texttt{home-page}, \texttt{page},
+  \texttt{article}, \texttt{author}, \texttt{project}, \texttt{lead-submission};
+  \item карьерный контур: \texttt{vacancy}, \texttt{industry}, \texttt{job-role},
+  \texttt{vacancy-application}.
+\end{itemize}
+
+\section*{7. Проверка сценариев и подтвержденные результаты}
+
+Для проекта подготовлена воспроизводимая матрица приемки. На baseline от \texttt{22.05.2026}
+подтверждено:
+\begin{itemize}
+  \item публичные маршруты storefront-core открываются корректно;
+  \item \texttt{preview} с неверным \texttt{secret} возвращает \texttt{401}, а
+  draft-preview отдает страницу с \texttt{noindex};
+  \item формы проходят server-side валидацию;
+  \item валидные отправки форм сохраняются в \texttt{SQLite};
+  \item frontend-сборка проходит успешно и формирует \texttt{35} prerendered static routes;
+  \item генерируются \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml};
+  \item в базе данных подтвержден активный \texttt{Frontend rebuild hook} на
+  \texttt{entry.publish} и \texttt{entry.unpublish};
+  \item размер клиентского build output составляет около \texttt{2.3 МБ}.
+\end{itemize}
+
+\section*{8. Практическая значимость}
+
+Практическая значимость работы заключается в переносе типовых редакторских операций из
+frontend-кода в \texttt{CMS}. Контент-менеджер получает возможность управлять страницами,
+статьями, проектами и метаданными через административный интерфейс, а разработчик
+перестает быть обязательным участником каждого небольшого изменения контента.
+
+Для проекта в целом это дает:
+\begin{itemize}
+  \item централизованную модель данных;
+  \item единый публикационный контур;
+  \item поддержку локализации;
+  \item управляемый \texttt{preview};
+  \item основу для дальнейшего масштабируемого развития публичной витрины.
+\end{itemize}
+
+\section*{9. Направления развития}
+
+В ходе выполнения работы сформированы следующие направления дальнейшего развития:
+\begin{enumerate}
+  \item расширение англоязычного наполнения detail-разделов
+  \texttt{articles/projects};
+  \item дальнейшее развитие \texttt{CMS SEO}-контура и углубление редакторской настройки
+  публичных страниц;
+  \item расширение browser-level контура оценки доступности и производительности.
+\end{enumerate}
+
+\section*{10. Основные выводы}
+
+\begin{enumerate}
+  \item в результате выполнения выпускной квалификационной работы разработан прототип
+  \texttt{CMS-first} системы управления контентом для корпоративного маркетингового сайта;
+  \item полученное решение объединяет контентную модель, публичную витрину, локализацию,
+  \texttt{preview}, формы взаимодействия с пользователем и публикационный контур;
+  \item практический результат работы состоит в переходе от кодо-центричного
+  подхода к централизованной модели управления контентом;
+  \item разработанная система может рассматриваться как инженерная основа для дальнейшего
+  развития маркетинговой платформы как управляемой и воспроизводимой системы.
+\end{enumerate}
+
+\end{document}
