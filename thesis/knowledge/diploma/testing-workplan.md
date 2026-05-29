@@ -16,10 +16,10 @@
 - [x] Этап 2. Стабилизировать automated smoke contour
 - [x] Этап 3. Оформить воспроизводимый runbook проверок
 - [x] Этап 4. Автоматизировать сбор evidence
-- [ ] Этап 5. Оформить manual checklist пользовательских сценариев
-- [ ] Этап 6. Синхронизировать acceptance matrix и testing evidence pack
+- [x] Этап 5. Оформить manual checklist пользовательских сценариев
+- [x] Этап 6. Синхронизировать acceptance matrix и testing evidence pack
 - [ ] Этап 7. Переписать подраздел о тестировании в тексте диплома
-- [ ] Этап 8. Опционально снять browser-level audit
+- [x] Этап 8. Опционально снять browser-level audit
 
 ## Общие правила для всех этапов
 
@@ -81,7 +81,7 @@
 - Проверены `.env` и `.env.example`; минимальные требования по `env` для `CMS`, frontend runtime/build, preview и smoke зафиксированы в `testing-evidence-pack.md`.
 - Подтвержден локальный baseline: `http://localhost:1337` доступен (`/` редиректит на `/admin`, `/admin` отвечает `200`), frontend runtime отвечает на `http://localhost:4321`, static preview отвечает на `http://localhost:4322`.
 - Приняты baseline-команды для повторного старта: `pnpm dev`, `pnpm build:front`, `PORT=4322 HOST=127.0.0.1 pnpm preview:front`, `pnpm smoke:front`.
-- Ограничения baseline: `http://localhost:4322` обслуживает только `apps/front/dist/client` и не отдает Astro API routes; read-only smoke на `2026-05-29` все еще фиксирует `3` acceptance gaps: `ru/en` home-page с `noindex` и отсутствие `EN` detail coverage для `articles/projects`.
+- Ограничения baseline на момент завершения Этапа 0: `http://localhost:4322` обслуживает только `apps/front/dist/client` и не отдает Astro API routes; тогда read-only smoke еще фиксировал `3` acceptance gaps: `ru/en` home-page с `noindex` и отсутствие `EN` detail coverage для `articles/projects`.
 
 ### Prompt для отдельного треда
 
@@ -161,8 +161,8 @@
 
 - Проверено, что public `noindex` не был дефектом `metadata.ts` / `main.astro`: frontend лишь уважал `seo.noIndex`, пришедший из versioned `seed-storefront.js` и `seed-pages.js`.
 - Нормализован versioned dataset для публичных `home-page/page`: `seo.noIndex` снят, а seeded navigation/CTA для `articles/projects` переведены на locale-prefixed ссылки вместо legacy `/articles` и `/projects`.
-- Зафиксирована граница dataset для `EN` detail coverage: в репозитории нет versioned `article/project` seed scripts, а текущий SQLite baseline содержит published detail entries только для `ru-RU`; поэтому отсутствие `EN` detail entries теперь отражается как dataset-dependent smoke warning, а не как обязательный pass/fail приложения.
-- После повторного `pnpm --dir apps/cms seed:storefront`, `pnpm --dir apps/cms seed:pages` и `pnpm smoke:front` read-only baseline дает `0` failures и `2` warnings (`EN` detail dataset boundary и skipped mutation checks).
+- На момент завершения Этапа 1 была зафиксирована граница dataset для `EN` detail coverage; позже она закрыта отдельным versioned `seed-content.js`, поэтому это ограничение больше не актуально для финального baseline.
+- После полного re-seed (`seed:storefront`, `seed:pages`, `seed:vacancies`, `seed:content`) финальный baseline `2026-05-29` дает `0` failures и `1` warning в read-only smoke и `0` failures / `0` warnings в mutation smoke.
 
 ### Prompt для отдельного треда
 
@@ -308,8 +308,8 @@
 
 - В репозитории добавлен компактный runbook [testing-runbook.md](testing-runbook.md) с reproducible baseline для защиты и повторного прогона.
 - В runbook отдельно зафиксированы `Automated`, `Manual` и `DB/Build evidence` шаги: prerequisite, последовательный `CMS -> front` startup, sequential re-seed, `build`, `preview`, `smoke`, preview/API/form checks и SQLite commands.
-- Для воспроизводимости отдельно отмечены практические ограничения baseline: `seed:storefront` и `seed:pages` нельзя запускать параллельно на SQLite, а `http://localhost:4322` обслуживает только static preview без Astro API routes.
-- Повторно подтверждено, что baseline-команды дают ожидаемый результат: read-only `pnpm smoke:front` завершаетcя с `0` failures и `2` warnings, `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` завершаетcя с `0` failures и `1` warning.
+- Для воспроизводимости отдельно отмечены практические ограничения baseline: seed-скрипты нельзя запускать параллельно на SQLite, а `http://localhost:4322` обслуживает только static preview без Astro API routes.
+- Повторно подтверждено, что baseline-команды дают ожидаемый результат: read-only `pnpm smoke:front` завершаетcя с `0` failures и `1` warning, `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` завершаетcя с `0` failures и `0` warnings.
 
 ### Prompt для отдельного треда
 
@@ -386,7 +386,7 @@
 - Повторяющиеся ручные evidence-шаги сведены в одну локальную команду `pnpm evidence:testing`, которая запускает [scripts/collect-testing-evidence.sh](/Users/arthur/Documents/projects/Диплом/app-monorepo/scripts/collect-testing-evidence.sh).
 - Script покрывает representative HTTP checks, sitemap coverage и SQLite queries по `strapi_webhooks`, `lead_submissions`, `vacancy_applications` без новых npm-зависимостей и без изменений existing smoke contour.
 - Результат сохранен в repeatable виде: collector можно переиспользовать для обновления `testing-evidence-pack.md`, приложений к ВКР и демонстрации на защите.
-- Актуальный baseline collector на `2026-05-29` проходит с `hard_failures=0`; warning по `EN` detail coverage считается dataset limitation, warning по `Static preview root` допустим, если `4322` не поднят отдельным процессом.
+- Актуальный baseline collector на `2026-05-29` проходит с `hard_failures=0`; warning допустим только по `Static preview root`, если `4322` не поднят отдельным процессом.
 
 ### Prompt для отдельного треда
 
@@ -439,18 +439,27 @@
 
 ### Чеклист этапа
 
-- [ ] Выбрать representative public routes
-- [ ] Выбрать representative preview flow
-- [ ] Выбрать representative form flows
-- [ ] Описать expected outcomes по каждому шагу
-- [ ] Отметить, какие пункты требуют browser runtime, а какие можно проверять по HTTP/HTML
-- [ ] Убрать все второстепенные сценарии, не нужные для ВКР
+- [x] Выбрать representative public routes
+- [x] Выбрать representative preview flow
+- [x] Выбрать representative form flows
+- [x] Описать expected outcomes по каждому шагу
+- [x] Отметить, какие пункты требуют browser runtime, а какие можно проверять по HTTP/HTML
+- [x] Убрать все второстепенные сценарии, не нужные для ВКР
 
 ### Основные артефакты
 
 - `thesis/knowledge/diploma/acceptance-matrix.md`
 - `thesis/knowledge/diploma/testing-evidence-pack.md`
 - новый checklist в `thesis/docs` или `thesis/knowledge/diploma`
+
+### Итог этапа
+
+Фиксация от `2026-05-29`.
+
+- В репозитории добавлен короткий manual checklist [testing-manual-checklist.md](testing-manual-checklist.md) для live-demo и для подраздела о ручной приемке.
+- Checklist оставляет только сценарии с высокой доказательной ценностью для ВКР: redirect `/ -> /ru/`, storefront `ru/en`, representative CMS page, preview flow, vacancy detail, lead form и vacancy form.
+- Для каждого шага зафиксирован expected result и тип проверки; основной контур помечен как `Browser runtime`, а успешные mutation-сценарии явно вынесены из обязательного live-показа, потому что они уже подтверждены automated + DB evidence.
+- Документ согласован с `acceptance-matrix.md`, `testing-evidence-pack.md` и `demo-plan.md`, но не превращает демонстрацию в длинный enterprise test plan.
 
 ### Prompt для отдельного треда
 
@@ -503,17 +512,25 @@
 
 ### Чеклист этапа
 
-- [ ] Обновить статусы в `acceptance-matrix.md`
-- [ ] Обновить дату baseline
-- [ ] Обновить описание automated checks
-- [ ] Обновить описание manual checks
-- [ ] Обновить failure/gap section
-- [ ] Проверить, что документы не противоречат друг другу
+- [x] Обновить статусы в `acceptance-matrix.md`
+- [x] Обновить дату baseline
+- [x] Обновить описание automated checks
+- [x] Обновить описание manual checks
+- [x] Обновить failure/gap section
+- [x] Проверить, что документы не противоречат друг другу
 
 ### Основные артефакты
 
 - `thesis/knowledge/diploma/acceptance-matrix.md`
 - `thesis/knowledge/diploma/testing-evidence-pack.md`
+
+### Итог этапа
+
+Фиксация от `2026-05-29`.
+
+- `acceptance-matrix.md` синхронизирован с актуальным baseline `2026-05-29`: уточнены правила чтения статусов, подтвержден `SMK-01` для read-only и mutation baseline, а данные `2026-05-22` оставлены только как вспомогательное build/browser evidence там, где это явно оговорено.
+- `testing-evidence-pack.md` очищен от устаревших и двусмысленных формулировок: automated evidence привязан к `pnpm smoke:front`, `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` и `pnpm evidence:testing`, manual evidence вынесен к `testing-manual-checklist.md`, DB/build evidence синхронизирован с текущими `dist/client` и последними строками SQLite.
+- Acceptance gaps не скрыты: к финалу `2026-05-29` локально закрыты `EN` detail coverage и browser-level audit baseline; незакрытым внешним сценарием остается только `Vercel` rebuild после publish/unpublish.
 
 ### Prompt для отдельного треда
 
@@ -621,26 +638,35 @@
 
 ### Цель
 
-Если позволит среда, добавить один дополнительный слой доказательств по `accessibility` или `performance`.
+Добавить дополнительный browser-level слой доказательств по `accessibility` и
+`performance`, не раздувая основной baseline до e2e-набора.
 
 ### Готово, если
 
-- есть хотя бы один аккуратно оформленный browser-level report;
+- есть аккуратно оформленный browser-level report;
 - он не подменяет основной baseline, а усиливает его;
-- ограничения tooling явно зафиксированы.
+- ограничения такого audit layer явно зафиксированы.
 
 ### Чеклист этапа
 
-- [ ] Выбрать один инструмент: `axe` или `Lighthouse`
-- [ ] Выбрать 2-3 representative routes
-- [ ] Выполнить прогон
-- [ ] Зафиксировать полученные результаты или ограничение среды
-- [ ] Добавить результаты в evidence pack только как supplementary evidence
+- [x] Выбрать browser-level tool
+- [x] Выбрать representative routes
+- [x] Выполнить прогон
+- [x] Зафиксировать полученные результаты
+- [x] Добавить результаты в evidence pack как supplementary evidence
 
 ### Основные артефакты
 
 - `thesis/knowledge/diploma/testing-evidence-pack.md`
-- возможный новый report в `thesis/docs` или `thesis/knowledge/diploma/evidence-artifacts`
+- `thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json`
+
+### Итог этапа
+
+Фиксация от `2026-05-29`.
+
+- В репозитории добавлен локальный Playwright audit `pnpm audit:browser`, который сохраняет artifact [browser-baseline-audit.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json).
+- Audit подтверждает browser-level baseline для `RU home`, `EN home`, `RU CMS page`, `Vacancy detail`: `html[lang]`, `h1`, наличие форм, отсутствие unlabeled form controls, console/page errors и сбор navigation/FCP metrics.
+- Этап усиливает testing baseline, но не подменяет его: это не полный `axe`/`Lighthouse` или WCAG certification scan.
 
 ### Prompt для отдельного треда
 
@@ -654,13 +680,11 @@
 - thesis/knowledge/diploma/acceptance-matrix.md
 
 Что нужно сделать:
-1. Выбрать только один дополнительный audit layer:
-   - accessibility через `axe`;
-   - performance через `Lighthouse`.
-2. Проверить 2-3 representative pages.
-3. Если tooling снова упирается в сеть или среду, не тратить на это весь тред, а зафиксировать ограничение.
-4. Если прогон успешен, добавить результат как supplementary evidence, а не как обязательный baseline.
-5. В конце сохранить результат в репозитории и отметить прогресс в `thesis/knowledge/diploma/testing-workplan.md`.
+1. Выбрать один локальный browser-level tool и не тянуть лишние зависимости без необходимости.
+2. Проверить representative pages для accessibility/performance baseline.
+3. Если прогон успешен, сохранить artifact в репозитории и добавить результат как supplementary evidence.
+4. Не подменять этим audit основной smoke/runbook baseline.
+5. В конце отметить прогресс в `thesis/knowledge/diploma/testing-workplan.md`.
 
 Ограничения:
 - не раздувать scope до полноценного browser e2e набора;

@@ -104,7 +104,9 @@ http_check "RU home" "$BASE_URL/ru/" "200"
 http_check "EN home" "$BASE_URL/en/" "200"
 http_check "RU CMS page" "$BASE_URL/ru/$SMOKE_PAGE_SLUG/" "200"
 http_check "RU article detail" "$BASE_URL/ru/articles/$SMOKE_ARTICLE_SLUG/" "200"
+http_check "EN article detail" "$BASE_URL/en/articles/$SMOKE_ARTICLE_SLUG/" "200"
 http_check "RU project detail" "$BASE_URL/ru/projects/$SMOKE_PROJECT_SLUG/" "200"
+http_check "EN project detail" "$BASE_URL/en/projects/$SMOKE_PROJECT_SLUG/" "200"
 http_check "Vacancy detail" "$BASE_URL/vacancies/$SMOKE_VACANCY_SLUG/" "200"
 http_check_warn "Static preview root" "$PREVIEW_URL/" "200"
 http_check "Preview invalid secret" "$BASE_URL/api/preview?secret=bad&locale=ru&type=page&slug=$SMOKE_PAGE_SLUG&status=draft" "401"
@@ -130,9 +132,15 @@ if [[ -f "$SITEMAP_FILE" ]]; then
   grep -q "<loc>${BASE_URL}/ru/articles/${SMOKE_ARTICLE_SLUG}/</loc>" "$SITEMAP_FILE" \
     && note_ok "RU article detail present in sitemap" \
     || note_fail "RU article detail missing from sitemap"
+  grep -q "<loc>${BASE_URL}/en/articles/${SMOKE_ARTICLE_SLUG}/</loc>" "$SITEMAP_FILE" \
+    && note_ok "EN article detail present in sitemap" \
+    || note_fail "EN article detail missing from sitemap"
   grep -q "<loc>${BASE_URL}/ru/projects/${SMOKE_PROJECT_SLUG}/</loc>" "$SITEMAP_FILE" \
     && note_ok "RU project detail present in sitemap" \
     || note_fail "RU project detail missing from sitemap"
+  grep -q "<loc>${BASE_URL}/en/projects/${SMOKE_PROJECT_SLUG}/</loc>" "$SITEMAP_FILE" \
+    && note_ok "EN project detail present in sitemap" \
+    || note_fail "EN project detail missing from sitemap"
   grep -q "<loc>${BASE_URL}/vacancies/${SMOKE_VACANCY_SLUG}/</loc>" "$SITEMAP_FILE" \
     && note_ok "Vacancy detail present in sitemap" \
     || note_fail "Vacancy detail missing from sitemap"
@@ -149,17 +157,13 @@ if [[ -f "$SITEMAP_FILE" ]]; then
     note_ok "Legacy /projects route absent from sitemap"
   fi
 
-  if grep -Eq "<loc>${BASE_URL}/en/articles/[^<]+</loc>" "$SITEMAP_FILE"; then
-    note_ok "EN article detail entries present in sitemap"
-  else
-    note_warn "EN article detail entries absent from sitemap (known dataset limitation)"
-  fi
+  grep -Eq "<loc>${BASE_URL}/en/articles/[^<]+</loc>" "$SITEMAP_FILE" \
+    && note_ok "EN article detail entries present in sitemap" \
+    || note_fail "EN article detail entries absent from sitemap"
 
-  if grep -Eq "<loc>${BASE_URL}/en/projects/[^<]+</loc>" "$SITEMAP_FILE"; then
-    note_ok "EN project detail entries present in sitemap"
-  else
-    note_warn "EN project detail entries absent from sitemap (known dataset limitation)"
-  fi
+  grep -Eq "<loc>${BASE_URL}/en/projects/[^<]+</loc>" "$SITEMAP_FILE" \
+    && note_ok "EN project detail entries present in sitemap" \
+    || note_fail "EN project detail entries absent from sitemap"
 else
   note_fail "Missing sitemap-0.xml: $SITEMAP_FILE"
 fi

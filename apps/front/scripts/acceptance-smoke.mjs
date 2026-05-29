@@ -272,6 +272,12 @@ const pageChecks = [
 		expectedCanonical: `${config.baseUrl}/ru/articles/${config.articleSlug}/`,
 	},
 	{
+		name: "EN article detail",
+		path: `/en/articles/${config.articleSlug}/`,
+		expectedLang: "en",
+		expectedCanonical: `${config.baseUrl}/en/articles/${config.articleSlug}/`,
+	},
+	{
 		name: "RU projects list",
 		path: "/ru/projects/",
 		expectedLang: "ru",
@@ -282,6 +288,12 @@ const pageChecks = [
 		path: `/ru/projects/${config.projectSlug}/`,
 		expectedLang: "ru",
 		expectedCanonical: `${config.baseUrl}/ru/projects/${config.projectSlug}/`,
+	},
+	{
+		name: "EN project detail",
+		path: `/en/projects/${config.projectSlug}/`,
+		expectedLang: "en",
+		expectedCanonical: `${config.baseUrl}/en/projects/${config.projectSlug}/`,
 	},
 	{
 		name: "Vacancies list",
@@ -355,6 +367,87 @@ if (!config.previewSecret) {
 		"PREVIEW_SECRET is not configured for smoke script."
 	);
 } else {
+	const verifyPreviewTarget = async ({
+		name,
+		type,
+		slug,
+		publishedLocation,
+		draftLocation,
+	}) => {
+		await expectStatus(
+			GROUPS.preview,
+			`${name} published redirect`,
+			`/api/preview?secret=${encodeURIComponent(config.previewSecret)}&locale=ru&type=${type}&slug=${slug}&status=published`,
+			307,
+			({ response }) => {
+				const location = response.headers.get("location");
+
+				if (location !== publishedLocation) {
+					throw new Error(`Unexpected redirect target: ${location}`);
+				}
+
+				return location;
+			}
+		);
+
+		try {
+			const previewResponse = await fetch(
+				new URL(
+					`/api/preview?secret=${encodeURIComponent(config.previewSecret)}&locale=ru&type=${type}&slug=${slug}&status=draft`,
+					config.baseUrl
+				),
+				{ redirect: "manual" }
+			);
+
+			if (previewResponse.status !== 307) {
+				throw new Error(`Expected HTTP 307, got ${previewResponse.status}.`);
+			}
+
+			const previewLocation = previewResponse.headers.get("location");
+			const previewCookie = previewResponse.headers.get("set-cookie");
+
+			if (previewLocation !== draftLocation) {
+				throw new Error(`Unexpected preview redirect target: ${previewLocation}`);
+			}
+
+			if (!previewCookie?.includes("__cms_preview=")) {
+				throw new Error("Preview cookie was not set.");
+			}
+
+			const cookieHeader = previewCookie.split(";")[0];
+			const { response, text } = await fetchText(previewLocation, {
+				headers: {
+					cookie: cookieHeader,
+				},
+			});
+
+			if (response.status !== 200) {
+				throw new Error(`Preview page returned HTTP ${response.status}.`);
+			}
+
+			const robots = extractRobots(text);
+
+			if (robots !== "noindex, nofollow") {
+				throw new Error(`Unexpected robots meta: ${robots}`);
+			}
+
+			pass(
+				GROUPS.preview,
+				`${name} draft route with cookie`,
+				JSON.stringify({
+					previewLocation,
+					robots,
+				})
+			);
+		} catch (error) {
+			fail(
+				GROUPS.preview,
+				`${name} draft route with cookie`,
+				error instanceof Error ? error.message : String(error)
+			);
+		}
+	};
+
 	await expectStatus(
 		GROUPS.preview,
 		"Preview published redirect -> public route",
@@ -372,62 +465,37 @@ if (!config.previewSecret) {
 		}
 	);
 
-	try {
-		const previewResponse = await fetch(
-			new URL(
-				`/api/preview?secret=${encodeURIComponent(config.previewSecret)}&locale=ru&type=page&slug=${config.pageSlug}&status=draft`,
-				config.baseUrl
-			),
-			{ redirect: "manual" }
-		);
+	await verifyPreviewTarget({
+		name: "Preview page",
+		type: "page",
+		slug: config.pageSlug,
+		publishedLocation: `/ru/${config.pageSlug}/`,
+		draftLocation: `/preview/ru/${config.pageSlug}/`,
+	});
 
-		if (previewResponse.status !== 307) {
-			throw new Error(`Expected HTTP 307, got ${previewResponse.status}.`);
-		}
+	await verifyPreviewTarget({
+		name: "Preview article detail",
+		type: "article",
+		slug: config.articleSlug,
+		publishedLocation: `/ru/articles/${config.articleSlug}/`,
+		draftLocation: `/preview/ru/articles/${config.articleSlug}/`,
+	});
 
-		const previewLocation = previewResponse.headers.get("location");
-		const previewCookie = previewResponse.headers.get("set-cookie");
+	await verifyPreviewTarget({
+		name: "Preview project detail",
+		type: "project",
+		slug: config.projectSlug,
+		publishedLocation: `/ru/projects/${config.projectSlug}/`,
+		draftLocation: `/preview/ru/projects/${config.projectSlug}/`,
+	});
 
-		if (previewLocation !== `/preview/ru/${config.pageSlug}/`) {
-			throw new Error(`Unexpected preview redirect target: ${previewLocation}`);
-		}
-
-		if (!previewCookie?.includes("__cms_preview=")) {
-			throw new Error("Preview cookie was not set.");
-		}
-
-		const cookieHeader = previewCookie.split(";")[0];
-		const { response, text } = await fetchText(previewLocation, {
-			headers: {
-				cookie: cookieHeader,
-			},
-		});
-
-		if (response.status !== 200) {
-			throw new Error(`Preview page returned HTTP ${response.status}.`);
-		}
-
-		const robots = extractRobots(text);
-
-		if (robots !== "noindex, nofollow") {
-			throw new Error(`Unexpected robots meta: ${robots}`);
-		}
-
-		pass(
-			GROUPS.preview,
-			"Preview draft route with cookie",
-			JSON.stringify({
-				previewLocation,
-				robots,
-			})
-		);
-	} catch (error) {
-		fail(
-			GROUPS.preview,
-			"Preview draft route with cookie",
-			error instanceof Error ? error.message : String(error)
-		);
-	}
+	await verifyPreviewTarget({
+		name: "Preview vacancy detail",
+		type: "vacancy",
+		slug: config.vacancySlug,
+		publishedLocation: `/vacancies/${config.vacancySlug}/`,
+		draftLocation: `/preview/ru/vacancies/${config.vacancySlug}/`,
+	});
 }
 
 if (!existsSync(resolve(distClientDir, "sitemap-index.xml"))) {
@@ -448,7 +516,9 @@ if (!existsSync(resolve(distClientDir, "sitemap-index.xml"))) {
 			`${config.baseUrl}/ru/`,
 			`${config.baseUrl}/en/`,
 			`${config.baseUrl}/ru/articles/${config.articleSlug}/`,
+			`${config.baseUrl}/en/articles/${config.articleSlug}/`,
 			`${config.baseUrl}/ru/projects/${config.projectSlug}/`,
+			`${config.baseUrl}/en/projects/${config.projectSlug}/`,
 			`${config.baseUrl}/vacancies/${config.vacancySlug}/`,
 		];
 		const forbiddenEntries = [
@@ -472,16 +542,6 @@ if (!existsSync(resolve(distClientDir, "sitemap-index.xml"))) {
 			}
 		}
 
-		const missingEnDetails = [];
-
-		if (!new RegExp(`${escapedBaseUrl}/en/articles/[^<]+</loc>`).test(sitemap)) {
-			missingEnDetails.push("articles");
-		}
-
-		if (!new RegExp(`${escapedBaseUrl}/en/projects/[^<]+</loc>`).test(sitemap)) {
-			missingEnDetails.push("projects");
-		}
-
 		pass(
 			GROUPS.build,
 			"Build sitemap coverage",
@@ -491,22 +551,12 @@ if (!existsSync(resolve(distClientDir, "sitemap-index.xml"))) {
 			}),
 			"build"
 		);
-
-		if (missingEnDetails.length > 0) {
-			warn(
-				GROUPS.dataset,
-				"Build sitemap EN detail coverage",
-				`No EN detail entries were generated in sitemap for: ${missingEnDetails.join(", ")}. Treated as a dataset-dependent limitation until versioned EN article/project seeds exist.`,
-				"build"
-			);
-		} else {
-			pass(
-				GROUPS.build,
-				"Build sitemap EN detail coverage",
-				"EN article/project detail entries are present in sitemap.",
-				"build"
-			);
-		}
+		pass(
+			GROUPS.build,
+			"Build sitemap EN detail coverage",
+			"EN article/project detail entries are present in sitemap.",
+			"build"
+		);
 	} catch (error) {
 		fail(
 			GROUPS.build,

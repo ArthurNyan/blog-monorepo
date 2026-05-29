@@ -2,7 +2,8 @@
 
 Дата актуализации: `2026-05-29`.
 
-Этот runbook повторяет текущий testing baseline без тяжелого browser tooling.
+Этот runbook повторяет текущий testing baseline и дополнительный browser-level audit
+без внешнего SaaS.
 
 ## Типы результатов
 
@@ -61,16 +62,20 @@ pnpm dev:front
 ```bash
 pnpm --dir apps/cms seed:storefront
 pnpm --dir apps/cms seed:pages
+pnpm --dir apps/cms seed:vacancies
+pnpm --dir apps/cms seed:content
 ```
 
 Ожидаемо:
 
 - `Storefront seed complete for locales: en, ru-RU`
 - `Pages seed complete for locales: en, ru-RU`
+- `Seed complete: ... vacancies in locales en, ru-RU`
+- `Content seed complete for locales: en, ru-RU`
 
 Примечание:
 
-- Не запускать `seed:storefront` и `seed:pages` параллельно на SQLite: возможен `SQLITE_BUSY` / `database is locked`.
+- Не запускать seed-скрипты параллельно на SQLite: возможен `SQLITE_BUSY` / `database is locked`.
 
 ## 4. Build And Preview
 
@@ -102,7 +107,9 @@ curl -I http://localhost:4321/
 curl -I http://localhost:4321/ru/
 curl -I http://localhost:4321/ru/cms-first-platform/
 curl -I http://localhost:4321/ru/articles/neea-llc/
+curl -I http://localhost:4321/en/articles/neea-llc/
 curl -I http://localhost:4321/ru/projects/project/
+curl -I http://localhost:4321/en/projects/project/
 curl -I http://localhost:4321/vacancies/test-vacancy/
 curl -I http://localhost:4322/
 ```
@@ -127,11 +134,10 @@ pnpm smoke:front
 Норма:
 
 - `0 failures`
-- `2 warnings`
+- `1 warning`
 
-Нормальные warnings:
+Нормальный warning:
 
-- нет `EN` detail entries для `articles/projects`;
 - mutation checks не включались.
 
 Mutation baseline:
@@ -143,11 +149,7 @@ SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front
 Норма:
 
 - `0 failures`
-- `1 warning`
-
-Нормальный warning:
-
-- нет `EN` detail entries для `articles/projects`.
+- `0 warnings`
 
 ## 7. Preview Checks
 
@@ -185,6 +187,19 @@ curl -i "http://localhost:4321/api/preview?secret=${PREVIEW_SECRET}&locale=ru&ty
 - `307`
 - `Location: /preview/ru/cms-first-platform/`
 - `Set-Cookie: __cms_preview=...`
+
+Detail preview contour:
+
+```bash
+pnpm smoke:front
+```
+
+Норма:
+
+- smoke подтверждает published redirect и draft preview для `page`, `article`, `project`, `vacancy`;
+- preview detail routes `/preview/ru/articles/neea-llc/`,
+  `/preview/ru/projects/project/`, `/preview/ru/vacancies/test-vacancy/`
+  отвечают `200` при валидной preview cookie и несут `robots=noindex`.
 
 ## 8. Form And API Checks
 
@@ -229,7 +244,6 @@ pnpm evidence:testing
 Норма:
 
 - `hard_failures=0`;
-- warning по `EN` detail coverage допустим как documented dataset limitation;
 - warning по `Static preview root` допустим, если preview server на `4322` не поднят
   отдельно.
 
@@ -263,15 +277,32 @@ sqlite3 apps/cms/.tmp/data.db "select id,full_name,email,source,hr_status from v
 
 Считается нормой:
 
-- read-only smoke: `0 failures`, `2 warnings`;
-- mutation smoke: `0 failures`, `1 warning`;
-- `pnpm evidence:testing`: `hard_failures=0`, warnings только по dataset limitation и,
-  при не поднятом `4322`, по static preview root;
+- read-only smoke: `0 failures`, `1 warning`;
+- mutation smoke: `0 failures`, `0 warnings`;
+- `pnpm evidence:testing`: `hard_failures=0`, warnings только при не поднятом `4322`
+  по static preview root;
 - preview API проверяется на `4321`, static preview проверяется на `4322`;
-- `EN` detail coverage для `articles/projects` остается documented dataset limitation.
+- `EN` detail coverage для `articles/projects` входит в обязательный baseline через
+  `seed:content`, runtime, build и sitemap.
 
 Не входит в обязательный baseline:
 
-- `Lighthouse`, `axe`, browser-level WCAG audit;
 - внешние production-like rebuild checks;
 - parallel seed execution на SQLite.
+
+## 11. Browser Audit
+
+Тип: `Automated supplementary evidence`
+
+```bash
+pnpm audit:browser
+```
+
+Норма:
+
+- `failures=0`;
+- сохраняется artifact
+  `thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json`;
+- для `ru/en` home, `ru` CMS page и `vacancy detail` подтверждаются:
+  `html[lang]`, `h1`, наличие форм, отсутствие unlabeled form controls,
+  отсутствие console/page errors и browser navigation timing metrics.

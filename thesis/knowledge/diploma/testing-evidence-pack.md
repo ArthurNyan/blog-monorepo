@@ -2,9 +2,6 @@
 
 Дата актуализации: `2026-05-29`.
 
-Часть evidence ниже сохранена из более раннего baseline `2026-05-22`, но Stage 0 в этой
-сессии повторно подтвердил старт окружения, static preview и read-only smoke contour.
-
 ## Назначение
 
 Документ собирает результаты проверки в форме, пригодной:
@@ -16,9 +13,10 @@
 
 Этот документ сознательно разделяет:
 
-- автоматизированные проверки;
-- ручные и полу-ручные проверки;
-- непроверенные или внешне ограниченные части.
+- automated evidence: воспроизводимые команды `smoke`, `preview`, `HTTP`, `sitemap`;
+- manual evidence: короткий browser-runtime walkthrough из `testing-manual-checklist.md`;
+- code/build/DB evidence: `dist/client`, SQLite и code-level route/config inspection;
+- внешние ограничения: только внешние rebuild paths, не подтвержденные локально.
 
 ## 1. Test Baseline
 
@@ -73,6 +71,9 @@
 - generated static files после `pnpm --dir apps/front build`;
 - прямые SQL-запросы к SQLite для `lead_submissions`, `vacancy_applications`,
   `strapi_webhooks`;
+- `testing-runbook.md`, `testing-manual-checklist.md`, `pnpm smoke:front`,
+  `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front`, `pnpm evidence:testing`,
+  `pnpm audit:browser`;
 - knowledge и code-level route/config inspection.
 
 ## 1.1. Evidence collection automation
@@ -96,7 +97,6 @@ Script:
 
 Что остается нормальным warning, а не hard failure:
 
-- отсутствие `EN` detail entries для `articles/projects` в sitemap;
 - недоступность static preview `http://127.0.0.1:4322`, если preview server не поднят
   отдельно.
 
@@ -123,23 +123,21 @@ evidence для обновления knowledge-документов и прил�
   invalid secret, published redirect, draft cookie и preview `noindex`;
 - `build_evidence`:
   наличие build sitemap и coverage обязательных/legacy routes;
-- `dataset_limitations`:
-  отдельная фиксация `EN` detail coverage для `articles/projects`;
 - `mutation_checks`:
   optional form submit checks через `SMOKE_ALLOW_MUTATIONS=true`.
 
-Smoke contour специально сделан без `Playwright`, `Lighthouse` и `axe`, чтобы базовая
+Smoke script специально сделан без `Playwright`, `Lighthouse` и `axe`, чтобы базовая
 проверка была воспроизводима даже при нестабильной сети и без доп. установки браузерных
 пакетов.
 
 Фактический результат прогонов:
 
-- `2026-05-29`: после `pnpm --dir apps/cms seed:storefront` и
-  `pnpm --dir apps/cms seed:pages` команда `pnpm smoke:front` завершилась с
-  `0` failures и `2` warnings;
-- `2026-05-22`: `SMOKE_ALLOW_MUTATIONS=true pnpm --dir apps/front smoke:acceptance`
-  подтвердил обе формы, но на read-only assertions тогда сохранялся более широкий
-  acceptance gap.
+- `2026-05-29`: после `pnpm --dir apps/cms seed:storefront`,
+  `pnpm --dir apps/cms seed:pages`, `pnpm --dir apps/cms seed:vacancies` и
+  `pnpm --dir apps/cms seed:content` команда `pnpm smoke:front` завершилась с
+  `0` failures и `1` warning;
+- `2026-05-29`: `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` завершилась с
+  `0` failures и `0` warnings и подтвердила обе публичные формы.
 
 На актуальном read-only baseline `2026-05-29` обязательные automated assertions
 проходят без failures.
@@ -149,14 +147,12 @@ Smoke contour специально сделан без `Playwright`, `Lighthouse
 - stable runtime invariants;
 - preview-specific runtime checks;
 - build evidence;
-- dataset-dependent warnings;
+- optional dataset-specific group, который в актуальном baseline не дал ни одного результата;
 - optional mutation checks.
 
 Текущие read-only warnings:
 
-1. В `sitemap` отсутствуют `en` detail entries для `articles` и `projects`; это теперь
-   трактуется как dataset-dependent limitation, а не как failure runtime-кода.
-2. Mutation checks форм не включались без `SMOKE_ALLOW_MUTATIONS=true`.
+1. Mutation checks форм не включались без `SMOKE_ALLOW_MUTATIONS=true`.
 
 ### 2.2. Runtime route checks
 
@@ -165,8 +161,9 @@ Smoke contour специально сделан без `Playwright`, `Lighthouse
 - `/` редиректит на `/ru/`;
 - `/ru/` и `/en/` отдаются как локализованные storefront entry points;
 - `/ru/cms-first-platform/` и `/en/cms-first-platform/` доступны;
-- `/ru/articles/`, `/ru/articles/neea-llc/`, `/ru/projects/`,
-  `/ru/projects/project/`, `/vacancies/`, `/vacancies/test-vacancy/` доступны;
+- `/ru/articles/`, `/ru/articles/neea-llc/`, `/en/articles/neea-llc/`,
+  `/ru/projects/`, `/ru/projects/project/`, `/en/projects/project/`,
+  `/vacancies/`, `/vacancies/test-vacancy/` доступны;
 - legacy `/articles/...` и `/projects/...` редиректят в locale-prefixed `ru`.
 
 ### 2.3. Preview contour
@@ -177,6 +174,9 @@ Smoke contour специально сделан без `Playwright`, `Lighthouse
 - `/api/preview?...status=published` редиректит на public URL и очищает preview cookie;
 - `/api/preview?...status=draft` выставляет `__cms_preview` и ведет на `/preview/...`;
 - `/preview/ru/cms-first-platform/` отдается с `meta robots=noindex, nofollow`;
+- `/preview/ru/articles/neea-llc/`, `/preview/ru/projects/project/`,
+  `/preview/ru/vacancies/test-vacancy/` отдаются с валидной preview cookie и несут
+  `meta robots=noindex, nofollow`;
 - `Strapi` реально содержит draft versions для `page`, `article`, `project`, `vacancy`,
   что подтверждено запросами с `x-preview-secret` и `status=draft`.
 
@@ -186,22 +186,30 @@ Smoke contour специально сделан без `Playwright`, `Lighthouse
 
 - invalid `lead-submissions` payload получает `400` и field errors;
 - valid `lead-submissions` payload получает `201`;
-- таблица `lead_submissions` увеличилась с исходного baseline и к концу сессии содержит `4` записи;
+- таблица `lead_submissions` увеличилась после mutation smoke; для baseline важен факт
+  появления новых строк, а не фиксированное общее количество записей;
 - cross-site `vacancy-applications` POST блокируется same-origin guard;
 - invalid `.txt` resume отклоняется с `400`;
 - valid `.pdf` resume получает `201`;
-- таблица `vacancy_applications` увеличилась с исходного baseline и к концу сессии содержит `4` записи.
+- таблица `vacancy_applications` увеличилась после mutation smoke; для baseline важен
+  факт появления новых строк, а не фиксированное общее количество записей.
 
-Фактические записи, подтвержденные в SQLite:
+Актуальные последние строки из SQLite `2026-05-29`:
 
 ```text
 lead_submissions:
-4 | Codex Acceptance Smoke | codex-2f16483e-6ec5-4316-b4a0-ad7c6b5548fb@example.com | astro-page-builder | acceptance-smoke
-3 | Codex Acceptance Smoke | codex-5295c21d-0656-478e-b4e2-29d69a20c1f7@example.com | astro-page-builder | acceptance-smoke
+10 | Codex Acceptance Smoke | codex-6379b13e-862f-420c-865c-cfb42939648f@example.com | astro-page-builder | acceptance-smoke
+9 | Codex Acceptance Smoke | codex-55502b1c-e194-4b91-bcca-4850614e720c@example.com | astro-page-builder | acceptance-smoke
+8 | Playwright Lead Smoke | playwright-lead-1779460493589-zxypxh@example.com | astro-page-builder | home-page-primary-lead
+7 | Codex Acceptance Smoke | codex-c95574d2-5902-4516-a455-a46427236778@example.com | astro-page-builder | acceptance-smoke
+6 | Playwright Lead Smoke | playwright-lead-1779458221570-k19q2r@example.com | astro-page-builder | home-page-primary-lead
 
 vacancy_applications:
-4 | Codex Vacancy Smoke | codex-vacancy-a54fc86d-b70f-4e55-b6e6-bebda78eef66@example.com | astro-vacancy-form | New
-3 | Codex Vacancy Smoke | codex-vacancy-d64afcf5-f51b-4b71-aa59-e1f99a8ca8e8@example.com | astro-vacancy-form | New
+11 | Codex Vacancy Smoke | codex-vacancy-a33a0661-1596-48aa-9bf5-3812d6964c63@example.com | astro-vacancy-form | New
+10 | Codex Vacancy Smoke | codex-vacancy-a2d2d30b-c2ed-4625-acb6-ea14fad55a2f@example.com | astro-vacancy-form | New
+9 | Playwright Vacancy Invalid | playwright-vacancy-invalid-1779460492936-92u9lh@example.com | astro-vacancy-form | New
+8 | Playwright Vacancy Invalid | playwright-vacancy-invalid-1779458677142-ppvqub@example.com | astro-vacancy-form | New
+7 | Codex Vacancy Smoke | codex-vacancy-d701c8fe-ab85-4141-872d-f4f164e4b234@example.com | astro-vacancy-form | New
 ```
 
 ### 2.5. Sitemap and build contour
@@ -214,18 +222,17 @@ pnpm --dir apps/front build
 
 Факт build:
 
-- build завершился успешно `2026-05-22`;
+- build повторно завершился успешно `2026-05-29`;
 - generated routes включают `ru/en` storefront-core, `ru` detail routes
-  `articles/projects`, а также public `vacancies`;
+  `articles/projects`, `en` detail routes `articles/projects`, а также public `vacancies`;
 - `@astrojs/sitemap` создал `sitemap-index.xml` и `sitemap-0.xml` в `dist/client`.
 
 Подтверждено по `sitemap-0.xml`:
 
 - присутствуют `/ru/`, `/en/`, `/ru/articles/...`, `/ru/projects/...`, `/vacancies/...`;
 - отсутствуют legacy `/articles/` и `/projects/` без locale;
-- присутствуют `/en/articles/` и `/en/projects/` list pages.
-- отсутствуют `en` detail entries `articles/projects`, что совпадает с фактическими
-  данными CMS и теперь фиксируется как dataset-dependent smoke warning.
+- присутствуют `/en/articles/`, `/en/articles/neea-llc/`, `/en/projects/`,
+  `/en/projects/project/`.
 
 ### 2.6. Publication / rebuild contour
 
@@ -244,13 +251,47 @@ enabled=1
 - rebuild contour формально подключен к `Strapi`;
 - локально доказан факт регистрации webhook, а не только наличие кода.
 
+Текущая строка `strapi_webhooks`:
+
+```text
+Frontend rebuild hook | https://api.vercel.com/v1/integrations/deploy/... | ["entry.publish","entry.unpublish"] | 1
+```
+
+### 2.7. Browser audit contour
+
+Команда:
+
+```bash
+pnpm audit:browser
+```
+
+Artifact:
+
+- [browser-baseline-audit.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json)
+
+Фактический результат `2026-05-29`:
+
+- `failures=0`;
+- проверены `RU home`, `EN home`, `RU CMS page`, `Vacancy detail`;
+- на всех representative pages подтверждены `html[lang]`, `h1`, наличие форм,
+  отсутствие unlabeled form controls и отсутствие browser console/page errors;
+- зафиксированы browser navigation timing metrics:
+  - `RU home`: `domContentLoaded=237.1`, `loadEventEnd=245.1`, `FCP=208`;
+  - `EN home`: `domContentLoaded=205`, `loadEventEnd=211.2`, `FCP=224`;
+  - `RU CMS page`: `domContentLoaded=260.2`, `loadEventEnd=4331.2`, `FCP=276`;
+  - `Vacancy detail`: `domContentLoaded=121.7`, `loadEventEnd=124.7`, `FCP=128`.
+
 ## 3. Manual And Semi-Manual Results
+
+Manual evidence для живой демонстрации вынесен в
+[testing-manual-checklist.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-manual-checklist.md).
+В актуальном baseline `2026-05-29` он используется как формализованный browser-runtime
+контур и не подменяет automated/DB checks.
 
 ### 3.1. Accessibility baseline
 
-Полноценный browser-level `axe`/Lighthouse audit в этой сессии не завершен из-за
-`ECONNRESET` при установке tooling из `npm registry`, поэтому accessibility baseline
-снят на структурном и runtime-уровне.
+Accessibility baseline теперь снят не только на HTML/runtime-уровне, но и отдельным
+Playwright browser audit.
 
 Подтверждено:
 
@@ -261,22 +302,42 @@ enabled=1
 - формы не пишут напрямую в CMS из браузера и проходят server-side validation layer;
 - `vacancy-applications` защищены same-origin guard;
 - `lead-submissions` и `vacancy-applications` проверяют `honeypot` / file constraints.
+- `pnpm audit:browser` подтверждает наличие форм и отсутствие unlabeled form controls
+  на `ru/en home`, `ru CMS page` и `vacancy detail`.
 
 Ограничения accessibility baseline:
 
+- это не полный WCAG certification scan;
 - не выполнена keyboard navigation walkthrough;
 - не снят screen-reader trace;
-- не выполнен автоматизированный WCAG scan;
-- не проверялись contrast issues browser tooling-ом.
+- не проверялись contrast issues специализированным audit-tooling.
 
 Следствие для текста ВКР:
 
-- можно честно говорить о базовой структурной доступности и server-side safety-механизмах;
-- нельзя писать, что выполнен полный WCAG audit.
+- можно честно говорить о browser-level accessibility baseline, структурной доступности
+  и server-side safety-механизмах;
+- нельзя писать, что выполнен полный WCAG audit или certification review.
 
-### 3.2. Performance baseline
+### 3.2. Representative manual runtime contour
 
-Performance baseline снят на build/static уровне, а не через Lighthouse.
+На защиту и для ручной приемки оставлен только короткий сценарный набор:
+
+- redirect `/ -> /ru/`;
+- storefront `ru` и `en`;
+- representative CMS page `/ru/cms-first-platform/`;
+- preview flow через `/preview/...`;
+- vacancy detail `/vacancies/test-vacancy/`;
+- invalid input paths для lead form и vacancy form.
+
+Эти пункты уже сохранены как отдельный артефакт и не повышают статусы сверх того,
+что реально было продемонстрировано: в live-demo preview остается representative
+для `page`, тогда как full detail preview coverage для `article/project/vacancy`
+уже закрыта automated smoke; успешные form mutations подтверждаются automated + DB
+evidence, а не live-demo.
+
+### 3.3. Performance baseline
+
+Performance baseline снят на build/static и browser timing уровне, без Lighthouse.
 
 Подтверждено:
 
@@ -287,16 +348,21 @@ Performance baseline снят на build/static уровне, а не через
 
 Зафиксированные численные baseline-показатели:
 
-- prerendered `index.html` routes: `35`;
-- размер `apps/front/dist/client`: `2.3M`;
+- prerendered `index.html` routes: `37`;
+- размер `apps/front/dist/client`: `2.4M`;
 - крупнейшие артефакты:
   - `three_0.167.1...js` — `457347 B`;
   - `vendor...js` — `361099 B`;
   - `motion-dom...js` — `94801 B`;
 - local static timings на `python3 -m http.server` для build output:
-  - `/ru/` — `size=52320`, `ttfb=0.001399`, `total=0.002902`;
-  - `/ru/articles/neea-llc/` — `size=48835`, `ttfb=0.000482`, `total=0.000997`;
-  - `/vacancies/test-vacancy/` — `size=31774`, `ttfb=0.000401`, `total=0.000695`.
+  - `/ru/` — `size=52338`, `ttfb=0.001330`, `total=0.001598`;
+  - `/en/articles/neea-llc/` — `size=27682`, `ttfb=0.000541`, `total=0.000782`;
+  - `/vacancies/test-vacancy/` — `size=31826`, `ttfb=0.000503`, `total=0.001063`.
+- browser timing из `browser-baseline-audit.json`:
+  - `RU home` — `domContentLoaded=237.1`, `loadEventEnd=245.1`, `FCP=208`;
+  - `EN home` — `domContentLoaded=205`, `loadEventEnd=211.2`, `FCP=224`;
+  - `RU CMS page` — `domContentLoaded=260.2`, `loadEventEnd=4331.2`, `FCP=276`;
+  - `Vacancy detail` — `domContentLoaded=121.7`, `loadEventEnd=124.7`, `FCP=128`.
 
 Для приложений полезно дополнительно фиксировать:
 
@@ -322,73 +388,24 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 Следствие для текста ВКР:
 
 - можно писать о build-based производительности статического storefront-контура;
+- можно ссылаться на локальный browser timing baseline;
 - нельзя писать о formal Lighthouse score или production web-vitals без дополнительного прогона.
 
 ## 4. Failures And Gaps
 
-На baseline normalization `2026-05-29` причины acceptance-ограничений разделяются так:
+По состоянию на актуальный baseline `2026-05-29` основные прежние acceptance gaps закрыты:
 
-- public `noindex` на `home-page/page` был вызван versioned CMS seed, а не кодом
-  frontend: [metadata.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/seo/metadata.ts)
-  лишь объединяет `seo.noIndex`, `previewMode` и `draft`-status, а
-  [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro)
-  просто рендерит итоговый `robots` meta tag;
-- отсутствие `EN` detail entries для `articles/projects` связано с dataset: в репозитории
-  нет versioned `seed-articles` / `seed-projects` scripts, а текущий SQLite baseline
-  содержит published detail entries только для `ru-RU`.
+- public `noindex` на `home-page/page` устранен через нормализацию versioned
+  `seed-storefront.js` и `seed-pages.js`;
+- `EN` detail coverage для representative `articles/projects` закрыта через
+  versioned `seed-content.js`, runtime, build, sitemap и SQLite;
+- browser-level accessibility/performance baseline теперь зафиксирован в локальном
+  Playwright artifact.
 
-### 4.1. English content coverage for `articles/projects`
+Остается один сознательно незакрытый внешний сценарий:
 
-На baseline `2026-05-29` подтверждена именно граница versioned dataset:
-
-- в репозитории versioned seed покрывает `storefront`, `pages` и `vacancies`, но не
-  содержит отдельных `article/project` seed scripts;
-- SQLite baseline показывает `0` published `en` articles и `0` published `en` projects;
-- published detail entries для representative content сейчас существуют только в `ru-RU`
-  (`2` article records и `2` project records).
-
-Что это значит:
-
-- архитектурный `ru/en` route contour и locale-aware slug generation существуют;
-- list pages `/en/articles/` и `/en/projects/` собираются;
-- detail coverage `articles/projects` на английском языке текущим versioned dataset не подтверждена.
-
-Для защиты это нужно формулировать как:
-
-- мультиязычный route/data contour реализован;
-- полнота англоязычного контента зависит от наполнения CMS и на текущем baseline для
-  detail entries не завершена;
-- отсутствие `EN` detail entries не должно считаться обязательным smoke-pass до появления
-  versioned seed для `article/project`.
-
-### 4.2. Browser tooling
-
-Попытка снять browser-level metrics через `pnpm dlx lighthouse` сорвалась на внешней сети:
-
-- `ERR_PNPM_META_FETCH_FAIL`
-- многократные `ECONNRESET` к `registry.npmjs.org`
-
-Это не дефект приложения. Это ограничение среды текущей сессии.
-
-### 4.3. Public noindex on storefront entry points
-
-На baseline normalization `2026-05-29` подтверждено, что прежний public `noindex`
-был dataset-induced, а не связан с дефектом metadata pipeline:
-
-- versioned `seed-storefront.js` и `seed-pages.js` содержали `seo.noIndex: true` для
-  публичных `home-page/page`;
-- `buildSeoMetadata` интерпретирует это поле буквально и дополнительно добавляет `noindex`
-  только для `previewMode` / `draft`;
-- после обновления seed и повторного `pnpm --dir apps/cms seed:storefront` +
-  `pnpm --dir apps/cms seed:pages` read-only smoke больше не находит `robots=noindex`
-  на `/ru/`, `/en/`, `/ru/cms-first-platform/`, `/en/cms-first-platform/`.
-
-Это означает:
-
-- preview-protection работает и остается intentional;
-- публичная indexability `home-page/page` теперь нормализована на versioned seed baseline;
-- прежний `home-page noindex` нужно трактовать как исправленную проблему dataset, а не как
-  незакрытый дефект SEO-кода.
+- внешний `Vercel` rebuild после publish/unpublish не воспроизводился локально и не
+  должен маркироваться как `Pass` без реального прогона.
 
 ## 5. What Is Ready For Chapter 2
 
@@ -396,9 +413,9 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 - проект имеет не только реализованный код, но и воспроизводимую acceptance matrix;
 - public routes, preview, forms, sitemap и managed rebuild webhook подтверждены фактами;
-- testing contour отделяет automated, manual и unverified части;
-- ограничения `ru/en` coverage для `articles/projects` и browser-level metrics явно
-  зафиксированы и не маскируются.
+- testing contour отделяет automated, manual и external части;
+- основной локальный acceptance baseline закрыт без скрытых gaps; отдельно вынесен
+  только внешний rebuild contour.
 
 ## 6. Appendix-Friendly Command Set
 
@@ -413,7 +430,9 @@ curl -I http://localhost:4321/
 curl -I http://localhost:4321/ru/
 curl -I http://localhost:4321/ru/cms-first-platform/
 curl -I http://localhost:4321/ru/articles/neea-llc/
+curl -I http://localhost:4321/en/articles/neea-llc/
 curl -I http://localhost:4321/ru/projects/project/
+curl -I http://localhost:4321/en/projects/project/
 curl -I http://localhost:4321/vacancies/test-vacancy/
 ```
 
@@ -421,7 +440,7 @@ curl -I http://localhost:4321/vacancies/test-vacancy/
 
 ```bash
 curl -i 'http://localhost:4321/api/preview?secret=bad&locale=ru&type=page&slug=cms-first-platform&status=draft'
-curl -i 'http://localhost:4321/api/preview?secret=...&locale=ru&type=page&slug=cms-first-platform&status=draft'
+curl -i "http://localhost:4321/api/preview?secret=${PREVIEW_SECRET}&locale=ru&type=page&slug=cms-first-platform&status=draft"
 ```
 
 ### Build and sitemap
@@ -435,9 +454,10 @@ sed -n '1,260p' apps/front/dist/client/sitemap-0.xml
 ### Smoke contour
 
 ```bash
-pnpm --dir apps/front smoke:acceptance
-SMOKE_ALLOW_MUTATIONS=true pnpm --dir apps/front smoke:acceptance
 pnpm smoke:front
+SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front
+pnpm --dir apps/front smoke:acceptance
+pnpm audit:browser
 ```
 
 ### SQLite evidence

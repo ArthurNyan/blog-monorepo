@@ -1,0 +1,253 @@
+{
+  "timestamp": "2026-05-29T15:41:30.428Z",
+  "baseUrl": "http://localhost:4321",
+  "failures": 0,
+  "total": 4,
+  "results": [
+    {
+      "name": "RU home",
+      "url": "http://localhost:4321/ru/",
+      "status": "pass",
+      "failures": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": [],
+      "details": {
+        "title": "CMS-first корпоративная витрина",
+        "lang": "ru",
+        "h1Count": 1,
+        "formsCount": 1,
+        "unlabeledControls": [],
+        "buttonNames": [
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": ""
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Открыть CMS-first страницу"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Смотреть вакансии"
+          },
+          {
+            "tag": "button",
+            "type": "submit",
+            "text": "Запросить демонстрацию"
+          }
+        ],
+        "performance": {
+          "domContentLoaded": 237.1,
+          "loadEventEnd": 245.1,
+          "responseStart": 51.5,
+          "firstContentfulPaint": 208,
+          "resourceCount": 89
+        }
+      }
+    },
+    {
+      "name": "EN home",
+      "url": "http://localhost:4321/en/",
+      "status": "pass",
+      "failures": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": [],
+      "details": {
+        "title": "CMS-first corporate storefront",
+        "lang": "en",
+        "h1Count": 1,
+        "formsCount": 1,
+        "unlabeledControls": [],
+        "buttonNames": [
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS pages"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": ""
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS pages"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Open the CMS-first page"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "View vacancies"
+          },
+          {
+            "tag": "button",
+            "type": "submit",
+            "text": "Request demo"
+          }
+        ],
+        "performance": {
+          "domContentLoaded": 205,
+          "loadEventEnd": 211.2,
+          "responseStart": 138.7,
+          "firstContentfulPaint": 224,
+          "resourceCount": 93
+        }
+      }
+    },
+    {
+      "name": "RU CMS page",
+      "url": "http://localhost:4321/ru/cms-first-platform/",
+      "status": "pass",
+      "failures": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": [],
+      "details": {
+        "title": "CMS-first маркетинговая платформа",
+        "lang": "ru",
+        "h1Count": 2,
+        "formsCount": 1,
+        "unlabeledControls": [],
+        "buttonNames": [
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": ""
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Открыть вакансии"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Смотреть статьи"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "Feature tabs"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "Bento features"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "Registry FAQ"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "Изучить проекты"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "01Главная страница уже переведена в CMS?"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "02Структура страницы задается в Astro?"
+          },
+          {
+            "tag": "button",
+            "type": "button",
+            "text": "03Можно ли расширять библиотеку блоков дальше?"
+          },
+          {
+            "tag": "button",
+            "type": "submit",
+            "text": "Отправить запрос"
+          }
+        ],
+        "performance": {
+          "domContentLoaded": 260.2,
+          "loadEventEnd": 4331.2,
+          "responseStart": 181.3,
+          "firstContentfulPaint": 276,
+          "resourceCount": 96
+        }
+      }
+    },
+    {
+      "name": "Vacancy detail",
+      "url": "http://localhost:4321/vacancies/test-vacancy/",
+      "status": "pass",
+      "failures": [],
+      "consoleErrors": [],
+      "pageErrors": [],
+      "requestFailures": [],
+      "details": {
+        "title": "QA Engineer (Sandbox Vacancy)",
+        "lang": "ru",
+        "h1Count": 1,
+        "formsCount": 1,
+        "unlabeledControls": [],
+        "buttonNames": [
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": ""
+          },
+          {
+            "tag": "button",
+            "type": "",
+            "text": "CMS-страницы"
+          },
+          {
+            "tag": "button",
+            "type": "submit",
+            "text": "Отправить отклик"
+          }
+        ],
+        "performance": {
+          "domContentLoaded": 121.7,
+          "loadEventEnd": 124.7,
+          "responseStart": 73.1,
+          "firstContentfulPaint": 128,
+          "resourceCount": 72
+        }
+      }
+    }
+  ]
+}
