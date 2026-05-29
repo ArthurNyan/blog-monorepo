@@ -11,6 +11,11 @@ const localizedPath = (locale, slug = "") => {
 	return slug ? `/${prefix}/${slug}/` : `/${prefix}/`;
 };
 
+const localizedCollectionPath = (locale, collection, slug = "") => {
+	const prefix = locale === "ru-RU" ? "ru" : "en";
+	return slug ? `/${prefix}/${collection}/${slug}/` : `/${prefix}/${collection}/`;
+};
+
 const globalSeed = {
 	"ru-RU": {
 		companyName: "Andruia CMS Studio",
@@ -46,11 +51,11 @@ const globalSeed = {
 			},
 			{
 				label: "Статьи",
-				href: "/articles",
+				href: localizedCollectionPath("ru-RU", "articles"),
 			},
 			{
 				label: "Проекты",
-				href: "/projects",
+				href: localizedCollectionPath("ru-RU", "projects"),
 			},
 			{
 				label: "Вакансии",
@@ -64,7 +69,7 @@ const globalSeed = {
 		},
 		headerSecondaryCta: {
 			label: "К статьям",
-			href: "/articles",
+			href: localizedCollectionPath("ru-RU", "articles"),
 			description: "Открыть контентный раздел на текущей витрине.",
 		},
 		footerColumns: [
@@ -79,8 +84,8 @@ const globalSeed = {
 			{
 				heading: "Контент",
 				links: [
-					{ label: "Статьи", href: "/articles" },
-					{ label: "Проекты", href: "/projects" },
+					{ label: "Статьи", href: localizedCollectionPath("ru-RU", "articles") },
+					{ label: "Проекты", href: localizedCollectionPath("ru-RU", "projects") },
 					{ label: "Вакансии", href: "/vacancies" },
 				],
 			},
@@ -128,11 +133,11 @@ const globalSeed = {
 			},
 			{
 				label: "Articles",
-				href: "/articles",
+				href: localizedCollectionPath("en", "articles"),
 			},
 			{
 				label: "Projects",
-				href: "/projects",
+				href: localizedCollectionPath("en", "projects"),
 			},
 			{
 				label: "Vacancies",
@@ -146,7 +151,7 @@ const globalSeed = {
 		},
 		headerSecondaryCta: {
 			label: "Read articles",
-			href: "/articles",
+			href: localizedCollectionPath("en", "articles"),
 			description: "Open the content section on the storefront.",
 		},
 		footerColumns: [
@@ -161,8 +166,8 @@ const globalSeed = {
 			{
 				heading: "Content",
 				links: [
-					{ label: "Articles", href: "/articles" },
-					{ label: "Projects", href: "/projects" },
+					{ label: "Articles", href: localizedCollectionPath("en", "articles") },
+					{ label: "Projects", href: localizedCollectionPath("en", "projects") },
 					{ label: "Vacancies", href: "/vacancies" },
 				],
 			},
@@ -190,7 +195,7 @@ const homePageSeed = {
 			ogTitle: "CMS-first корпоративная витрина",
 			ogDescription:
 				"Минимальный демонстрируемый контур: global, home-page, pages и locale-prefixed маршруты.",
-			noIndex: true,
+			noIndex: false,
 		},
 		blocks: [
 			{
@@ -263,7 +268,7 @@ const homePageSeed = {
 				source: "articles",
 				limit: 3,
 				ctaLabel: "К статьям",
-				ctaUrl: "/articles",
+				ctaUrl: localizedCollectionPath("ru-RU", "articles"),
 			},
 			{
 				__component: "blocks.lead-form",
@@ -282,11 +287,11 @@ const homePageSeed = {
 				__component: "blocks.cta",
 				title: "Следующий слой после восстановления данных",
 				description:
-					"Расширить ту же locale-схему на articles и projects, затем довести `preview mode`, `sitemap` и `webhook -> rebuild`.",
+					"Зафиксировать стабильное англоязычное detail-наполнение для `articles/projects`, затем довести `preview mode`, `sitemap` и `webhook -> rebuild`.",
 				primaryButtonLabel: "Открыть демо",
 				primaryButtonUrl: localizedPath("ru-RU", "cms-first-demo"),
 				secondaryButtonLabel: "Смотреть проекты",
-				secondaryButtonUrl: "/projects",
+				secondaryButtonUrl: localizedCollectionPath("ru-RU", "projects"),
 			},
 		],
 	},
@@ -301,7 +306,7 @@ const homePageSeed = {
 			ogTitle: "CMS-first corporate storefront",
 			ogDescription:
 				"A minimal demonstrable contour: global, home-page, pages, and locale-prefixed routes.",
-			noIndex: true,
+			noIndex: false,
 		},
 		blocks: [
 			{
@@ -374,7 +379,7 @@ const homePageSeed = {
 				source: "articles",
 				limit: 3,
 				ctaLabel: "Read articles",
-				ctaUrl: "/articles",
+				ctaUrl: localizedCollectionPath("en", "articles"),
 			},
 			{
 				__component: "blocks.lead-form",
@@ -393,11 +398,11 @@ const homePageSeed = {
 				__component: "blocks.cta",
 				title: "The next layer after data recovery",
 				description:
-					"Extend the same locale scheme to articles and projects, then finish `preview mode`, `sitemap`, and `webhook -> rebuild`.",
+					"Lock a stable English detail baseline for `articles/projects`, then finish `preview mode`, `sitemap`, and `webhook -> rebuild`.",
 				primaryButtonLabel: "Open the demo",
 				primaryButtonUrl: localizedPath("en", "cms-first-demo"),
 				secondaryButtonLabel: "Explore projects",
-				secondaryButtonUrl: "/projects",
+				secondaryButtonUrl: localizedCollectionPath("en", "projects"),
 			},
 		],
 	},

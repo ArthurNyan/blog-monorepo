@@ -1,6 +1,9 @@
 # Testing Evidence Pack
 
-Дата фиксации: `2026-05-22`.
+Дата актуализации: `2026-05-29`.
+
+Часть evidence ниже сохранена из более раннего baseline `2026-05-22`, но Stage 0 в этой
+сессии повторно подтвердил старт окружения, static preview и read-only smoke contour.
 
 ## Назначение
 
@@ -27,6 +30,43 @@
 - frontend build output: `apps/front/dist/client`;
 - CMS data store: `apps/cms/.tmp/data.db`.
 
+Повторная Stage 0 валидация `2026-05-29` подтвердила:
+
+- `http://localhost:1337` доступен; root URL отвечает `302` и редиректит на `/admin`,
+  `http://localhost:1337/admin` отвечает `200`;
+- `http://localhost:4321` доступен как live runtime `Astro`;
+- `http://localhost:4322` доступен как static preview из `apps/front/dist/client`;
+- `http://localhost:4322` не обслуживает Astro API routes: `/api/preview?...` на этом
+  адресе ожидаемо возвращает `404`, а runtime preview-path проверяется только на
+  `http://localhost:4321`.
+
+Принятый baseline-командный контур:
+
+- `pnpm dev`
+- `pnpm build:front`
+- `PORT=4322 HOST=127.0.0.1 pnpm preview:front`
+- `pnpm smoke:front`
+
+Практическая оговорка для dev smoke baseline:
+
+- runtime checks требуют доступных `CMS` и frontend runtime одновременно;
+- в dev-режиме лучше сначала поднять `CMS`, затем `front`, либо перезапустить `front`
+  после восстановления `CMS`, потому что часть Astro `getStaticPaths()` и server-side fetch
+  зависят от живого CMS уже в момент запуска runtime.
+
+Минимально значимые `env` для baseline:
+
+- `CMS` boot: `APP_KEYS`, `ADMIN_JWT_SECRET`, `API_TOKEN_SALT`,
+  `TRANSFER_TOKEN_SALT`, `ENCRYPTION_KEY`; для локального baseline достаточно
+  `DATABASE_CLIENT=sqlite`, `DATABASE_FILENAME` имеет fallback;
+- frontend runtime/build: `CMS_URL` и `PUBLIC_CMS_URL` имеют fallback на
+  `http://localhost:1337`, `SITE_URL` и `PUBLIC_SITE_URL` используются для canonical/site
+  URL; `CMS_API_TOKEN` обязателен для server-side vacancy/lead flows и важен для полного
+  build vacancy routes;
+- preview contour: общий `PREVIEW_SECRET` обязателен в `apps/cms` и `apps/front`;
+- smoke contour: обязателен `PREVIEW_SECRET`, все `SMOKE_*` служат только override-ами,
+  `SMOKE_ALLOW_MUTATIONS=true` отдельно включает мутационные проверки форм.
+
 Использованные источники доказательства:
 
 - live HTTP responses `Astro` и `Strapi`;
@@ -34,6 +74,34 @@
 - прямые SQL-запросы к SQLite для `lead_submissions`, `vacancy_applications`,
   `strapi_webhooks`;
 - knowledge и code-level route/config inspection.
+
+## 1.1. Evidence collection automation
+
+Повторяющиеся ручные шаги baseline теперь сведены в одну локальную команду:
+
+```bash
+pnpm evidence:testing
+```
+
+Script:
+
+- [scripts/collect-testing-evidence.sh](/Users/arthur/Documents/projects/Диплом/app-monorepo/scripts/collect-testing-evidence.sh)
+
+Что он собирает:
+
+- representative HTTP checks для `CMS`, frontend runtime, preview-invalid-secret и
+  ключевых public routes;
+- sitemap presence/coverage checks по `apps/front/dist/client`;
+- SQLite evidence по `strapi_webhooks`, `lead_submissions`, `vacancy_applications`.
+
+Что остается нормальным warning, а не hard failure:
+
+- отсутствие `EN` detail entries для `articles/projects` в sitemap;
+- недоступность static preview `http://127.0.0.1:4322`, если preview server не поднят
+  отдельно.
+
+Команда не меняет данные CMS и не заменяет `pnpm smoke:front`; это отдельный collector
+evidence для обновления knowledge-документов и приложений к ВКР.
 
 ## 2. Automated Results
 
@@ -47,33 +115,48 @@
 
 Покрытие smoke script:
 
-- redirect `/` -> `/ru/`;
-- legacy redirects `/articles/...` и `/projects/...`;
-- public routes `home/page/article/project/vacancy`;
-- `title`, `canonical`, `og:title`, `html[lang]`, `h1`;
-- preview invalid secret;
-- preview published redirect;
-- preview draft cookie + `noindex`;
-- build sitemap existence and coverage;
-- optional mutating checks форм через `SMOKE_ALLOW_MUTATIONS=true`.
+- `runtime_invariants`:
+  redirect `/` -> `/ru/`, legacy redirects, public routes
+  `home/page/article/project/vacancy`, `title`, `canonical`, `og:title`,
+  `html[lang]`, `h1`, public indexability;
+- `preview_runtime`:
+  invalid secret, published redirect, draft cookie и preview `noindex`;
+- `build_evidence`:
+  наличие build sitemap и coverage обязательных/legacy routes;
+- `dataset_limitations`:
+  отдельная фиксация `EN` detail coverage для `articles/projects`;
+- `mutation_checks`:
+  optional form submit checks через `SMOKE_ALLOW_MUTATIONS=true`.
 
 Smoke contour специально сделан без `Playwright`, `Lighthouse` и `axe`, чтобы базовая
 проверка была воспроизводима даже при нестабильной сети и без доп. установки браузерных
 пакетов.
 
-Фактический результат прогонов `2026-05-22`:
+Фактический результат прогонов:
 
-- `pnpm --dir apps/front smoke:acceptance` завершился с `5` failures и `1` warning;
-- `SMOKE_ALLOW_MUTATIONS=true pnpm --dir apps/front smoke:acceptance` завершился с
-  теми же `5` failures, но подтвердил обе формы.
+- `2026-05-29`: после `pnpm --dir apps/cms seed:storefront` и
+  `pnpm --dir apps/cms seed:pages` команда `pnpm smoke:front` завершилась с
+  `0` failures и `2` warnings;
+- `2026-05-22`: `SMOKE_ALLOW_MUTATIONS=true pnpm --dir apps/front smoke:acceptance`
+  подтвердил обе формы, но на read-only assertions тогда сохранялся более широкий
+  acceptance gap.
 
-Содержимое текущих automated failures:
+На актуальном read-only baseline `2026-05-29` обязательные automated assertions
+проходят без failures.
 
-1. `ru home-page` marked as `noindex`.
-2. `en home-page` marked as `noindex`.
-3. `ru CMS page` marked as `noindex`.
-4. `en CMS page` marked as `noindex`.
-5. В `sitemap` отсутствуют `en` detail entries для `articles` и `projects`.
+Вывод smoke теперь сам разделяет:
+
+- stable runtime invariants;
+- preview-specific runtime checks;
+- build evidence;
+- dataset-dependent warnings;
+- optional mutation checks.
+
+Текущие read-only warnings:
+
+1. В `sitemap` отсутствуют `en` detail entries для `articles` и `projects`; это теперь
+   трактуется как dataset-dependent limitation, а не как failure runtime-кода.
+2. Mutation checks форм не включались без `SMOKE_ALLOW_MUTATIONS=true`.
 
 ### 2.2. Runtime route checks
 
@@ -142,7 +225,7 @@ pnpm --dir apps/front build
 - отсутствуют legacy `/articles/` и `/projects/` без locale;
 - присутствуют `/en/articles/` и `/en/projects/` list pages.
 - отсутствуют `en` detail entries `articles/projects`, что совпадает с фактическими
-  данными CMS и приводит к automated acceptance failure.
+  данными CMS и теперь фиксируется как dataset-dependent smoke warning.
 
 ### 2.6. Publication / rebuild contour
 
@@ -243,24 +326,40 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 ## 4. Failures And Gaps
 
+На baseline normalization `2026-05-29` причины acceptance-ограничений разделяются так:
+
+- public `noindex` на `home-page/page` был вызван versioned CMS seed, а не кодом
+  frontend: [metadata.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/seo/metadata.ts)
+  лишь объединяет `seo.noIndex`, `previewMode` и `draft`-status, а
+  [main.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/layouts/main.astro)
+  просто рендерит итоговый `robots` meta tag;
+- отсутствие `EN` detail entries для `articles/projects` связано с dataset: в репозитории
+  нет versioned `seed-articles` / `seed-projects` scripts, а текущий SQLite baseline
+  содержит published detail entries только для `ru-RU`.
+
 ### 4.1. English content coverage for `articles/projects`
 
-На baseline `2026-05-22` выявлен фактический разрыв:
+На baseline `2026-05-29` подтверждена именно граница versioned dataset:
 
-- `Strapi` возвращает `0` published `en` articles;
-- `Strapi` возвращает `0` published `en` projects.
+- в репозитории versioned seed покрывает `storefront`, `pages` и `vacancies`, но не
+  содержит отдельных `article/project` seed scripts;
+- SQLite baseline показывает `0` published `en` articles и `0` published `en` projects;
+- published detail entries для representative content сейчас существуют только в `ru-RU`
+  (`2` article records и `2` project records).
 
 Что это значит:
 
-- архитектурный `ru/en` route contour существует;
+- архитектурный `ru/en` route contour и locale-aware slug generation существуют;
 - list pages `/en/articles/` и `/en/projects/` собираются;
-- detail coverage `articles/projects` на английском языке текущим dataset не подтверждена.
+- detail coverage `articles/projects` на английском языке текущим versioned dataset не подтверждена.
 
 Для защиты это нужно формулировать как:
 
 - мультиязычный route/data contour реализован;
 - полнота англоязычного контента зависит от наполнения CMS и на текущем baseline для
-  detail entries не завершена.
+  detail entries не завершена;
+- отсутствие `EN` detail entries не должно считаться обязательным smoke-pass до появления
+  versioned seed для `article/project`.
 
 ### 4.2. Browser tooling
 
@@ -271,27 +370,25 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 Это не дефект приложения. Это ограничение среды текущей сессии.
 
-### 4.3. Public noindex on storefront-core
+### 4.3. Public noindex on storefront entry points
 
-На runtime и в static build подтверждено, что:
+На baseline normalization `2026-05-29` подтверждено, что прежний public `noindex`
+был dataset-induced, а не связан с дефектом metadata pipeline:
 
-- `/ru/`
-- `/en/`
-- `/ru/cms-first-platform/`
-- `/en/cms-first-platform/`
-
-содержат:
-
-```html
-<meta name="robots" content="noindex, nofollow">
-```
+- versioned `seed-storefront.js` и `seed-pages.js` содержали `seo.noIndex: true` для
+  публичных `home-page/page`;
+- `buildSeoMetadata` интерпретирует это поле буквально и дополнительно добавляет `noindex`
+  только для `previewMode` / `draft`;
+- после обновления seed и повторного `pnpm --dir apps/cms seed:storefront` +
+  `pnpm --dir apps/cms seed:pages` read-only smoke больше не находит `robots=noindex`
+  на `/ru/`, `/en/`, `/ru/cms-first-platform/`, `/en/cms-first-platform/`.
 
 Это означает:
 
-- preview-protection работает;
-- но текущий CMS SEO dataset делает часть публичной витрины неиндексируемой.
-
-Для диплома это нужно описывать как найденный acceptance gap, а не как “SEO успешно закрыт”.
+- preview-protection работает и остается intentional;
+- публичная indexability `home-page/page` теперь нормализована на versioned seed baseline;
+- прежний `home-page noindex` нужно трактовать как исправленную проблему dataset, а не как
+  незакрытый дефект SEO-кода.
 
 ## 5. What Is Ready For Chapter 2
 
@@ -300,7 +397,7 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 - проект имеет не только реализованный код, но и воспроизводимую acceptance matrix;
 - public routes, preview, forms, sitemap и managed rebuild webhook подтверждены фактами;
 - testing contour отделяет automated, manual и unverified части;
-- ограничения `ru/en` coverage, public `noindex` и browser-level metrics явно
+- ограничения `ru/en` coverage для `articles/projects` и browser-level metrics явно
   зафиксированы и не маскируются.
 
 ## 6. Appendix-Friendly Command Set
@@ -308,6 +405,10 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 ### Core runtime checks
 
 ```bash
+pnpm evidence:testing
+
+curl -I http://localhost:1337/
+curl -I http://localhost:1337/admin
 curl -I http://localhost:4321/
 curl -I http://localhost:4321/ru/
 curl -I http://localhost:4321/ru/cms-first-platform/
@@ -342,6 +443,8 @@ pnpm smoke:front
 ### SQLite evidence
 
 ```bash
+pnpm evidence:testing
+
 sqlite3 apps/cms/.tmp/data.db "select name,url,headers,events,enabled from strapi_webhooks;"
 sqlite3 apps/cms/.tmp/data.db "select id,full_name,email,source,form_name from lead_submissions order by id desc;"
 sqlite3 apps/cms/.tmp/data.db "select id,full_name,email,source,hr_status from vacancy_applications order by id desc;"

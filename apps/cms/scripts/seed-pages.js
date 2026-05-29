@@ -6,6 +6,11 @@ const APP_DIR = path.resolve(__dirname, "..");
 const DIST_DIR = path.join(APP_DIR, "dist");
 const PREFERRED_LOCALES = ["en", "ru-RU"];
 
+const localizedCollectionPath = (locale, collection, slug = "") => {
+	const prefix = locale === "ru-RU" ? "ru" : "en";
+	return slug ? `/${prefix}/${collection}/${slug}/` : `/${prefix}/${collection}/`;
+};
+
 const pagesSeed = {
 	"ru-RU": {
 		title: "CMS-first маркетинговая платформа",
@@ -17,7 +22,7 @@ const pagesSeed = {
 			ogTitle: "CMS-first маркетинговая платформа",
 			ogDescription:
 				"Страница собирается из блоков Strapi и рендерится на Astro без хардкода структуры.",
-			noIndex: true,
+			noIndex: false,
 		},
 		blocks: [
 			{
@@ -29,7 +34,7 @@ const pagesSeed = {
 				primaryButtonLabel: "Открыть вакансии",
 				primaryButtonUrl: "/vacancies",
 				secondaryButtonLabel: "Смотреть статьи",
-				secondaryButtonUrl: "/articles",
+				secondaryButtonUrl: localizedCollectionPath("ru-RU", "articles"),
 			},
 			{
 				__component: "blocks.logo-cloud",
@@ -110,7 +115,7 @@ const pagesSeed = {
 					},
 				],
 				ctaLabel: "Изучить проекты",
-				ctaUrl: "/projects",
+				ctaUrl: localizedCollectionPath("ru-RU", "projects"),
 			},
 			{
 				__component: "blocks.checklist",
@@ -181,7 +186,7 @@ const pagesSeed = {
 					{
 						title: "Что еще не стоит считать завершенным",
 						body:
-							"- articles, projects и vacancies пока не переведены на locale-prefixed public routes\n- media seed для визуальных блоков пока минимален\n- preview mode и rebuild pipeline остаются следующими шагами\n- sitemap и production deployment еще не доведены",
+							"- locale-prefixed public routes для `articles/projects` уже есть, но стабильный `EN` detail dataset пока не versioned\n- вакансии осознанно остаются вне `/:locale/...` public boundary\n- media seed для визуальных блоков пока минимален\n- preview mode и rebuild pipeline остаются следующими шагами",
 					},
 				],
 			},
@@ -254,9 +259,9 @@ const pagesSeed = {
 					"Информационные блоки нужны не сами по себе, а как следующий слой управляемой маркетинговой структуры.",
 				items: [
 					{
-						title: "Расширить locale-prefixed маршруты",
+						title: "Стабилизировать EN detail coverage",
 						description:
-							"После главной и `pages` тот же ru/en-контур нужно довести до articles и projects.",
+							"Locale-prefixed routes для `articles/projects` уже реализованы, но versioned dataset пока не гарантирует английские detail entries.",
 					},
 					{
 						title: "Довести публичный i18n-контур",
@@ -324,11 +329,11 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Следующий шаг",
 				description:
-					"Расширить этот же контур на articles и projects, затем довести preview mode, sitemap и rebuild-публикацию.",
+					"Зафиксировать стабильное `EN` detail-наполнение для `articles/projects`, затем довести preview mode, sitemap и rebuild-публикацию.",
 				primaryButtonLabel: "Перейти к проектам",
-				primaryButtonUrl: "/projects",
+				primaryButtonUrl: localizedCollectionPath("ru-RU", "projects"),
 				secondaryButtonLabel: "Читать статьи",
-				secondaryButtonUrl: "/articles",
+				secondaryButtonUrl: localizedCollectionPath("ru-RU", "articles"),
 			},
 		],
 	},
@@ -342,7 +347,7 @@ const pagesSeed = {
 			ogTitle: "CMS-first marketing platform",
 			ogDescription:
 				"The page is assembled from Strapi blocks and rendered in Astro without hardcoded section structure.",
-			noIndex: true,
+			noIndex: false,
 		},
 		blocks: [
 			{
@@ -354,7 +359,7 @@ const pagesSeed = {
 				primaryButtonLabel: "Open vacancies",
 				primaryButtonUrl: "/vacancies",
 				secondaryButtonLabel: "Read articles",
-				secondaryButtonUrl: "/articles",
+				secondaryButtonUrl: localizedCollectionPath("en", "articles"),
 			},
 			{
 				__component: "blocks.logo-cloud",
@@ -435,7 +440,7 @@ const pagesSeed = {
 					},
 				],
 				ctaLabel: "Explore projects",
-				ctaUrl: "/projects",
+				ctaUrl: localizedCollectionPath("en", "projects"),
 			},
 			{
 				__component: "blocks.checklist",
@@ -506,7 +511,7 @@ const pagesSeed = {
 					{
 						title: "What should not be treated as finished yet",
 						body:
-							"- articles, projects, and vacancies are still outside full locale-prefixed public routes\n- media seed for visual blocks stays minimal\n- preview mode and rebuild pipeline remain the next steps\n- sitemap and production deployment are still pending",
+							"- locale-prefixed public routes for `articles/projects` already exist, but the versioned dataset still lacks a stable `EN` detail baseline\n- vacancies intentionally remain outside the `/:locale/...` public boundary\n- media seed for visual blocks stays minimal\n- preview mode and rebuild pipeline remain the next steps",
 					},
 				],
 			},
@@ -579,9 +584,9 @@ const pagesSeed = {
 					"These informational blocks matter as the next layer of controlled marketing structure, not as decoration.",
 				items: [
 					{
-						title: "Expand locale-prefixed routes",
+						title: "Stabilize EN detail coverage",
 						description:
-							"After the homepage and `pages`, the same ru/en contour should be extended to articles and projects.",
+							"Locale-prefixed `articles/projects` routes are already implemented, but the versioned dataset still does not guarantee English detail entries.",
 					},
 					{
 						title: "Finish the public i18n contour",
@@ -649,11 +654,11 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Next step",
 				description:
-					"Extend the same contour to articles and projects, then finish preview mode, sitemap, and rebuild publication.",
+					"Lock a stable `EN` detail baseline for `articles/projects`, then finish preview mode, sitemap, and rebuild publication.",
 				primaryButtonLabel: "Go to projects",
-				primaryButtonUrl: "/projects",
+				primaryButtonUrl: localizedCollectionPath("en", "projects"),
 				secondaryButtonLabel: "Read articles",
-				secondaryButtonUrl: "/articles",
+				secondaryButtonUrl: localizedCollectionPath("en", "articles"),
 			},
 		],
 	},

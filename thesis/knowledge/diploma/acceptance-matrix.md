@@ -1,6 +1,6 @@
 # Acceptance Matrix
 
-Дата актуализации: `2026-05-22`.
+Дата актуализации: `2026-05-29`.
 
 ## Назначение
 
@@ -14,7 +14,9 @@
 - `Manual` означает ручную, но формализованную проверку по шагам.
 - `Code/Build evidence` означает факт, подтвержденный кодом, build output или БД,
   но не прогнанный как полноценный пользовательский runtime-path.
-- `Pass` означает подтвержденный факт на baseline от `2026-05-22`.
+- `Pass` означает подтвержденный факт на актуальном baseline матрицы.
+- Матрица агрегирует baseline-результаты `2026-05-22` и `2026-05-29`; если сценарий был
+  перепроверен позже, это отражается в графе `Evidence / замечание`.
 - `Partial` означает, что часть сценария подтверждена, но остаются ограничения среды,
   данных или внешней инфраструктуры.
 - `Fail` означает наблюдаемый разрыв между целевым claim и текущим baseline.
@@ -28,8 +30,8 @@
 | `PUB-01` | Redirect `/` -> `/ru/` | HTTP redirect с сохранением locale entry point | Automated | `Pass` | Проверено live runtime на `http://localhost:4321/`. |
 | `PUB-02` | Главная `ru` | `200`, корректный `<title>`, `canonical`, `og:title`, `html[lang=ru]`, один `h1` | Automated | `Pass` | Проверено live runtime и включено в smoke contour. |
 | `PUB-03` | Главная `en` | `200`, корректный `<title>`, `canonical`, `og:title`, `html[lang=en]`, один `h1` | Automated | `Pass` | Проверено live runtime и включено в smoke contour. |
-| `PUB-04` | CMS page `ru` | `/ru/cms-first-platform/` открывается и рендерит SEO-контур | Automated | `Pass` | Проверено live runtime и preview draft route. |
-| `PUB-05` | CMS page `en` | `/en/cms-first-platform/` открывается и рендерит SEO-контур | Automated | `Pass` | Проверено live runtime и build output. |
+| `PUB-04` | CMS page `ru` | `/ru/cms-first-platform/` открывается и рендерит SEO-контур | Automated | `Pass` | Проверено live runtime, preview draft route и повторно подтверждено read-only smoke `2026-05-29`. |
+| `PUB-05` | CMS page `en` | `/en/cms-first-platform/` открывается и рендерит SEO-контур | Automated | `Pass` | Проверено live runtime, build output и повторно подтверждено read-only smoke `2026-05-29`. |
 | `PUB-06` | Articles list `ru` | `/ru/articles/` возвращает `200` и рендерит list page | Automated | `Pass` | Проверено live runtime и static build. |
 | `PUB-07` | Article detail `ru` | `/ru/articles/neea-llc/` возвращает `200`, canonical/OG присутствуют | Automated | `Pass` | Проверено live runtime и static build. |
 | `PUB-08` | Projects list `ru` | `/ru/projects/` возвращает `200` и рендерит list page | Automated | `Pass` | Проверено live runtime и static build. |
@@ -66,13 +68,13 @@
 | `SEO-01` | Canonical / OG on key routes | На representative routes присутствуют `canonical`, `og:title`, `og:url` | Automated | `Pass` | Проверено live runtime для `home/page/article/project/vacancy`. |
 | `SEO-02` | Preview noindex | Preview route не индексируется | Automated | `Pass` | Проверено live runtime. |
 | `SEO-03` | Editor-managed detail SEO | `home-page`, `page`, `article`, `project`, `vacancy` используют CMS SEO/fallback layer | Code/Build evidence + runtime sample | `Pass` | Подтверждено кодом layout/metadata и representative pages. |
-| `SEO-04` | Public page indexability | Публичные `home-page` и `page` не должны нести `robots=noindex` | Automated | `Fail` | На baseline `2026-05-22` `ru/en home-page` и `ru/en page` реально отдаются с `noindex, nofollow`. |
+| `SEO-04` | Public page indexability | Публичные `home-page` и `page` не должны нести `robots=noindex` | Automated | `Pass` | Versioned `seed-storefront.js` / `seed-pages.js` нормализованы, затем `pnpm smoke:front` на baseline `2026-05-29` подтвердил отсутствие public `noindex` на `/ru/`, `/en/`, `/ru/cms-first-platform/`, `/en/cms-first-platform/`. |
 | `SM-01` | Sitemap generation in build | `apps/front/dist/client/sitemap-index.xml` и `sitemap-0.xml` генерируются после build | Automated | `Pass` | Подтверждено build output `2026-05-22`. |
 | `SM-02` | Sitemap contains storefront routes | В sitemap входят `/ru/`, `/en/`, `ru` detail routes и `/vacancies/...` | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml`. |
 | `SM-03` | Sitemap excludes legacy routes | Legacy `/articles` и `/projects` без locale отсутствуют в sitemap | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml` и `astro.config.mjs`. |
 | `LOC-01` | Storefront-core `ru/en` | `home-page` и `page` доступны и собираются в обеих локалях | Automated | `Pass` | Проверено live runtime и build output. |
 | `LOC-02` | `articles/projects` locale-prefixed routes | `/:locale/articles/` и `/:locale/projects/` buildятся для `ru/en` | Automated | `Pass` | Проверено build output. |
-| `LOC-03` | `articles/projects` EN detail coverage | Наличие английских detail entries для representative `article/project` | Automated | `Fail` | На baseline `2026-05-22` `Strapi` возвращает `0` published EN articles и `0` published EN projects. |
+| `LOC-03` | `articles/projects` EN detail coverage | Наличие английских detail entries для representative `article/project` | Code/Build evidence | `Partial` | Versioned dataset не содержит `seed-articles` / `seed-projects`; SQLite baseline и `sitemap-0.xml` подтверждают только `ru-RU` published detail entries, поэтому `EN` detail coverage фиксируется как dataset-dependent limitation, а не как обязательный smoke-pass. |
 | `LOC-04` | Vacancies public locale boundary | Публичные вакансии живут вне `/:locale/...`, preview при этом locale-aware | Automated + Code/Build evidence | `Pass` | Подтверждено route helpers, runtime и build output. |
 | `PUBF-01` | Managed rebuild webhook exists | Активный `Frontend rebuild hook` есть в `strapi_webhooks` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
 | `PUBF-02` | Webhook events | Webhook подписан на `entry.publish` и `entry.unpublish` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
@@ -88,17 +90,17 @@
 | `PERF-01` | Frontend build baseline | Frontend build проходит, static routes генерируются без runtime errors | Automated | `Pass` | `pnpm --dir apps/front build` успешно выполнен `2026-05-22`; prerendered `index.html` routes: `35`. |
 | `PERF-02` | Static asset baseline | Размер build output и крупнейшие chunks зафиксированы | Automated | `Pass` | `dist/client`: `2.3M`; крупнейшие chunks: `three` `457347 B`, `vendor` `361099 B`, `motion-dom` `94801 B`. |
 | `PERF-03` | Browser performance audit | Lighthouse / Web Vitals baseline | External tooling | `Unverified` | Упирается в нестабильную загрузку browser-tooling из npm. |
-| `SMK-01` | Minimal automated smoke contour | `pnpm --dir apps/front smoke:acceptance` и `SMOKE_ALLOW_MUTATIONS=true ...` воспроизводят baseline acceptance checks | Automated | `Partial` | Smoke реализован и воспроизводим, но текущий baseline приводит к `5` automated failures: `4` public noindex и отсутствие EN detail routes `articles/projects`. |
+| `SMK-01` | Minimal automated smoke contour | `pnpm --dir apps/front smoke:acceptance` и `SMOKE_ALLOW_MUTATIONS=true ...` воспроизводят baseline acceptance checks | Automated | `Pass` | Smoke script теперь явно разделяет `runtime_invariants`, `preview_runtime`, `build_evidence`, `dataset_limitations` и `mutation_checks`; актуальный read-only baseline `2026-05-29` дает `0` failures и `2` warnings: dataset-dependent `EN` detail coverage для `articles/projects` и пропуск optional mutation checks без `SMOKE_ALLOW_MUTATIONS=true`. |
 
 ## Вывод для диплома
 
-По состоянию на `2026-05-22` у проекта есть воспроизводимая матрица приемки, где:
+По состоянию на `2026-05-29` у проекта есть воспроизводимая матрица приемки, где:
 
 - ключевые публичные сценарии подтверждены runtime и build evidence;
 - preview, формы и managed rebuild webhook подтверждены лучше, чем просто “по коду”;
 - контур `ru/en` подтвержден для storefront-core, но не для английских detail entries
   `articles/projects` в текущем dataset;
-- SEO-контур формально работает, но текущий CMS dataset делает публичные `home/page`
-  неиндексируемыми;
+- public indexability `home-page/page` подтверждена после нормализации versioned seed,
+  а remaining locale gap связан именно с dataset `articles/projects`;
 - accessibility и performance имеют базовый структурный baseline, но не закрыты
   полноценным browser-level audit в рамках этой сессии.

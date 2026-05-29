@@ -16,6 +16,7 @@
     "start:cms": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run cms:start",
     "preview:front": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:preview",
     "smoke:front": "pnpm --dir apps/front smoke:acceptance",
+    "evidence:testing": "bash scripts/collect-testing-evidence.sh",
     "generate:api": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx run front:generate:api",
     "affected:build": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx affected -t build",
     "affected:lint": "NX_DAEMON=false NX_ADD_PLUGINS=false NX_ISOLATE_PLUGINS=false nx affected -t lint",
