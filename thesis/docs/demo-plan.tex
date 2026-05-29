@@ -1,0 +1,322 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+\setmainfont[
+  Path=../fonts/,
+  UprightFont=pt-astra-serif_regular.ttf,
+  BoldFont=pt-astra-serif_bold.ttf,
+  ItalicFont=pt-astra-serif_italic.ttf,
+  BoldItalicFont=pt-astra-serif_bold-italic.ttf
+]{PT Astra Serif}
+
+\setmonofont[
+  Path=../fonts/fira-code/,
+  UprightFont=FiraCode-Regular.ttf,
+  BoldFont=FiraCode-Bold.ttf
+]{Fira Code}
+
+\hypersetup{
+  hidelinks,
+  pdfauthor={Нахатакян Артур Романович},
+  pdftitle={План демонстрации программного продукта}
+}
+
+\setlist[itemize]{leftmargin=1.4cm}
+\setlist[enumerate]{leftmargin=1.4cm}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+\emergencystretch=2em
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{План демонстрации программного продукта}}\\[0.8em]
+{\normalsize Тема ВКР: «Разработка системы управления контентом в сфере маркетинга на базе Strapi и Astro»}
+\end{center}
+
+\section*{Назначение документа}
+
+Документ фиксирует план демонстрации разработанного программного продукта без внесения
+изменений в код проекта. План опирается на уже реализованный и подтвержденный baseline
+системы и предназначен для предзащиты ВКР.
+
+\section*{Цель демонстрации}
+
+Показать, что разработанная система:
+\begin{itemize}
+  \item реализует \texttt{CMS-first} подход к управлению контентом;
+  \item поддерживает раздельные контуры публичной витрины и административного управления;
+  \item обеспечивает локализацию, предварительный просмотр, базовый \texttt{SEO}-контур и
+  формы взаимодействия с пользователем;
+  \item имеет воспроизводимый публикационный контур
+  \texttt{publish -> webhook -> rebuild}.
+\end{itemize}
+
+\section*{Формат демонстрации}
+
+Рекомендуемая длительность: \texttt{10--15 минут}.
+
+Основной формат:
+\begin{enumerate}
+  \item краткое введение в архитектуру;
+  \item показ административного контура \texttt{Strapi};
+  \item показ публичной витрины \texttt{Astro};
+  \item показ preview-сценария;
+  \item краткий разбор эксплуатационного и публикационного контура;
+  \item фиксация ограничений текущей версии.
+\end{enumerate}
+
+\section*{Среда демонстрации}
+
+\subsection*{Требуемые сервисы}
+
+\begin{itemize}
+  \item frontend runtime: \texttt{http://localhost:4321};
+  \item CMS runtime: \texttt{http://localhost:1337};
+  \item при необходимости build-preview: \texttt{http://localhost:4322}.
+\end{itemize}
+
+\subsection*{Минимальная проверка перед показом}
+
+Перед демонстрацией рекомендуется убедиться, что:
+\begin{itemize}
+  \item открывается главная страница \texttt{/ru/};
+  \item открывается английская версия \texttt{/en/};
+  \item доступна \texttt{Strapi} admin panel;
+  \item работает хотя бы один preview-сценарий для \texttt{page};
+  \item в CMS есть опубликованные записи для \texttt{page}, \texttt{article},
+  \texttt{project}, \texttt{vacancy};
+  \item в CMS есть хотя бы один draft для показа preview;
+  \item заранее известны логины ролей, если планируется показ разделения доступа.
+\end{itemize}
+
+\subsection*{Что не требуется}
+
+\begin{itemize}
+  \item не требуется вносить изменения в код проекта;
+  \item не требуется live-доработка данных во время выступления;
+  \item не требуется запуск полного production-пути с внешним \texttt{Vercel} rebuild.
+\end{itemize}
+
+\section*{Сценарий демонстрации}
+
+\subsection*{1. Введение и постановка задачи}
+
+Время: \texttt{1--2 минуты}.
+
+Что показать и проговорить:
+\begin{itemize}
+  \item тему ВКР и назначение системы;
+  \item проблему кодо-центричного управления маркетинговым сайтом;
+  \item идею разделения на \texttt{Strapi} как контентное ядро и \texttt{Astro} как
+  публичную витрину.
+\end{itemize}
+
+Ожидаемый результат: комиссия понимает, зачем в проекте одновременно нужны \texttt{CMS},
+публичный frontend, preview и публикационный контур.
+
+\subsection*{2. Архитектура и контуры системы}
+
+Время: \texttt{1--2 минуты}.
+
+Что показать:
+\begin{itemize}
+  \item краткую схему взаимодействия \texttt{Strapi -> API -> Astro};
+  \item два основных контура:
+  \begin{itemize}
+    \item маркетинговый: \texttt{global}, \texttt{home-page}, \texttt{page},
+    \texttt{article}, \texttt{author}, \texttt{project}, \texttt{lead-submission};
+    \item карьерный: \texttt{vacancy}, \texttt{industry}, \texttt{job-role},
+    \texttt{vacancy-application}.
+  \end{itemize}
+\end{itemize}
+
+Что проговорить:
+\begin{itemize}
+  \item роли \texttt{administrator}, \texttt{marketer/content-manager}, \texttt{editor},
+  \texttt{hr};
+  \item принцип, что публичная витрина не пишет в \texttt{Strapi} напрямую из браузера.
+\end{itemize}
+
+Ожидаемый результат: показано, что система спроектирована как разделенная управляемая
+платформа.
+
+\subsection*{3. Демонстрация CMS-контура}
+
+Время: \texttt{2--3 минуты}.
+
+Что показать в \texttt{Strapi}:
+\begin{itemize}
+  \item список ключевых сущностей;
+  \item структуру \texttt{home-page} или \texttt{page};
+  \item наличие \texttt{Dynamic Zone} у страниц;
+  \item \texttt{SEO}-поля у страницы или детальной сущности;
+  \item наличие опубликованного и чернового контента;
+  \item при возможности --- разделение ролей или описание того, кто что редактирует.
+\end{itemize}
+
+Что проговорить:
+\begin{itemize}
+  \item \texttt{editor} готовит черновик, но не публикует;
+  \item \texttt{marketer/content-manager} публикует маркетинговый контент;
+  \item \texttt{hr} управляет вакансиями и откликами.
+\end{itemize}
+
+Ожидаемый результат: показано, что контент редактируется в \texttt{CMS}, а не в исходном
+коде frontend.
+
+\subsection*{4. Демонстрация публичной витрины}
+
+Время: \texttt{3--4 минуты}.
+
+Что открыть в браузере:
+\begin{enumerate}
+  \item \texttt{/ru/} --- главная страница;
+  \item \texttt{/en/} --- английская версия главной;
+  \item representative \texttt{page}, например \texttt{/ru/cms-first-platform/};
+  \item список или detail статьи \texttt{/ru/articles/...};
+  \item список или detail проекта \texttt{/ru/projects/...};
+  \item \texttt{/vacancies/} и detail вакансии.
+\end{enumerate}
+
+Что проговорить:
+\begin{itemize}
+  \item storefront-core работает в локалях \texttt{ru/en};
+  \item страницы, статьи и проекты приходят из \texttt{CMS};
+  \item вакансии вынесены в отдельный прикладной модуль;
+  \item frontend выполняет роль публичной витрины и использует данные \texttt{Strapi}.
+\end{itemize}
+
+Ожидаемый результат: комиссия видит, что система реально публикует контентные разделы, а
+не ограничивается только админкой.
+
+\subsection*{5. Демонстрация preview-сценария}
+
+Время: \texttt{2 минуты}.
+
+Что показать:
+\begin{itemize}
+  \item preview action для черновой \texttt{page} или другой сущности;
+  \item переход через \texttt{/api/preview};
+  \item открытие маршрута \texttt{/preview/...};
+  \item отличие preview от обычной публичной страницы.
+\end{itemize}
+
+Что проговорить:
+\begin{itemize}
+  \item preview работает без раскрытия публичного draft API;
+  \item draft-чтение выполняется через \texttt{PREVIEW\_SECRET};
+  \item preview-страницы получают \texttt{noindex}.
+\end{itemize}
+
+Ожидаемый результат: показан один из ключевых инженерных результатов --- безопасный
+предпросмотр черновика.
+
+\subsection*{6. Демонстрация форм взаимодействия}
+
+Время: \texttt{1--2 минуты}.
+
+Безопасный вариант показа:
+\begin{itemize}
+  \item открыть публичную форму лида или отклика;
+  \item показать обязательные поля;
+  \item продемонстрировать валидацию на невалидных данных;
+  \item при необходимости кратко показать, что отправка идет через server-side route, а не
+  напрямую в \texttt{Strapi}.
+\end{itemize}
+
+Если нежелательно изменять данные в системе, следует ограничиться показом формы и сценария
+валидации без финальной успешной отправки.
+
+Если допустима мутация тестовых данных, можно показать успешную отправку и наличие записи в
+\texttt{Strapi}.
+
+Ожидаемый результат: показано, что прикладные формы встроены в систему и защищены
+server-side слоем.
+
+\subsection*{7. Демонстрация публикационного контура}
+
+Время: \texttt{1--2 минуты}.
+
+Что показать:
+\begin{itemize}
+  \item наличие managed webhook в \texttt{Strapi};
+  \item подписку на события \texttt{entry.publish} и \texttt{entry.unpublish};
+  \item краткое объяснение цепочки \texttt{publish -> webhook -> rebuild}.
+\end{itemize}
+
+Что проговорить:
+\begin{itemize}
+  \item локально подтвержден факт существования и синхронизации webhook;
+  \item полный внешний production-путь с \texttt{Vercel} не требуется демонстрировать
+  вживую;
+  \item для целей ВКР важно показать сам инженерный контур и его воспроизводимость.
+\end{itemize}
+
+Ожидаемый результат: комиссия видит, что публикация контента связана с обновлением
+публичной витрины.
+
+\subsection*{8. Итог и ограничения}
+
+Время: \texttt{1 минута}.
+
+Что проговорить в завершении:
+\begin{itemize}
+  \item система реализует \texttt{CMS-first} модель для маркетингового сайта;
+  \item контентное управление отделено от публичной витрины;
+  \item реализованы локализация, preview, формы и публикационный контур;
+  \item проект имеет воспроизводимый набор проверок и acceptance-сценариев.
+\end{itemize}
+
+Какие ограничения нужно проговаривать честно:
+\begin{itemize}
+  \item английское наполнение detail-разделов \texttt{articles/projects} зависит от
+  фактического dataset;
+  \item текущий \texttt{SEO} dataset требует дополнительной финальной проверки индексации
+  публичных страниц;
+  \item browser-level аудит через \texttt{Lighthouse/axe} не является обязательной частью
+  текущей live-демонстрации;
+  \item live-показ внешнего \texttt{Vercel} rebuild не обязателен.
+\end{itemize}
+
+\section*{Что лучше не показывать как основной сценарий}
+
+Во время демонстрации не стоит делать центральным элементом показа:
+\begin{itemize}
+  \item редактирование production-данных без заранее подготовленного тестового сценария;
+  \item зависимые от внешней инфраструктуры действия, которые могут сорваться из-за сети;
+  \item англоязычные detail-страницы \texttt{articles/projects}, если они не заполнены в
+  текущем dataset;
+  \item спорные \texttt{SEO}-утверждения без предварительно проверенного фактического
+  состояния.
+\end{itemize}
+
+\section*{Резервный план}
+
+Если часть live-сценариев не открывается во время демонстрации, рекомендуется:
+\begin{enumerate}
+  \item сохранить основную логику показа через уже работающие маршруты \texttt{/ru/},
+  \texttt{page}, \texttt{preview}, \texttt{vacancies};
+  \item использовать заранее открытые вкладки браузера;
+  \item опираться на уже подготовленные диаграммы, acceptance-материалы и структуру
+  сущностей в \texttt{Strapi};
+  \item делать акцент на архитектуре, редакторском workflow и воспроизводимых проверках.
+\end{enumerate}
+
+\section*{Вывод}
+
+Для предзащиты оптимален сценарий, в котором демонстрация строится не вокруг внесения
+новых изменений в проект, а вокруг уже реализованных и подтвержденных контуров:
+контентного управления, публичной витрины, preview, форм и публикации. Это позволяет
+показать зрелость решения и избежать риска live-ошибок, связанных с ненужной доработкой
+проекта непосредственно перед выступлением.
+
+\end{document}
