@@ -18,7 +18,7 @@
 - [x] Этап 4. Автоматизировать сбор evidence
 - [x] Этап 5. Оформить manual checklist пользовательских сценариев
 - [x] Этап 6. Синхронизировать acceptance matrix и testing evidence pack
-- [ ] Этап 7. Переписать подраздел о тестировании в тексте диплома
+- [x] Этап 7. Переписать подраздел о тестировании в тексте диплома
 - [x] Этап 8. Опционально снять browser-level audit
 
 ## Общие правила для всех этапов
@@ -582,12 +582,12 @@
 
 ### Чеклист этапа
 
-- [ ] Проверить текущий раздел тестирования в `03-chapter-2.tex`
-- [ ] Вынести в текст automated smoke contour
-- [ ] Вынести manual сценарии
-- [ ] Вынести build/DB evidence
-- [ ] Явно описать ограничения
-- [ ] Проверить, что формулировки совпадают с `acceptance-matrix` и `testing-evidence-pack`
+- [x] Проверить текущий раздел тестирования в `03-chapter-2.tex`
+- [x] Вынести в текст automated smoke contour
+- [x] Вынести manual сценарии
+- [x] Вынести build/DB evidence
+- [x] Явно описать ограничения
+- [x] Проверить, что формулировки совпадают с `acceptance-matrix` и `testing-evidence-pack`
 
 ### Основные артефакты
 
@@ -595,6 +595,15 @@
 - `thesis/knowledge/diploma/acceptance-matrix.md`
 - `thesis/knowledge/diploma/testing-evidence-pack.md`
 - `thesis/knowledge/diploma/chapter-2-evidence.md`
+
+### Итог этапа
+
+Фиксация от `2026-05-29`.
+
+- Подраздел `Тестирование` в `thesis/content/03-chapter-2.tex` переписан под актуальный baseline `2026-05-29` и больше не описывает проверку как почти полностью ручную.
+- В текст главы вынесены характер testing contour, automated smoke baseline, ручная приемка, build/DB evidence и browser audit baseline, при этом не заявляется наличие полноценного unit/e2e контура.
+- Формулировки согласованы с `acceptance-matrix.md` и `testing-evidence-pack.md`: зафиксированы `0 failures / 1 warning` для read-only smoke, `0 failures / 0 warnings` для mutation smoke, подтвержденные формы, `preview`, `sitemap`, SQLite evidence и локальный browser audit.
+- Ограничения описаны явно: browser audit не выдается за полный WCAG/Lighthouse review, а внешний `publish -> Vercel rebuild` не маркируется как локально воспроизведенный сквозной сценарий.
 
 ### Prompt для отдельного треда
 
