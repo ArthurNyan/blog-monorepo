@@ -22,7 +22,8 @@ const previewCollectionSegments: Record<
 };
 
 const getPreviewSecret = () => {
-	const previewSecret = import.meta.env.PREVIEW_SECRET;
+	const previewSecret =
+		process.env.PREVIEW_SECRET?.trim() || import.meta.env.PREVIEW_SECRET;
 
 	if (!previewSecret) {
 		throw new Error(

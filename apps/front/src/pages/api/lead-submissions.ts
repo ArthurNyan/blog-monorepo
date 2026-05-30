@@ -1,28 +1,15 @@
 import type { APIRoute } from "astro";
 import { parseCmsErrorMessage } from "@/shared/api/cms";
+import {
+	getServerCmsApiToken,
+	getServerCmsBaseUrl,
+} from "@/shared/api/strapi-server";
 import { toSiteLocale } from "@/shared/i18n/config";
 import { isHoneypotFilled } from "@/shared/lib/form-security";
 import { getLeadFormCopy } from "@/widgets/LeadCaptureForm/model/copy";
 import { createLeadSubmissionRequestSchema } from "@/widgets/LeadCaptureForm/model/schema";
 
 export const prerender = false;
-
-const getCmsBaseUrl = () =>
-	import.meta.env.CMS_URL ??
-	import.meta.env.PUBLIC_CMS_URL ??
-	"http://localhost:1337";
-
-const getCmsApiToken = () => {
-	const token = import.meta.env.CMS_API_TOKEN?.trim();
-
-	if (!token) {
-		throw new Error(
-			"CMS_API_TOKEN is not configured. Lead submissions require a server-side Strapi API token."
-		);
-	}
-
-	return token;
-};
 
 export const POST: APIRoute = async ({ request }) => {
 	let rawPayload: unknown;
@@ -67,11 +54,11 @@ export const POST: APIRoute = async ({ request }) => {
 
 	try {
 		const cmsResponse = await fetch(
-			new URL("/api/lead-submissions", getCmsBaseUrl()).toString(),
+			new URL("/api/lead-submissions", getServerCmsBaseUrl()).toString(),
 			{
 				method: "POST",
 				headers: {
-					authorization: `Bearer ${getCmsApiToken()}`,
+					authorization: `Bearer ${getServerCmsApiToken()}`,
 					"content-type": "application/json",
 				},
 				body: JSON.stringify({

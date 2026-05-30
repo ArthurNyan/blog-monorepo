@@ -5,7 +5,7 @@ import {
 } from "@/shared/api/cms";
 import {
 	buildServerCmsUrl,
-	createServerCmsHeaders,
+	createOptionalServerCmsHeaders,
 } from "@/shared/api/strapi-server";
 import type { PageSeo } from "@/shared/api/pages";
 import type {
@@ -149,7 +149,7 @@ export const fetchCmsVacancies = async (
 	}
 
 	const response = await fetch(url.toString(), {
-		headers: createServerCmsHeaders(options?.headers),
+		headers: createOptionalServerCmsHeaders(options?.headers),
 	});
 
 	if (!response.ok) {
@@ -187,7 +187,7 @@ export const fetchCmsVacancyBySlug = async (
 	}
 
 	const response = await fetch(url.toString(), {
-		headers: createServerCmsHeaders(options.headers),
+		headers: createOptionalServerCmsHeaders(options.headers),
 	});
 
 	if (!response.ok) {
@@ -210,7 +210,7 @@ export const fetchCmsIndustries = async (
 	url.searchParams.set("locale", locale);
 
 	const response = await fetch(url.toString(), {
-		headers: createServerCmsHeaders(options?.headers),
+		headers: createOptionalServerCmsHeaders(options?.headers),
 	});
 
 	if (!response.ok) {
@@ -233,7 +233,7 @@ export const fetchCmsJobRoles = async (
 	url.searchParams.set("locale", locale);
 
 	const response = await fetch(url.toString(), {
-		headers: createServerCmsHeaders(options?.headers),
+		headers: createOptionalServerCmsHeaders(options?.headers),
 	});
 
 	if (!response.ok) {
