@@ -4,6 +4,8 @@ FROM node:22.12.0-bookworm-slim AS base
 
 ENV PNPM_HOME=/pnpm
 ENV PATH=$PNPM_HOME:$PATH
+ENV NX_DAEMON=false
+ENV NX_SOCKET_DIR=/tmp/nx-tmp
 
 RUN npm install -g pnpm@10.11.0
 
