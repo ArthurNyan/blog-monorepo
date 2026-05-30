@@ -1,7 +1,7 @@
 // @ts-check
 
 import tailwindcss from '@tailwindcss/vite';
-import { defineConfig } from 'astro/config';
+import { defineConfig, passthroughImageService } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import node from '@astrojs/node';
 
@@ -16,6 +16,9 @@ export default defineConfig({
   adapter: node({
     mode: 'standalone',
   }),
+  image: {
+    service: passthroughImageService(),
+  },
   vite: {
     plugins: [tailwindcss()],
     build: {
