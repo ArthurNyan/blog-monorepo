@@ -1,3 +1,5 @@
+import { getDokployRebuildConfig } from './dokploy-rebuild';
+
 const DEFAULT_WEBHOOK_NAME = 'Frontend rebuild hook';
 const PUBLICATION_EVENTS = ['entry.publish', 'entry.unpublish'] as const;
 
@@ -78,14 +80,13 @@ const areHeadersEqual = (
 export const getPublicationWebhookConfig = (
   env: NodeJS.ProcessEnv = process.env
 ): PublicationWebhookConfig => {
-  const url = env.FRONTEND_REBUILD_HOOK_URL?.trim();
-  const token = env.FRONTEND_REBUILD_HOOK_TOKEN?.trim();
+  const dokployConfig = getDokployRebuildConfig(env);
 
   return {
-    enabled: Boolean(url),
-    headers: token ? { 'x-rebuild-token': token } : {},
+    enabled: Boolean(dokployConfig.managedWebhookUrl && dokployConfig.dokployWebhookUrl),
+    headers: dokployConfig.incomingToken ? { 'x-rebuild-token': dokployConfig.incomingToken } : {},
     name: env.FRONTEND_REBUILD_WEBHOOK_NAME?.trim() || DEFAULT_WEBHOOK_NAME,
-    url,
+    url: dokployConfig.managedWebhookUrl,
   };
 };
 

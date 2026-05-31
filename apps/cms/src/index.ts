@@ -63,7 +63,7 @@ export default {
 
     if (!rebuildConfig.enabled) {
       strapi.log.warn(
-        'FRONTEND_REBUILD_HOOK_URL is not set. The managed frontend rebuild webhook will stay disabled until the URL is configured.'
+        'PUBLIC_URL or DOKPLOY_DEPLOY_WEBHOOK_URL is not set. The managed frontend rebuild webhook will stay disabled until the CMS public URL and Dokploy deploy hook are configured.'
       );
     }
 
