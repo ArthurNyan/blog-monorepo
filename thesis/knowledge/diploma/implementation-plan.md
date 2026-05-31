@@ -36,7 +36,7 @@
   - `articles`;
   - `projects`;
   - `vacancies`.
-- `Vercel` adapter на frontend.
+- `Node.js` adapter и `Dockerfile` на frontend.
 - middleware на стороне CMS, которое принудительно ограничивает публичные `GET /api/*`
   опубликованными данными, если нет корректного preview-secret.
 
@@ -46,8 +46,9 @@
   дальше последовательно удерживать в thesis как финальную границу, а не расширять до всего сайта.
 - `SEO` и `preview` уже есть для content sections; detail pages `article/project/vacancy`
   уже переведены на CMS-managed `SEO`, а section list pages остаются route-owned.
-- deployment-контур frontend частично подготовлен через `@astrojs/vercel`, но не доведен до
-  полноценно оформленного production bundle с `webhook -> rebuild`.
+- deployment-контур frontend частично подготовлен через `@astrojs/node` и `Dockerfile`, но
+  не доведен до полноценно оформленного production bundle с `Dokploy`-ориентированным
+  `webhook -> rebuild`.
 
 ### Еще не закрыто как завершенный результат
 
@@ -73,12 +74,12 @@
 
 Почему это важно:
 
-- это замыкает публикационный контур `Strapi -> publish -> rebuild -> Astro/Vercel`;
+- это замыкает публикационный контур `Strapi -> publish -> webhook -> Dokploy rebuild/redeploy -> Astro frontend`;
 - без этого нельзя честно писать, что публикация автоматически обновляет витрину.
 
 Что нужно сделать:
 
-- выбрать и зафиксировать способ вызова deploy hook;
+- выбрать и зафиксировать способ вызова webhook/redeploy hook `Dokploy`;
 - добавить environment contract для rebuild-сценария;
 - реализовать вызов hook после публикации;
 - проверить сценарий на реальном изменении страницы.
@@ -195,12 +196,12 @@
 Текущее состояние:
 - pages, Dynamic Zone, SEO/Open Graph, sitemap и preview уже реализованы;
 - preview уже покрывает home-page, pages, articles, projects и vacancies;
-- frontend уже использует Vercel adapter;
+- frontend уже использует `Node.js` adapter и запускается как standalone runtime;
 - в дипломе публикационный контур должен быть: Strapi -> publish -> webhook -> rebuild frontend.
 
 Задача:
 1. Проверить, что в коде еще отсутствует оформленный webhook -> rebuild.
-2. Предложить минимальный рабочий вариант для Vercel deploy hook.
+2. Предложить минимальный рабочий вариант для webhook/redeploy hook `Dokploy`.
 3. Реализовать его в репозитории.
 4. Обновить knowledge, чтобы это можно было честно описывать в главе 2.
 

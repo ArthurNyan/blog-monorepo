@@ -432,7 +432,7 @@ def add_goal_slide(prs: Presentation, slide_no: int) -> None:
             "Спроектировать требования, архитектуру и модель данных.",
             "Реализовать CMS-контур для pages, articles, projects, vacancies.",
             "Добавить ru/en, preview mode, SEO/Open Graph и sitemap.",
-            "Организовать roles/permissions, webhook -> rebuild, Vercel и Docker.",
+            "Организовать roles/permissions, webhook -> rebuild, Dokploy и раздельный deployment Docker-приложений.",
             "Проверить результат по сценариям публикации, локализации и безопасности.",
         ],
     )
@@ -480,7 +480,7 @@ def add_stack_slide(prs: Presentation, slide_no: int) -> None:
         [
             "Prerender-подход для предсказуемой отдачи контента.",
             "Server routes для preview и форменных сценариев.",
-            "Удобная интеграция с sitemap и deployment на Vercel.",
+            "Node adapter, sitemap и deployment через Dokploy как отдельного Docker-приложения.",
         ],
     )
 
@@ -521,7 +521,7 @@ def add_architecture_slide(prs: Presentation, assets: dict[str, Path], slide_no:
             "apps/cms: Strapi 5, content model, roles, webhooks.",
             "apps/front: Astro 6, публичные маршруты, preview и API routes.",
             "OpenAPI/typed contract: единая схема данных между CMS и frontend.",
-            "Vercel + Docker: эксплуатационный контур системы.",
+            "Dokploy + Docker: эксплуатационный контур системы.",
         ],
     )
 
@@ -621,8 +621,8 @@ def add_deployment_slide(prs: Presentation, assets: dict[str, Path], slide_no: i
         "Эксплуатационный контур",
         [
             "Versioned webhook в Strapi подписан на entry.publish и entry.unpublish.",
-            "Frontend deployment ориентирован на Vercel deploy hook.",
-            "CMS оформлена как Docker bundle с отдельным PostgreSQL runtime.",
+            "Frontend deployment ориентирован на webhook/redeploy механизм Dokploy.",
+            "Frontend и CMS оформлены как отдельные Docker-приложения; CMS дополнительно имеет Docker bundle с PostgreSQL runtime.",
             "Роли: administrator, marketer/content-manager, editor, HR.",
             "Draft-доступ выдается только через preview-secret; public API ограничен published-данными.",
         ],
@@ -682,7 +682,7 @@ def add_significance_slide(prs: Presentation, slide_no: int) -> None:
         "Текущие ограничения",
         [
             "Полный browser-level WCAG audit и Lighthouse baseline не завершены.",
-            "Внешний Vercel deploy не воспроизводился end-to-end внутри репозитория.",
+            "Внешний Dokploy rebuild/redeploy не воспроизводился end-to-end внутри репозитория.",
             "Дальнейшее развитие: новые блоки Dynamic Zone, расширение workflow и аналитики контента.",
         ],
     )

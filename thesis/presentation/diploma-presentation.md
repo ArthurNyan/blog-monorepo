@@ -85,7 +85,7 @@ description: Презентация к выпускной квалификаци
 2. Спроектировать требования, архитектуру и модель данных.
 3. Реализовать CMS-контур для `pages`, `articles`, `projects`, `vacancies`.
 4. Добавить `ru/en`, `preview mode`, `SEO/Open Graph` и `sitemap`.
-5. Организовать `roles/permissions`, `webhook -> rebuild`, `Vercel`, `Docker` и проверку результата.
+5. Организовать `roles/permissions`, `webhook -> rebuild`, `Dokploy`, раздельный deployment `Docker`-приложений и проверку результата.
 
 </div>
 </div>
@@ -119,7 +119,7 @@ description: Презентация к выпускной квалификаци
 
 - `Prerender` для предсказуемой отдачи контента.
 - Server routes для `preview` и форменных сценариев.
-- Интеграция с `sitemap` и deployment на `Vercel`.
+- `Node adapter`, `sitemap` и deployment через `Dokploy` как отдельного `Docker`-приложения.
 
 </div>
 </div>
@@ -143,7 +143,7 @@ description: Презентация к выпускной квалификаци
 </div>
 <div class="soft-card">
 <strong>Эксплуатационный слой</strong><br>
-`Vercel` и `Docker` замыкают deployment и rebuild-контур.
+`Dokploy` управляет deployment и rebuild-контуром для двух отдельных `Docker`-приложений.
 </div>
 </div>
 
@@ -246,8 +246,8 @@ description: Презентация к выпускной квалификаци
 ### Эксплуатационный контур
 
 - versioned webhook в `Strapi` подписан на `entry.publish` и `entry.unpublish`;
-- frontend deployment ориентирован на `Vercel deploy hook`;
-- CMS оформлена как `Docker` bundle с отдельным `PostgreSQL` runtime;
+- frontend deployment ориентирован на webhook/redeploy механизм `Dokploy`;
+- frontend и CMS оформлены как отдельные `Docker`-приложения, а CMS дополнительно имеет локальный `Docker Compose` bundle с `PostgreSQL`;
 - роли: `administrator`, `marketer/content-manager`, `editor`, `HR`;
 - `draft`-доступ выдается только через `preview-secret`, а public API ограничен опубликованными данными.
 
@@ -288,7 +288,7 @@ description: Презентация к выпускной квалификаци
 ### Текущие ограничения
 
 - Полный browser-level `WCAG audit` и `Lighthouse baseline` не завершены.
-- Внешний `Vercel deploy` не воспроизводился `end-to-end` внутри репозитория.
+- Внешний `Dokploy rebuild/redeploy` не воспроизводился `end-to-end` внутри репозитория.
 - Дальнейшее развитие: новые блоки `Dynamic Zone`, расширение workflow и аналитики контента.
 
 </div>

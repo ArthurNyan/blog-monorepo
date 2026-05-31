@@ -20,9 +20,10 @@
    `strapi_webhooks` и тем самым в разделе `Settings -> Webhooks`.
 4. Встроенный `Strapi webhook runner` отправляет `POST` на `FRONTEND_REBUILD_HOOK_URL`
    при событиях `entry.publish` и `entry.unpublish`.
-5. В production этот URL должен указывать на внешний rebuild/deploy hook frontend-среды
-   на `Vercel`.
-6. `Astro` заново собирает prerendered-публичные маршруты, использующие данные из CMS.
+5. В production этот URL должен указывать на внешний webhook/redeploy hook
+   frontend-приложения в `Dokploy`.
+6. `Dokploy` запускает повторную сборку и redeploy frontend `Docker`-приложения, после
+   чего `Astro` заново отдает prerendered-публичные маршруты, использующие данные из CMS.
 
 Для диплома этот contour считается самостоятельным инженерным результатом, потому что
 замыкает цепочку `publish -> webhook -> rebuild` без ручного запуска frontend-сборки.
@@ -66,16 +67,18 @@ Versioned webhook-запись содержит:
 
 На стороне frontend уже существовали и используются как часть итогового contour:
 
-- `Astro`-конфигурация с `vercel()` adapter в
+- `Astro`-конфигурация с `node()` adapter в
   [apps/front/astro.config.mjs](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/astro.config.mjs);
+- frontend `Dockerfile` в
+  [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile);
 - `site` на основе `SITE_URL`;
 - `@astrojs/sitemap`;
 - prerendered публичные маршруты;
 - server-side preview routes для draft-контента.
 
 Отдельный repo-hosted rebuild endpoint во frontend не добавлялся. Production-сценарий
-строится вокруг внешнего deploy hook `Vercel`, а webhook в `Strapi` лишь управляемо
-вызывает этот внешний endpoint.
+строится вокруг внешнего webhook/redeploy hook `Dokploy`, а webhook в `Strapi` лишь
+управляемо вызывает этот внешний endpoint.
 
 ### 3.3. Docker contour for CMS
 
@@ -175,12 +178,12 @@ Versioned webhook-запись содержит:
 
 Не следует описывать как полностью воспроизведенный факт:
 
-- конечный внешний `Vercel` rebuild/deploy после вызова production hook;
+- конечный внешний `Dokploy` rebuild/redeploy после вызова production hook;
 - полный `docker build` образа CMS как завершенный локальный результат текущей сессии.
 
 Причины:
 
-- `Vercel deploy hook` является внешним инфраструктурным участком цепочки;
+- webhook/redeploy hook `Dokploy` является внешним инфраструктурным участком цепочки;
 - при проверке `docker build` Dockerfile дошел до стадии установки зависимостей, но
   завершение оборвалось внешним сетевым сбоем при загрузке `pnpm` через `corepack`
   (`ECONNRESET` к `registry.npmjs.org`), а не на синтаксической ошибке versioned bundle.
@@ -192,7 +195,7 @@ Versioned webhook-запись содержит:
 
 - можно писать, что rebuild-hook на стороне CMS реализован и локально доказан;
 - можно писать, что Docker contour versioned и config-validated;
-- нельзя писать, что полный production path `Strapi -> Vercel rebuild -> deployed site`
+- нельзя писать, что полный production path `Strapi -> Dokploy rebuild/redeploy -> deployed site`
   был воспроизведен end-to-end внутри репозитория.
 
 ## 7. Что обязательно осталось сделать
@@ -209,7 +212,7 @@ Versioned webhook-запись содержит:
 Даже в финальной версии допустимо:
 
 - оставлять публикацию rebuild-based без real-time invalidation;
-- опираться на внешний `Vercel` deploy hook вместо самостоятельного runtime-rebuild сервиса;
+- опираться на внешний webhook/redeploy hook `Dokploy` вместо самостоятельного runtime-rebuild сервиса;
 - сохранять тестовый contour преимущественно ручным;
 - не расширять locale-prefixed public routes дальше карьерного модуля `vacancies`;
 - не вводить отдельный CMS-managed `SEO` schema для всех section list pages;

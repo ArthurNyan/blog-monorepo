@@ -28,7 +28,7 @@
 |---|---|
 | Тип разрабатываемого решения | `CMS-first` платформа для корпоративного маркетингового сайта |
 | Основной backend стек | `Strapi 5`, `SQLite`, `OpenAPI`, `Docker` |
-| Основной frontend стек | `Astro 6`, `React`, `Tailwind`, `Vercel adapter`, `sitemap` |
+| Основной frontend стек | `Astro 6`, `React`, `Tailwind`, `Node adapter`, `Docker`, `sitemap` |
 | Архитектурная схема | `Strapi -> API -> Astro` |
 | Основные контентные сущности | `global`, `home-page`, `page`, `article`, `author`, `project`, `vacancy`, `industry`, `job-role` |
 | Прикладные сущности | `lead-submission`, `vacancy-application` |
@@ -121,8 +121,8 @@
 - валидные отправки форм сохраняются в `SQLite`;
 - frontend-сборка проходит успешно и формирует `35` prerendered static routes;
 - генерируются `sitemap-index.xml` и `sitemap-0.xml`;
-- в базе данных подтвержден активный `Frontend rebuild hook` на `entry.publish` и
-  `entry.unpublish`;
+- в базе данных подтвержден активный `Frontend rebuild hook`, ведущий на webhook
+  `Dokploy` и подписанный на `entry.publish` и `entry.unpublish`;
 - размер клиентского build output составляет около `2.3 МБ`.
 
 ## 8. Практическая значимость

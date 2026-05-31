@@ -44,12 +44,14 @@ data-layer с явным управлением локалями, \texttt{popula
 \texttt{home-page} и \texttt{pages} применяются locale-prefixed маршруты, а для статей,
 проектов и вакансий реализованы отдельные публичные разделы и детальные страницы.
 
-В конфигурации frontend подключен адаптер \texttt{Vercel} и модуль \texttt{sitemap}, а
-абсолютный адрес сайта задается через \texttt{SITE\_URL}. При этом публичные маршруты
-сохраняют модель предварительной сборки, а server-side логика используется точечно для
-\texttt{preview}-сценариев. Таким образом, базовый режим работы витрины ориентирован на
-предварительно сформированный результат, а не на генерацию представления при каждом
-внешнем запросе.
+В конфигурации frontend подключены адаптер \texttt{Node.js} и модуль \texttt{sitemap}, а
+абсолютный адрес сайта задается через \texttt{SITE\_URL}. Итоговая сборка формируется в
+standalone-режиме и используется как основа для отдельного \texttt{Docker}-приложения
+frontend, которое в production-контуре разворачивается через \texttt{Dokploy}. При этом
+публичные маршруты сохраняют модель предварительной сборки, а server-side логика
+используется точечно для \texttt{preview}-сценариев. Таким образом, базовый режим работы
+витрины ориентирован на предварительно сформированный результат, а не на генерацию
+представления при каждом внешнем запросе.
 
 \section{Проектирование модели данных CMS}
 
@@ -270,7 +272,8 @@ fetcher и перенаправляет пользователя на соотв
 
 Со стороны \texttt{Strapi Admin} этот сценарий дополнительно интегрирован в конфигурацию
 \texttt{preview}. При наличии \texttt{PREVIEW\_SECRET} CMS формирует допустимые preview-ссылки
-с учетом \texttt{SITE\_URL}, типа сущности, локали, статуса публикации и \texttt{slug}.
+с учетом \texttt{SITE\_URL}, то есть домена frontend-приложения, опубликованного в
+\texttt{Dokploy}, типа сущности, локали, статуса публикации и \texttt{slug}.
 Для \texttt{home-page} используется отдельная цель \texttt{home}, а для \texttt{page},
 \texttt{article}, \texttt{project} и \texttt{vacancy} CMS предварительно извлекает
 \texttt{slug} по \texttt{documentId} и строит ссылку на frontend-маршрут
@@ -356,40 +359,53 @@ URL-контракта. Следовательно, для публичных pr
 синхронизирует versioned webhook-запись в системной таблице \texttt{strapi\_webhooks},
 а значит и в разделе \texttt{Settings -> Webhooks} административной панели. Эта запись
 подписывается на события \texttt{entry.publish} и \texttt{entry.unpublish} и указывает на
-внешний rebuild hook frontend.
+внешний rebuild hook frontend. В production-контуре этот URL адресует webhook
+\texttt{Dokploy}, который запускает повторную сборку и redeploy отдельного frontend
+\texttt{Docker}-приложения.
 
 На стороне frontend этот сценарий опирается на уже существующую конфигурацию
-\texttt{Astro} с \texttt{Vercel} adapter, prerendered публичными маршрутами и отдельным
-server-side preview-контуром. Тем самым формируется воспроизводимая схема
-\texttt{Strapi -> publish -> webhook -> rebuild -> Astro/Vercel}, в которой редактору не
-требуется вручную инициировать frontend-сборку после публикации контента.
+\texttt{Astro} с \texttt{Node.js} adapter в standalone-режиме, prerendered публичными
+маршрутами и отдельным server-side preview-контуром. Тем самым формируется
+воспроизводимая схема \texttt{Strapi -> publish -> webhook -> Dokploy rebuild/redeploy ->
+Astro frontend}, в которой редактору не требуется вручную инициировать frontend-сборку
+после публикации контента.
 
 Локально в рамках работы было подтверждено, что при старте \texttt{Strapi} webhook
 автоматически создается в \texttt{strapi\_webhooks}: это было проверено как по логу
 \texttt{bootstrap}, так и прямым чтением временной \texttt{sqlite}-базы. Следовательно,
 webhook не является скрытой ручной настройкой в интерфейсе, а выступает versioned частью
-репозитория. Однако конечный production rebuild на \texttt{Vercel} относится к внешнему
-инфраструктурному участку и в пределах репозитория не воспроизводился как end-to-end путь.
-Поэтому в дипломе корректно утверждать, что publication hook реализован и локально
-доказан, но не заявлять, что весь внешний production deployment был повторен внутри
-локальной среды.
+репозитория. Однако конечный внешний запуск rebuild/redeploy в \texttt{Dokploy}
+относится к инфраструктурному участку и в пределах репозитория не воспроизводился как
+end-to-end путь. Поэтому в дипломе корректно утверждать, что publication hook реализован
+и локально доказан, но не заявлять, что весь внешний production deployment был повторен
+внутри локальной среды.
 
-\subsection{Deployment-архитектура CMS}
+\subsection{Deployment-архитектура frontend и CMS}
 
-Для CMS в проекте добавлен versioned deployment bundle на основе \texttt{Docker}. Он
-состоит из \texttt{Dockerfile}, \texttt{compose.yml} и отдельного production-like
-environment contract. Внутри \texttt{compose}-контура выделяются два сервиса:
+Production-контур системы ориентирован на \texttt{Dokploy}, где frontend и CMS
+размещаются как два независимых \texttt{Docker}-приложения. Frontend собирается из
+\texttt{apps/front/Dockerfile}: build-stage формирует standalone output \texttt{Astro}, а
+runtime-stage запускает серверное приложение на основе \texttt{dist/server/entry.mjs}.
+CMS собирается из \texttt{apps/cms/Dockerfile} и исполняет production build
+\texttt{Strapi}. Такое разделение соответствует фактической архитектуре проекта:
+публичная витрина и CMS обслуживаются независимо и могут обновляться раздельно.
+
+Для CMS в репозитории дополнительно зафиксирован versioned production-like bundle на
+основе \texttt{Docker Compose}. Он состоит из \texttt{Dockerfile}, \texttt{compose.yml} и
+отдельного environment contract. Внутри \texttt{compose}-контура выделяются два сервиса:
 \texttt{cms} с приложением \texttt{Strapi} и \texttt{cms-db} с \texttt{PostgreSQL}. Для
-медиа-данных предусмотрен отдельный persistent volume \texttt{uploads}. Такой вариант
-лучше соответствует инженерной трактовке ВКР, чем неформальный локальный запуск CMS без
-versioned deployment-файлов, поскольку контейнеризация позволяет отделить приложение
-от инфраструктурного окружения и воспроизводимо переносить его между средами~\cite{docker-overview}.
+медиа-данных предусмотрен отдельный persistent volume \texttt{uploads}. Такой bundle
+нужен для локальной валидации инфраструктурной схемы и лучше соответствует инженерной
+трактовке ВКР, чем неформальный локальный запуск CMS без versioned deployment-файлов,
+поскольку контейнеризация позволяет отделить приложение от инфраструктурного окружения и
+воспроизводимо переносить его между средами~\cite{docker-overview}.
 
 Environment contract этого контура фиксирует не только базовые публичные параметры
-\texttt{PUBLIC\_URL}, \texttt{SITE\_URL} и \texttt{IS\_PROXIED}, но и переменные доступа
-к БД, ключи \texttt{Strapi} и параметры rebuild-hook. В результате deployment-описание
+\texttt{PUBLIC\_URL}, \texttt{SITE\_URL}, \texttt{PUBLIC\_SITE\_URL} и
+\texttt{IS\_PROXIED}, но и переменные доступа к БД, ключи \texttt{Strapi},
+\texttt{PREVIEW\_SECRET} и параметры rebuild-hook. В результате deployment-описание
 становится частью репозитория и может использоваться как отдельный проектный артефакт
-второй главы, а не как устная инструкция по ручной настройке.
+второй главы, а не как устная инструкция по ручной настройке \texttt{Dokploy}-окружения.
 
 Локально был подтвержден корректный синтаксис и связность \texttt{compose}-контура через
 валидацию итоговой конфигурации. Дополнительно production build самого приложения
@@ -397,7 +413,8 @@ Environment contract этого контура фиксирует не толь�
 среде не была доведена до конца из-за внешнего сетевого сбоя на этапе загрузки
 \texttt{pnpm} через \texttt{corepack}, а не из-за ошибки versioned Docker bundle. Поэтому
 данный результат корректно описывать как versioned и config-validated deployment contour,
-но не как полностью воспроизведенный локальный production image build.
+но не как полностью воспроизведенный локальный production image build или end-to-end
+deployment в \texttt{Dokploy}.
 
 \section{Безопасность публичных сценариев}
 

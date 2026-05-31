@@ -78,7 +78,6 @@
 | `astro-strapi-guide` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/astro-strapi-guide.html) |
 | `nx-monorepos` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/nx-monorepos.html) |
 | `astro-i18n-routing` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/astro-i18n-routing.html) |
-| `vercel-astro-docs` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/vercel-astro-docs.html) |
 | `docker-overview` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/docker-overview.html) |
 | `google-international-sites` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/google-international-sites.html) |
 | `sitemaps-protocol` | `full-text-snapshot` | [HTML](../../research/reference-theses/metadata/web/sitemaps-protocol.html) |

@@ -157,12 +157,12 @@
 - `apps/front` оформлен как отдельное приложение `Nx` с целями `dev`, `build`, `preview`,
   `generate:api`, `lint`, `test` в [apps/front/project.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/project.json).
 - В [apps/front/package.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/package.json)
-  используется `Astro 6.3.1`, `@astrojs/react`, `@astrojs/vercel`,
+  используется `Astro 6.4.2`, `@astrojs/react`, `@astrojs/node`,
   `@astrojs/sitemap`, `Tailwind 4`, `react-hook-form`, `zod`.
 - В [apps/front/astro.config.mjs](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/astro.config.mjs)
-  frontend подключает `Vercel` adapter и `sitemap`, берет абсолютный `site` URL из
-  `SITE_URL` и дополнительно исключает legacy redirect routes `/articles/*` и
-  `/projects/*` из карты сайта.
+  frontend подключает `Node.js` adapter и `sitemap`, берет абсолютный `site` URL из
+  `SITE_URL` / `PUBLIC_SITE_URL`, работает в standalone-режиме и дополнительно исключает
+  legacy redirect routes `/articles/*` и `/projects/*` из карты сайта.
 - Во frontend включена генерация типизированного API-клиента через
   [apps/front/openapi-ts.config.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/openapi-ts.config.ts),
   который берет схему из `CMS_URL/api/documentation/1.0.0/full_documentation`.
@@ -449,7 +449,7 @@
 
 Локально не доказано end-to-end:
 
-- конечный внешний `Vercel` rebuild после production hook;
+- конечный внешний `Dokploy` rebuild/redeploy после production hook;
 - полный `docker build` как завершенный результат текущей сессии, потому что проверка
   уперлась во внешний сетевой сбой загрузки `pnpm` через `corepack`, а не в ошибку
   versioned Docker bundle.
@@ -479,7 +479,7 @@
   используют собственный shared fetch-layer, вакансии используют отдельный рукописный API-слой;
 - полная prerender-сборка публичной витрины по-прежнему зависит от доступности `Strapi`
   во время build;
-- часть production-path зависит от внешней инфраструктуры `Vercel` и сетевой доступности
+- часть production-path зависит от внешней инфраструктуры `Dokploy` и сетевой доступности
   registry во время Docker build;
 - secrets и фактические учетные записи пользователей остаются эксплуатационной настройкой,
   а не versioned артефактом репозитория;
@@ -522,7 +522,7 @@
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
 - публикационный contour `publish/unpublish -> admin-managed webhook -> rebuild` как реализованный кодовый механизм;
-- deployment-архитектуру `frontend на Vercel + CMS в Docker/PostgreSQL` с versioned env contract;
+- deployment-архитектуру `frontend и CMS как отдельных Docker`-приложений в `Dokploy` с versioned env contract;
 - versioned security model для `administrator`, `marketer/content-manager`, `editor`,
   `hr`, а также read-only public API contour и preview boundary;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections,
@@ -532,5 +532,5 @@
 
 Пока рано писать как реализованный результат:
 
-- полную end-to-end воспроизводимость внешнего `Vercel` rebuild внутри локальной среды;
+- полную end-to-end воспроизводимость внешнего `Dokploy` rebuild/redeploy внутри локальной среды;
 - финальные измеренные метрики `SEO`, `accessibility` и `performance`.

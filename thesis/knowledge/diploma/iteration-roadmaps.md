@@ -195,7 +195,7 @@
 
 - подраздел про публикационный контур;
 - подраздел про deployment-архитектуру;
-- схема `Strapi -> publish -> webhook -> rebuild -> Astro/Vercel`.
+- схема `Strapi -> publish -> webhook -> Dokploy rebuild/redeploy -> Astro frontend`.
 
 ### Критерий завершения этапа
 
@@ -227,7 +227,7 @@
 
 Не доказано как end-to-end локальный факт:
 
-- внешний `Vercel` rebuild после production hook;
+- внешний `Dokploy` rebuild/redeploy после production hook;
 - полный `docker build`, если он срывается внешней сетью/registry path, а не ошибкой bundle.
 
 Source of truth:

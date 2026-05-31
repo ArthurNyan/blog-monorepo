@@ -27,7 +27,7 @@
 
 1. Основу библиографии должны составлять источники, которые работают на тему `CMS-first` платформы: `headless CMS`, API-driven контент, мультиязычность, публикация, `SEO`, безопасность и deployment.
 2. Минимум две статьи от издательств уровня `Springer`, `IEEE`, `Elsevier` должен быть выполнен не формально, а содержательно.
-3. Официальные документы (`Strapi`, `Astro`, `Nx`, `Vercel`, `Docker`, `W3C`, `Google Search Central`) используются для описания фактических возможностей стека и стандартов, а не вместо научной литературы.
+3. Официальные документы (`Strapi`, `Astro`, `Nx`, `Docker`, `W3C`, `Google Search Central`) используются для описания фактических возможностей стека и стандартов, а не вместо научной литературы.
 4. `Sci-Hub` и `ResearchGate` допустимы как поисковый или access-инструмент, но не как источник для библиографической записи. В списке литературы должен стоять DOI, официальный landing page издателя или institutional repository.
 
 ## Минимум по publisher-level статьям уже закрыт
@@ -107,7 +107,7 @@
 
 Эти источники нужны не для замены научной литературы, а для аккуратного описания:
 
-- фактических возможностей `Strapi`, `Astro`, `Nx`, `Vercel`, `Docker`;
+- фактических возможностей `Strapi`, `Astro`, `Nx`, `Docker`;
 - правил для multilingual routing и `SEO`;
 - стандарта доступности и базового web protocol layer.
 
@@ -120,7 +120,6 @@
 | `astro-strapi-guide` | Подтверждает практическую связку `Strapi + Astro`, включая rebuild flow. | Глава 1: практическая реализуемость связки. | [Astro docs](https://docs.astro.build/ru/guides/cms/strapi/) | [HTML snapshot](../../research/reference-theses/metadata/web/astro-strapi-guide.html) |
 | `nx-monorepos` | Нужен для аргументации монорепозитория. | Глава 1 и 2: структура разработки. | [Nx docs](https://nx.dev/docs/concepts/decisions/why-monorepos) | [HTML snapshot](../../research/reference-theses/metadata/web/nx-monorepos.html) |
 | `astro-i18n-routing` | Подтверждает i18n route-модель `Astro`. | Глава 2: locale-prefixed routes. | [Astro docs](https://docs.astro.build/en/guides/internationalization/) | [HTML snapshot](../../research/reference-theses/metadata/web/astro-i18n-routing.html) |
-| `vercel-astro-docs` | Поддерживает deployment contour `Astro -> Vercel`. | Глава 2: frontend deployment. | [Vercel docs](https://vercel.com/docs/frameworks/frontend/astro) | [HTML snapshot](../../research/reference-theses/metadata/web/vercel-astro-docs.html) |
 | `docker-overview` | Нужен как базовый официальный источник про контейнеризацию deployment bundle. | Глава 2: `Docker`-контур `CMS`. | [Docker docs](https://docs.docker.com/engine/docker-overview/) | [HTML snapshot](../../research/reference-theses/metadata/web/docker-overview.html) |
 | `google-international-sites` | Полезен для корректного разговора про локализованные версии страниц и индексирование. | Глава 2: multilingual `SEO` и canonical logic. | [Google Search Central](https://developers.google.com/search/docs/specialty/international) | [HTML snapshot](../../research/reference-theses/metadata/web/google-international-sites.html) |
 | `sitemaps-protocol` | Фиксирует протокол `sitemap`. | Глава 2: генерация карты сайта. | [sitemaps.org](https://www.sitemaps.org/protocol.html) | [HTML snapshot](../../research/reference-theses/metadata/web/sitemaps-protocol.html) |
@@ -200,7 +199,7 @@ Exact full text по части статей `Elsevier` и `IEEE` все еще 
 ### Проектная глава
 
 - для `i18n`, routes и `SEO`: `astro-i18n-routing`, `google-international-sites`, `sitemaps-protocol`;
-- для deployment: `vercel-astro-docs`, `docker-overview`, `holcik2025headless-cloud`;
+- для deployment: `docker-overview`, `holcik2025headless-cloud`;
 - для security: `cigoj2019wcms-vulnerability`, `gorlo2010secure-cms`;
 - для accessibility и тестирования: `wcag22`.
 

@@ -530,7 +530,7 @@
 
 - `acceptance-matrix.md` синхронизирован с актуальным baseline `2026-05-29`: уточнены правила чтения статусов, подтвержден `SMK-01` для read-only и mutation baseline, а данные `2026-05-22` оставлены только как вспомогательное build/browser evidence там, где это явно оговорено.
 - `testing-evidence-pack.md` очищен от устаревших и двусмысленных формулировок: automated evidence привязан к `pnpm smoke:front`, `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` и `pnpm evidence:testing`, manual evidence вынесен к `testing-manual-checklist.md`, DB/build evidence синхронизирован с текущими `dist/client` и последними строками SQLite.
-- Acceptance gaps не скрыты: к финалу `2026-05-29` локально закрыты `EN` detail coverage и browser-level audit baseline; незакрытым внешним сценарием остается только `Vercel` rebuild после publish/unpublish.
+- Acceptance gaps не скрыты: к финалу `2026-05-29` локально закрыты `EN` detail coverage и browser-level audit baseline; незакрытым внешним сценарием остается только `Dokploy` rebuild/redeploy после publish/unpublish.
 
 ### Prompt для отдельного треда
 
@@ -603,7 +603,7 @@
 - Подраздел `Тестирование` в `thesis/content/03-chapter-2.tex` переписан под актуальный baseline `2026-05-29` и больше не описывает проверку как почти полностью ручную.
 - В текст главы вынесены характер testing contour, automated smoke baseline, ручная приемка, build/DB evidence и browser audit baseline, при этом не заявляется наличие полноценного unit/e2e контура.
 - Формулировки согласованы с `acceptance-matrix.md` и `testing-evidence-pack.md`: зафиксированы `0 failures / 1 warning` для read-only smoke, `0 failures / 0 warnings` для mutation smoke, подтвержденные формы, `preview`, `sitemap`, SQLite evidence и локальный browser audit.
-- Ограничения описаны явно: browser audit не выдается за полный WCAG/Lighthouse review, а внешний `publish -> Vercel rebuild` не маркируется как локально воспроизведенный сквозной сценарий.
+- Ограничения описаны явно: browser audit не выдается за полный WCAG/Lighthouse review, а внешний `publish -> Dokploy rebuild/redeploy` не маркируется как локально воспроизведенный сквозной сценарий.
 
 ### Prompt для отдельного треда
 

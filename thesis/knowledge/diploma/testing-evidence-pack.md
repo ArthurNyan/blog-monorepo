@@ -240,7 +240,7 @@ pnpm --dir apps/front build
 
 ```text
 Frontend rebuild hook
-url=https://api.vercel.com/v1/integrations/deploy/...
+url=https://dokploy.example.tld/...
 events=["entry.publish","entry.unpublish"]
 enabled=1
 ```
@@ -254,7 +254,7 @@ enabled=1
 Текущая строка `strapi_webhooks`:
 
 ```text
-Frontend rebuild hook | https://api.vercel.com/v1/integrations/deploy/... | ["entry.publish","entry.unpublish"] | 1
+Frontend rebuild hook | https://dokploy.example.tld/... | ["entry.publish","entry.unpublish"] | 1
 ```
 
 ### 2.7. Browser audit contour
@@ -404,7 +404,7 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 Остается один сознательно незакрытый внешний сценарий:
 
-- внешний `Vercel` rebuild после publish/unpublish не воспроизводился локально и не
+- внешний `Dokploy` rebuild/redeploy после publish/unpublish не воспроизводился локально и не
   должен маркироваться как `Pass` без реального прогона.
 
 ## 5. What Is Ready For Chapter 2

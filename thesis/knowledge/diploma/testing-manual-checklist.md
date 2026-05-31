@@ -142,7 +142,7 @@ Expected result:
 
 - длинный обход `articles`, `projects`, `vacancies` и всех CMS-сущностей подряд
 - успешные mutation-сценарии, если на защите нет необходимости писать тестовые данные
-- внешний `Vercel rebuild`
+- внешний `Dokploy rebuild/redeploy`
 - browser-level audit tooling
 
 ## Recommended Order

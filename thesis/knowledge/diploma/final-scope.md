@@ -30,7 +30,7 @@
   `vacancy`.
 - `CMS-managed SEO/Open Graph` уже реализован для `home-page`, `page` и detail entities
   `article`, `project`, `vacancy`, при отдельном route-owned fallback-слое для list pages.
-- `@astrojs/sitemap` и `@astrojs/vercel` уже подключены.
+- `@astrojs/sitemap` и `@astrojs/node` уже подключены.
 - В репозитории уже зафиксированы versioned `Docker`-файлы для CMS и оформленный
   `webhook -> rebuild` contour; незакрытым обязательным блоком остается прежде всего
   формальная матрица `roles/permissions` и reproducible verification pack.
@@ -230,7 +230,7 @@
 - versioned `webhook -> rebuild` contour;
 - versioned `Docker`-контур для `apps/cms`;
 - маркетинговая lead form и форма отклика на вакансию с `consent` и `honeypot`;
-- `Vercel` adapter и environment contract для `SITE_URL`, `PUBLIC_URL`, `IS_PROXIED`,
+- `Node.js` adapter, frontend `Dockerfile` и environment contract для `SITE_URL`, `PUBLIC_URL`, `IS_PROXIED`,
   `PREVIEW_SECRET`.
 
 ### Обязательно реализовать

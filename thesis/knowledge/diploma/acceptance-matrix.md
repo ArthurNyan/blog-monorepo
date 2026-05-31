@@ -79,7 +79,7 @@
 | `LOC-04` | Vacancies public locale boundary | Публичные вакансии живут вне `/:locale/...`, preview при этом locale-aware | Automated + Code/Build evidence | `Pass` | Подтверждено route helpers, runtime и build output. |
 | `PUBF-01` | Managed rebuild webhook exists | Активный `Frontend rebuild hook` есть в `strapi_webhooks` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
 | `PUBF-02` | Webhook events | Webhook подписан на `entry.publish` и `entry.unpublish` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
-| `PUBF-03` | External rebuild trigger | Реальный внешний `Vercel` rebuild после publish/unpublish | Manual / external | `Unverified` | В этой сессии не воспроизводился из-за нежелательности внешнего прод-подобного вызова. |
+| `PUBF-03` | External rebuild trigger | Реальный внешний `Dokploy` rebuild/redeploy после publish/unpublish | Manual / external | `Unverified` | В этой сессии не воспроизводился из-за нежелательности внешнего прод-подобного вызова. |
 
 ## Accessibility And Performance Baseline
 
