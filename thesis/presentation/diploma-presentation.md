@@ -260,14 +260,14 @@ description: Презентация к выпускной квалификаци
 
 | Что проверено | Результат |
 |---|---|
-| Frontend build и prerender | Собирается `35` публичных HTML-маршрутов без `runtime errors`. |
+| Frontend build и prerender | Собирается `37` публичных HTML-маршрутов без `runtime errors`. |
 | Preview contour | Черновики доступны только через `/api/preview` и `x-preview-secret`. |
 | SEO и sitemap | Проверены `title`, `canonical`, `og`-поля и генерация `sitemap-index.xml`. |
 | Форменные сценарии | `lead-submission` и `vacancy-application` валидируются на `server-side` и пишутся через технический токен. |
 | Rebuild contour | Managed webhook зарегистрирован в `Strapi` и привязан к событиям `publish/unpublish`. |
 | Security baseline | Public content API `read-only`; публикация отделена от редактирования ролями. |
 
-<div class="note center">Результаты опираются на локальную сборку, smoke-checks, runtime-проверки и прямую верификацию CMS/SQLite baseline.</div>
+<div class="note center">Результаты опираются на локальную сборку, smoke-checks, browser/runtime-проверки и прямую верификацию CMS/SQLite evidence.</div>
 
 ---
 
@@ -287,7 +287,7 @@ description: Презентация к выпускной квалификаци
 
 ### Текущие ограничения
 
-- Полный browser-level `WCAG audit` и `Lighthouse baseline` не завершены.
+- Полный browser-level `WCAG audit` и production-like `Lighthouse` профиль не входили в обязательный контур ВКР.
 - Внешний `Dokploy rebuild/redeploy` не воспроизводился `end-to-end` внутри репозитория.
 - Дальнейшее развитие: новые блоки `Dynamic Zone`, расширение workflow и аналитики контента.
 

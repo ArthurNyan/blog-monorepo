@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-05-31T18:09:18.378Z",
+  "timestamp": "2026-05-31T18:25:25.507Z",
   "baseUrl": "http://localhost:4321",
   "failures": 0,
   "total": 4,
@@ -52,11 +52,11 @@
           }
         ],
         "performance": {
-          "domContentLoaded": 249.2,
-          "loadEventEnd": 254.8,
-          "responseStart": 163.5,
-          "firstContentfulPaint": 260,
-          "resourceCount": 89
+          "domContentLoaded": 146.7,
+          "loadEventEnd": 150.9,
+          "responseStart": 46.4,
+          "firstContentfulPaint": 156,
+          "resourceCount": 81
         }
       }
     },
@@ -108,11 +108,11 @@
           }
         ],
         "performance": {
-          "domContentLoaded": 75.7,
-          "loadEventEnd": 78.1,
-          "responseStart": 47.2,
-          "firstContentfulPaint": 84,
-          "resourceCount": 94
+          "domContentLoaded": 81,
+          "loadEventEnd": 83.1,
+          "responseStart": 50.6,
+          "firstContentfulPaint": 92,
+          "resourceCount": 93
         }
       }
     },
@@ -199,10 +199,10 @@
           }
         ],
         "performance": {
-          "domContentLoaded": 116.9,
-          "loadEventEnd": 2266.1,
-          "responseStart": 101.9,
-          "firstContentfulPaint": 156,
+          "domContentLoaded": 103.2,
+          "loadEventEnd": 4134.9,
+          "responseStart": 60.6,
+          "firstContentfulPaint": 112,
           "resourceCount": 96
         }
       }
@@ -245,9 +245,9 @@
           }
         ],
         "performance": {
-          "domContentLoaded": 68.6,
-          "loadEventEnd": 70.1,
-          "responseStart": 42,
+          "domContentLoaded": 48.7,
+          "loadEventEnd": 52.4,
+          "responseStart": 32.3,
           "firstContentfulPaint": 72,
           "resourceCount": 72
         }

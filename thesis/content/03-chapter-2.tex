@@ -437,10 +437,10 @@ hook frontend-приложения в \texttt{Dokploy}.
 развертывается
 в \texttt{Dokploy}. Публичные маршруты при этом сохраняют модель предварительной сборки,
 \texttt{sitemap} генерируется как часть build-контура, а server-side логика используется
-точечно для \texttt{preview}. Следовательно, в системе реализована воспроизводимая схема
-\texttt{Strapi -> publish -> webhook -> Dokploy rebuild/redeploy -> Astro frontend}, в
-которой редактору не требуется вручную инициировать frontend-сборку после публикации
-контента.
+точечно для \texttt{preview}. Следовательно, в системе реализована управляемая схема
+\texttt{Strapi -> publish -> webhook -> Dokploy rebuild/redeploy -> Astro frontend},
+ориентированная на отсутствие ручного запуска frontend-сборки со стороны редактора после
+публикации контента.
 
 Локально в рамках работы было подтверждено, что при старте \texttt{Strapi} webhook
 автоматически создается в \texttt{strapi\_webhooks}: это было проверено как по логу
