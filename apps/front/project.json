@@ -34,17 +34,45 @@
         "cwd": "apps/front"
       }
     },
+    "smoke": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm smoke:acceptance",
+        "cwd": "apps/front"
+      }
+    },
+    "evidence:testing": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm evidence:testing",
+        "cwd": "."
+      }
+    },
+    "audit:browser": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm audit:browser",
+        "cwd": "."
+      },
+      "outputs": [
+        "{workspaceRoot}/thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json"
+      ]
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No lint configured for front yet'",
+        "command": "echo 'Standalone lint orchestration is not separated for front; use build, smoke, evidence:testing, and audit:browser.'",
         "cwd": "apps/front"
       }
     },
     "test": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
-        "command": "echo 'No tests configured for front yet'",
+        "command": "pnpm smoke:acceptance",
         "cwd": "apps/front"
       }
     }

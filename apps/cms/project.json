@@ -27,18 +27,35 @@
         "cwd": "apps/cms"
       }
     },
+    "smoke:front": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm smoke:front",
+        "cwd": "."
+      }
+    },
+    "evidence:testing": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "pnpm evidence:testing",
+        "cwd": "."
+      }
+    },
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "echo 'No lint configured for cms yet'",
+        "command": "echo 'Standalone lint orchestration is not separated for cms; use build, smoke:front, and evidence:testing.'",
         "cwd": "apps/cms"
       }
     },
     "test": {
       "executor": "nx:run-commands",
+      "cache": false,
       "options": {
-        "command": "echo 'No tests configured for cms yet'",
-        "cwd": "apps/cms"
+        "command": "pnpm evidence:testing",
+        "cwd": "."
       }
     }
   }
