@@ -69,6 +69,8 @@ const config = {
 	],
 };
 
+const baseOrigin = new URL(config.baseUrl).origin;
+
 const getDomSnapshot = () => {
 	const roundMetric = (value) =>
 		typeof value === "number" && Number.isFinite(value)
@@ -176,9 +178,13 @@ const run = async () => {
 			const consoleErrors = [];
 			const pageErrors = [];
 			const requestFailures = [];
+			const badResponses = [];
 
 			page.on("console", (message) => {
-				if (message.type() === "error") {
+				if (
+					message.type() === "error" &&
+					!message.text().startsWith("Failed to load resource:")
+				) {
 					consoleErrors.push(message.text());
 				}
 			});
@@ -197,6 +203,20 @@ const run = async () => {
 				}
 			});
 
+			page.on("response", (response) => {
+				const url = response.url();
+
+				if (new URL(url).origin !== baseOrigin) {
+					return;
+				}
+
+				if (response.status() >= 400 && url !== routeResult.url) {
+					badResponses.push(
+						`${response.request().method()} ${url} :: HTTP ${response.status()}`
+					);
+				}
+			});
+
 			const routeResult = {
 				name: route.name,
 				url: `${config.baseUrl}${route.path}`,
@@ -205,6 +225,7 @@ const run = async () => {
 				consoleErrors,
 				pageErrors,
 				requestFailures,
+				badResponses,
 				details: null,
 			};
 
@@ -267,6 +288,12 @@ const run = async () => {
 				if (requestFailures.length > 0) {
 					routeResult.failures.push(
 						`Failed same-origin requests: ${requestFailures.join(" | ")}`
+					);
+				}
+
+				if (badResponses.length > 0) {
+					routeResult.failures.push(
+						`Failed same-origin resource responses: ${badResponses.join(" | ")}`
 					);
 				}
 			} catch (error) {

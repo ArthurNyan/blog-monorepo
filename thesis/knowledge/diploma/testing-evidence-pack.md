@@ -1,6 +1,6 @@
 # Testing Evidence Pack
 
-Дата актуализации: `2026-05-29`.
+Дата актуализации: `2026-05-31`.
 
 ## Назначение
 
@@ -28,7 +28,7 @@
 - frontend build output: `apps/front/dist/client`;
 - CMS data store: `apps/cms/.tmp/data.db`.
 
-Повторная Stage 0 валидация `2026-05-29` подтвердила:
+Повторная Stage 0 валидация `2026-05-31` подтвердила:
 
 - `http://localhost:1337` доступен; root URL отвечает `302` и редиректит на `/admin`,
   `http://localhost:1337/admin` отвечает `200`;
@@ -40,10 +40,15 @@
 
 Принятый baseline-командный контур:
 
-- `pnpm dev`
+- `pnpm dev:cms`
+- `pnpm dev:front`
+- `pnpm build:cms`
 - `pnpm build:front`
 - `PORT=4322 HOST=127.0.0.1 pnpm preview:front`
 - `pnpm smoke:front`
+- `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front`
+- `pnpm evidence:testing`
+- `pnpm audit:browser`
 
 Практическая оговорка для dev smoke baseline:
 
@@ -51,6 +56,8 @@
 - в dev-режиме лучше сначала поднять `CMS`, затем `front`, либо перезапустить `front`
   после восстановления `CMS`, потому что часть Astro `getStaticPaths()` и server-side fetch
   зависят от живого CMS уже в момент запуска runtime.
+- если `pnpm build:front` запускался параллельно с уже поднятым `pnpm dev:front`, перед
+  browser audit лучше перезапустить `front`, чтобы исключить transient `Vite` reload noise.
 
 Минимально значимые `env` для baseline:
 
@@ -68,7 +75,8 @@
 Использованные источники доказательства:
 
 - live HTTP responses `Astro` и `Strapi`;
-- generated static files после `pnpm --dir apps/front build`;
+- generated static files после `pnpm build:front` и `Strapi` production build после
+  `pnpm build:cms`;
 - прямые SQL-запросы к SQLite для `lead_submissions`, `vacancy_applications`,
   `strapi_webhooks`;
 - `testing-runbook.md`, `testing-manual-checklist.md`, `pnpm smoke:front`,
@@ -103,6 +111,11 @@ Script:
 Команда не меняет данные CMS и не заменяет `pnpm smoke:front`; это отдельный collector
 evidence для обновления knowledge-документов и приложений к ВКР.
 
+Актуальный прогон `2026-05-31` дал:
+
+- `hard_failures=0`;
+- `warnings=0`.
+
 ## 2. Automated Results
 
 ### 2.1. Read-only smoke contour
@@ -132,14 +145,14 @@ Smoke script специально сделан без `Playwright`, `Lighthouse`
 
 Фактический результат прогонов:
 
-- `2026-05-29`: после `pnpm --dir apps/cms seed:storefront`,
+- `2026-05-31`: после `pnpm --dir apps/cms seed:storefront`,
   `pnpm --dir apps/cms seed:pages`, `pnpm --dir apps/cms seed:vacancies` и
   `pnpm --dir apps/cms seed:content` команда `pnpm smoke:front` завершилась с
   `0` failures и `1` warning;
-- `2026-05-29`: `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` завершилась с
+- `2026-05-31`: `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front` завершилась с
   `0` failures и `0` warnings и подтвердила обе публичные формы.
 
-На актуальном read-only baseline `2026-05-29` обязательные automated assertions
+На актуальном read-only baseline `2026-05-31` обязательные automated assertions
 проходят без failures.
 
 Вывод smoke теперь сам разделяет:
@@ -194,22 +207,22 @@ Smoke script специально сделан без `Playwright`, `Lighthouse`
 - таблица `vacancy_applications` увеличилась после mutation smoke; для baseline важен
   факт появления новых строк, а не фиксированное общее количество записей.
 
-Актуальные последние строки из SQLite `2026-05-29`:
+Актуальные последние строки из SQLite `2026-05-31`:
 
 ```text
 lead_submissions:
+11 | Codex Acceptance Smoke | codex-426747cd-ef79-43f1-a4f6-e26c7960d0cb@example.com | astro-page-builder | acceptance-smoke
 10 | Codex Acceptance Smoke | codex-6379b13e-862f-420c-865c-cfb42939648f@example.com | astro-page-builder | acceptance-smoke
 9 | Codex Acceptance Smoke | codex-55502b1c-e194-4b91-bcca-4850614e720c@example.com | astro-page-builder | acceptance-smoke
 8 | Playwright Lead Smoke | playwright-lead-1779460493589-zxypxh@example.com | astro-page-builder | home-page-primary-lead
 7 | Codex Acceptance Smoke | codex-c95574d2-5902-4516-a455-a46427236778@example.com | astro-page-builder | acceptance-smoke
-6 | Playwright Lead Smoke | playwright-lead-1779458221570-k19q2r@example.com | astro-page-builder | home-page-primary-lead
 
 vacancy_applications:
+12 | Codex Vacancy Smoke | codex-vacancy-9b3b3300-d56c-4f7b-98fe-aba02064fb00@example.com | astro-vacancy-form | New
 11 | Codex Vacancy Smoke | codex-vacancy-a33a0661-1596-48aa-9bf5-3812d6964c63@example.com | astro-vacancy-form | New
 10 | Codex Vacancy Smoke | codex-vacancy-a2d2d30b-c2ed-4625-acb6-ea14fad55a2f@example.com | astro-vacancy-form | New
 9 | Playwright Vacancy Invalid | playwright-vacancy-invalid-1779460492936-92u9lh@example.com | astro-vacancy-form | New
 8 | Playwright Vacancy Invalid | playwright-vacancy-invalid-1779458677142-ppvqub@example.com | astro-vacancy-form | New
-7 | Codex Vacancy Smoke | codex-vacancy-d701c8fe-ab85-4141-872d-f4f164e4b234@example.com | astro-vacancy-form | New
 ```
 
 ### 2.5. Sitemap and build contour
@@ -222,13 +235,15 @@ pnpm --dir apps/front build
 
 Факт build:
 
-- build повторно завершился успешно `2026-05-29`;
+- frontend build повторно завершился успешно `2026-05-31`;
+- отдельный `pnpm build:cms` также завершился успешно `2026-05-31`;
 - generated routes включают `ru/en` storefront-core, `ru` detail routes
   `articles/projects`, `en` detail routes `articles/projects`, а также public `vacancies`;
 - `@astrojs/sitemap` создал `sitemap-index.xml` и `sitemap-0.xml` в `dist/client`.
 
 Подтверждено по `sitemap-0.xml`:
 
+- `sitemap-0.xml` содержит `31` публичный URL;
 - присутствуют `/ru/`, `/en/`, `/ru/articles/...`, `/ru/projects/...`, `/vacancies/...`;
 - отсутствуют legacy `/articles/` и `/projects/` без locale;
 - присутствуют `/en/articles/`, `/en/articles/neea-llc/`, `/en/projects/`,
@@ -240,7 +255,7 @@ pnpm --dir apps/front build
 
 ```text
 Frontend rebuild hook
-url=https://dokploy.example.tld/...
+url=http://localhost:1337/api/rebuild
 events=["entry.publish","entry.unpublish"]
 enabled=1
 ```
@@ -254,7 +269,7 @@ enabled=1
 Текущая строка `strapi_webhooks`:
 
 ```text
-Frontend rebuild hook | https://dokploy.example.tld/... | ["entry.publish","entry.unpublish"] | 1
+Frontend rebuild hook | http://localhost:1337/api/rebuild | ["entry.publish","entry.unpublish"] | 1
 ```
 
 ### 2.7. Browser audit contour
@@ -269,23 +284,26 @@ Artifact:
 
 - [browser-baseline-audit.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json)
 
-Фактический результат `2026-05-29`:
+Фактический результат `2026-05-31`:
 
 - `failures=0`;
 - проверены `RU home`, `EN home`, `RU CMS page`, `Vacancy detail`;
 - на всех representative pages подтверждены `html[lang]`, `h1`, наличие форм,
-  отсутствие unlabeled form controls и отсутствие browser console/page errors;
+  отсутствие unlabeled form controls, `page errors` и same-origin
+  request/resource failures;
+- cross-origin placeholder asset вне локального contour не учитывается как hard failure,
+  поскольку не отражает состояние same-origin runtime приложения;
 - зафиксированы browser navigation timing metrics:
-  - `RU home`: `domContentLoaded=237.1`, `loadEventEnd=245.1`, `FCP=208`;
-  - `EN home`: `domContentLoaded=205`, `loadEventEnd=211.2`, `FCP=224`;
-  - `RU CMS page`: `domContentLoaded=260.2`, `loadEventEnd=4331.2`, `FCP=276`;
-  - `Vacancy detail`: `domContentLoaded=121.7`, `loadEventEnd=124.7`, `FCP=128`.
+  - `RU home`: `domContentLoaded=249.2`, `loadEventEnd=254.8`, `FCP=260`;
+  - `EN home`: `domContentLoaded=75.7`, `loadEventEnd=78.1`, `FCP=84`;
+  - `RU CMS page`: `domContentLoaded=116.9`, `loadEventEnd=2266.1`, `FCP=156`;
+  - `Vacancy detail`: `domContentLoaded=68.6`, `loadEventEnd=70.1`, `FCP=72`.
 
 ## 3. Manual And Semi-Manual Results
 
 Manual evidence для живой демонстрации вынесен в
 [testing-manual-checklist.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-manual-checklist.md).
-В актуальном baseline `2026-05-29` он используется как формализованный browser-runtime
+В актуальном baseline `2026-05-31` он используется как формализованный browser-runtime
 контур и не подменяет automated/DB checks.
 
 ### 3.1. Accessibility baseline
@@ -354,15 +372,15 @@ Performance baseline снят на build/static и browser timing уровне, 
   - `three_0.167.1...js` — `457347 B`;
   - `vendor...js` — `361099 B`;
   - `motion-dom...js` — `94801 B`;
-- local static timings на `python3 -m http.server` для build output:
-  - `/ru/` — `size=52338`, `ttfb=0.001330`, `total=0.001598`;
-  - `/en/articles/neea-llc/` — `size=27682`, `ttfb=0.000541`, `total=0.000782`;
-  - `/vacancies/test-vacancy/` — `size=31826`, `ttfb=0.000503`, `total=0.001063`.
+- local static timings на `astro preview` (`http://localhost:4322`) для build output:
+  - `/ru/` — `size=52336`, `ttfb=0.003352`, `total=0.003383`;
+  - `/en/articles/neea-llc/` — `size=27682`, `ttfb=0.002340`, `total=0.002364`;
+  - `/vacancies/test-vacancy/` — `size=31826`, `ttfb=0.001025`, `total=0.001047`.
 - browser timing из `browser-baseline-audit.json`:
-  - `RU home` — `domContentLoaded=237.1`, `loadEventEnd=245.1`, `FCP=208`;
-  - `EN home` — `domContentLoaded=205`, `loadEventEnd=211.2`, `FCP=224`;
-  - `RU CMS page` — `domContentLoaded=260.2`, `loadEventEnd=4331.2`, `FCP=276`;
-  - `Vacancy detail` — `domContentLoaded=121.7`, `loadEventEnd=124.7`, `FCP=128`.
+  - `RU home` — `domContentLoaded=249.2`, `loadEventEnd=254.8`, `FCP=260`;
+  - `EN home` — `domContentLoaded=75.7`, `loadEventEnd=78.1`, `FCP=84`;
+  - `RU CMS page` — `domContentLoaded=116.9`, `loadEventEnd=2266.1`, `FCP=156`;
+  - `Vacancy detail` — `domContentLoaded=68.6`, `loadEventEnd=70.1`, `FCP=72`.
 
 Для приложений полезно дополнительно фиксировать:
 
@@ -393,7 +411,7 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 ## 4. Failures And Gaps
 
-По состоянию на актуальный baseline `2026-05-29` основные прежние acceptance gaps закрыты:
+По состоянию на актуальный baseline `2026-05-31` основные прежние acceptance gaps закрыты:
 
 - public `noindex` на `home-page/page` устранен через нормализацию versioned
   `seed-storefront.js` и `seed-pages.js`;

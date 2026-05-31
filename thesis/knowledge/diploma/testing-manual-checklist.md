@@ -1,6 +1,6 @@
 # Testing Manual Checklist
 
-Дата актуализации: `2026-05-29`.
+Дата актуализации: `2026-05-31`.
 
 Этот checklist нужен для короткой ручной приемки и live-demo на защите. Он не дублирует
 полностью automated smoke и не заменяет DB/build evidence.

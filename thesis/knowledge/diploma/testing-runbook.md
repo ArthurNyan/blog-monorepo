@@ -1,6 +1,6 @@
 # Testing Runbook
 
-Дата актуализации: `2026-05-29`.
+Дата актуализации: `2026-05-31`.
 
 Этот runbook повторяет текущий testing baseline и дополнительный browser-level audit
 без внешнего SaaS.
@@ -82,12 +82,14 @@ pnpm --dir apps/cms seed:content
 Тип: `DB/Build evidence`
 
 ```bash
+pnpm build:cms
 pnpm build:front
 PORT=4322 HOST=127.0.0.1 pnpm preview:front
 ```
 
 Ожидаемо:
 
+- CMS build завершается успешно;
 - frontend build завершается успешно;
 - static preview доступен на `http://localhost:4322`.
 
@@ -95,6 +97,9 @@ PORT=4322 HOST=127.0.0.1 pnpm preview:front
 
 - `http://localhost:4322` обслуживает только `apps/front/dist/client`;
 - Astro API routes проверяются только на `http://localhost:4321`.
+- Если `pnpm build:front` запускался параллельно с уже поднятым `pnpm dev:front`,
+  перед `pnpm audit:browser` лучше перезапустить `front`, чтобы исключить transient
+  `Vite` reload noise в browser-level evidence.
 
 ## 5. Baseline Endpoint Checks
 
@@ -305,4 +310,5 @@ pnpm audit:browser
   `thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json`;
 - для `ru/en` home, `ru` CMS page и `vacancy detail` подтверждаются:
   `html[lang]`, `h1`, наличие форм, отсутствие unlabeled form controls,
-  отсутствие console/page errors и browser navigation timing metrics.
+  отсутствие `page errors`, same-origin request/resource failures и browser
+  navigation timing metrics.
