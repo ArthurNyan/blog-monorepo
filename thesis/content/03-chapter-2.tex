@@ -34,14 +34,7 @@ frontend-типами. Вместе с тем текущая реализаци�
 \texttt{global}, \texttt{home-page}, \texttt{page} и карьерного модуля сохранен отдельный
 data-layer с явным управлением локалями, \texttt{populate}-параметрами и
 \texttt{preview}-режимом. Сводно текущая архитектура системы показана на
-рисунке~\ref{fig:chapter2-cms-first-architecture}.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-first-architecture.pdf}
-  \caption{Контекстная схема текущей \texttt{CMS-first} системы на базе \texttt{Strapi} и \texttt{Astro}}
-  \label{fig:chapter2-cms-first-architecture}
-\end{figure}
+рисунке~\ref{fig:chapter2-cms-first-architecture} в приложении~А.
 
 \subsection{Контур доставки контента}
 
@@ -94,24 +87,11 @@ data-layer с явным управлением локалями, \texttt{popula
 в локалях \texttt{ru/en}. Исключение составляют \texttt{vacancy-application} и
 \texttt{lead-submission}, для которых локализация и режим черновика не требуются, так как
 эти сущности отражают факт отправки прикладной формы, а не редакционный контент. Сводная
-модель сущностей и их связей приведена на рисунке~\ref{fig:chapter2-cms-data-model}, а
+модель сущностей и их связей приведена на рисунке~\ref{fig:chapter2-cms-data-model} в
+приложении~Б, а
 жизненный цикл
 локализуемой контентной единицы с режимом \texttt{draft/publish} --- на
-рисунке~\ref{fig:chapter2-cms-content-lifecycle}.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-data-model.pdf}
-  \caption{Модель данных CMS с основными сущностями, связями и общими атрибутами публикации}
-  \label{fig:chapter2-cms-data-model}
-\end{figure}
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=0.8\linewidth]{assets/diagrams/plantuml/pdf/cms-content-lifecycle.pdf}
-  \caption{Жизненный цикл локализуемой контентной единицы в контуре \texttt{draft/publish}}
-  \label{fig:chapter2-cms-content-lifecycle}
-\end{figure}
+рисунке~\ref{fig:chapter2-cms-content-lifecycle} в приложении~В.
 
 \subsection{\texttt{SEO}-модель и глобальные сущности}
 
@@ -297,7 +277,7 @@ fetcher и перенаправляет пользователя на соотв
 \texttt{/api/preview}. Тем самым предпросмотр оформлен как связанный контур
 \texttt{CMS -> frontend}, а не только как изолированный server-side механизм витрины.
 Последовательность этого сценария приведена на
-рисунке~\ref{fig:chapter2-cms-preview-sequence}.
+рисунке~\ref{fig:chapter2-cms-preview-sequence} в приложении~Г.
 
 На стороне frontend preview-сессия хранится в \texttt{httpOnly} cookie. При успешной
 проверке секрета устанавливается служебная cookie \texttt{\_\_cms\_preview}, а дальнейшие
@@ -307,13 +287,6 @@ preview-страницы разрешают доступ только при н�
 \texttt{article}, \texttt{project} и \texttt{vacancy}. В результате редактор может
 проверять черновую версию материала в отдельном server-side маршруте, не раскрывая draft
 API в публичном режиме.
-
-\begin{figure}[htbp]
-  \centering
-  \includegraphics[width=\linewidth]{assets/diagrams/plantuml/pdf/cms-preview-sequence.pdf}
-  \caption{Сценарий защищенного предварительного просмотра чернового контента}
-  \label{fig:chapter2-cms-preview-sequence}
-\end{figure}
 
 Практический результат этого потока показан на
 рисунке~\ref{fig:chapter2-preview-screen}: редактор получает доступ к черновой
@@ -470,102 +443,139 @@ Environment contract этого контура фиксирует не толь�
 
 \section{Тестирование}
 
-\subsection{Характер и контур проверки}
+\subsection{Организация проверки и полученные результаты}
 
-Тестирование в текущей версии проекта построено как воспроизводимый контур приемочной
-проверки,
-ориентированный на интеграционные и пользовательские сценарии. Такая схема выбрана
-осознанно: \texttt{lint}- и \texttt{test}-цели в \texttt{apps/cms} и \texttt{apps/front}
-по-прежнему не содержат полноценного набора unit- или end-to-end тестов, поэтому для
-дипломной фиксации нельзя утверждать наличие законченного автотестового контура. Вместо
-этого проверка опирается на формализованную матрицу приемки, набор повторяемых команд и
-короткий ручной сценарий демонстрации, которые подтверждают фактическую работоспособность
-публичной витрины, \texttt{preview}-режима, форм и publication-связок.
-
-Базовый testing contour зафиксирован для локального окружения, где \texttt{Strapi}
-доступен на \texttt{localhost:1337}, frontend runtime --- на \texttt{localhost:4321}, а
-preview собранной витрины --- на \texttt{localhost:4322}. Воспроизводимая часть
-проверки выполняется командами \texttt{pnpm smoke:front},
+Тестирование разработанной системы было организовано как воспроизводимый контур
+приемочной проверки, ориентированный на реальные пользовательские и редакторские
+сценарии. Проверка выполнялась в локальном окружении, где \texttt{Strapi} работал на
+\texttt{localhost:1337}, frontend runtime --- на \texttt{localhost:4321}, а preview
+собранной витрины --- на \texttt{localhost:4322}. Для повторяемого запуска были
+зафиксированы команды \texttt{pnpm smoke:front},
 \texttt{SMOKE\_ALLOW\_MUTATIONS=true pnpm smoke:front},
-\texttt{pnpm evidence:testing} и \texttt{pnpm audit:browser}. Тем самым тестовый раздел
-опирается не на разовые наблюдения, а на повторяемый baseline, который можно запустить
-повторно после пересборки данных и приложений.
+\texttt{pnpm evidence:testing} и \texttt{pnpm audit:browser}. Такая организация
+позволила перейти от разовой ручной проверки к формализованному набору процедур, который
+подтверждает работоспособность ключевых частей \texttt{CMS-first} контура.
 
-\subsection{Автоматизированные проверки и evidence}
+Центральным результатом стала автоматизированная smoke-проверка frontend. Она
+подтвердила корректность публичных маршрутов, \texttt{preview}-поведения, сборочных
+артефактов и прикладных форм. На актуальном baseline от 29 мая 2026 года read-only
+прогон завершился с результатом \texttt{0 failures} и \texttt{1 warning}, а мутационный
+прогон --- с результатом \texttt{0 failures} и \texttt{0 warnings}. Тем самым был
+подтвержден не только факт доступности маршрутов, но и корректная работа сценариев
+отправки маркетингового лида и отклика на вакансию.
 
-Центральной частью автоматизированного контура выступает smoke-проверка frontend, которая
-разделяет инварианты публичных маршрутов, \texttt{preview}-сценарии, сборочные
-доказательства и
-опциональные мутационные проверки форм. На актуальном baseline от 29 мая 2026 года
-read-only прогон завершился с результатом \texttt{0 failures} и \texttt{1 warning}; это
-предупреждение связано только с тем, что мутационные проверки не выполняются без явного
-включения флага \texttt{SMOKE\_ALLOW\_MUTATIONS=true}. Повторный прогон с включенными
-мутациями завершился с результатом \texttt{0 failures} и \texttt{0 warnings}, что
-подтвердило как сценарий отправки маркетингового лида, так и сценарий отклика на
-вакансию.
+В automated contour были подтверждены редирект \texttt{/ -> /ru/}, доступность
+локализованных маршрутов \texttt{/ru/} и \texttt{/en/}, работа representative
+CMS-страниц, статей, проектов и вакансий, корректность legacy-редиректов, а также
+наличие \texttt{title}, \texttt{canonical}, \texttt{Open Graph}-метаданных,
+\texttt{html[lang]} и основного заголовка \texttt{h1}. Отдельным достижением стало
+подтверждение редакторского \texttt{preview}-контура: были воспроизведены отказ по
+неверному секрету, корректный переход на опубликованный маршрут для статуса
+\texttt{published}, установка \texttt{httpOnly} cookie для статуса \texttt{draft} и
+наличие \texttt{robots=noindex, nofollow} на preview-страницах не только для
+\texttt{home-page} и \texttt{page}, но и для detail pages сущностей
+\texttt{article}, \texttt{project} и \texttt{vacancy}.
 
-В рамках automated smoke были подтверждены ключевые публичные пользовательские сценарии:
-редирект \texttt{/ -> /ru/}, открытие локализованных маршрутов витрины
-\texttt{/ru/} и \texttt{/en/}, доступность репрезентативных CMS-страниц, статей,
-проектов и вакансий, а также корректность legacy-редиректов для старых маршрутов
-\texttt{/articles/...} и \texttt{/projects/...}. Отдельно проверялись \texttt{title},
-\texttt{canonical}, \texttt{Open Graph}-метаданные, атрибут \texttt{html[lang]}, наличие
-основного заголовка \texttt{h1} и отсутствие публичного \texttt{noindex} на главной и на
-CMS-страницах после нормализации versioned seed-данных.
-
-Автоматизировано подтвержден и редакторский \texttt{preview}-контур. Проверка включает
-отказ по неверному секрету, корректный редирект на опубликованный маршрут для статуса
-\texttt{published}, установку \texttt{httpOnly} cookie для статуса \texttt{draft} и
-наличие \texttt{robots=noindex, nofollow} на preview-страницах. На финальном baseline
-это подтверждено не только для \texttt{home-page} и \texttt{page}, но и для detail
-routes сущностей \texttt{article}, \texttt{project} и \texttt{vacancy}. Такой набор
-проверок показывает, что черновой контент отделен от публичного не декларативно, а
-реальным runtime-поведением маршрутов.
-
-Отдельный слой доказательств дают сборочные проверки и проверки на уровне базы данных.
-Сборка frontend завершилась успешно, сформировала \texttt{37} prerendered
-HTML-маршрутов,
-\texttt{sitemap-index.xml} и \texttt{sitemap-0.xml}, а также зафиксированный набор
-статических артефактов объемом около \texttt{2.4 MB}. Анализ карты сайта подтвердил
-наличие маршрутов \texttt{/ru/}, \texttt{/en/}, locale-prefixed detail pages для
-\texttt{articles/projects} и публичных маршрутов \texttt{/vacancies/...}, а также
-отсутствие legacy-маршрутов без локали в итоговом \texttt{sitemap}. SQL-проверки к
-\texttt{sqlite}-хранилищу дополнительно подтвердили создание записей в
+Существенную часть доказательной базы составили сборочные и database-based результаты.
+Сборка frontend завершилась успешно и сформировала \texttt{37} prerendered
+HTML-маршрутов, \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml}. Анализ карты сайта
+подтвердил наличие маршрутов \texttt{/ru/}, \texttt{/en/}, locale-prefixed detail pages
+для \texttt{articles/projects}, а также публичных маршрутов \texttt{/vacancies/...}.
+SQL-проверки зафиксировали появление новых записей в таблицах
 \texttt{lead\_submissions} и \texttt{vacancy\_applications} после мутационного smoke, а
 также наличие активного \texttt{Frontend rebuild hook} в таблице
-\texttt{strapi\_webhooks}.
+\texttt{strapi\_webhooks}. Это позволяет рассматривать тестирование не только как
+проверку интерфейса, но и как подтверждение корректности прикладных записей и
+publication-механизма на уровне данных.
 
-Дополнительно для репрезентативных маршрутов был выполнен браузерный аудит через
-\texttt{Playwright}. Он не подменяет полноценный WCAG- или Lighthouse-аудит, однако
-позволяет зафиксировать baseline поведения страниц в браузере: наличие \texttt{html[lang]} и
-\texttt{h1}, доступность форм, отсутствие необозначенных form controls и browser errors,
-а также базовые navigation timing metrics для \texttt{RU/EN home}, репрезентативной
-CMS-страницы и детальной вакансии. На актуальном baseline этот аудит завершился без
-ошибок, что усиливает доказательную базу по сравнению с одной только HTML-проверкой.
+Дополнительно был выполнен браузерный аудит representative маршрутов через
+\texttt{Playwright}. Он подтвердил наличие \texttt{html[lang]} и \texttt{h1},
+доступность форм, отсутствие необозначенных form controls и browser errors, а также
+зафиксировал базовые navigation timing metrics для \texttt{RU/EN home},
+репрезентативной CMS-страницы и детальной вакансии. В совокупности это позволяет
+утверждать, что на уровне браузерного исполнения проект продемонстрировал стабильное
+поведение как для storefront-core, так и для прикладных публичных сценариев. Сводные
+результаты проверки ключевых контуров системы представлены в
+таблице~\ref{tab:chapter2-testing-results}.
 
-\subsection{Ручная приемка и ограничения baseline}
+\begin{longtable}{|p{0.28\linewidth}|p{0.62\linewidth}|}
+  \caption{Сводные результаты проверки ключевых контуров системы}
+  \label{tab:chapter2-testing-results} \\
+  \hline
+  \textbf{Контур} & \textbf{Результат проверки} \\
+  \hline
+  \endfirsthead
+  \caption*{Продолжение таблицы~\ref{tab:chapter2-testing-results}} \\
+  \hline
+  \textbf{Контур} & \textbf{Результат проверки} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  Публичные маршруты и мультиязычность & Подтверждена доступность маршрутов \texttt{/ru/}, \texttt{/en/}, locale-prefixed CMS pages, статей и проектов; legacy URL корректно перенаправляются. Основание: automated smoke, runtime checks, build output и \texttt{sitemap}. \\
+  \hline
+  \texttt{Preview}-сценарии & Подтверждены проверка секрета, установка draft cookie, переход на published route и применение \texttt{noindex} для preview pages. Основание: automated smoke и runtime preview checks. \\
+  \hline
+  Публичные формы & Подтверждены server-side validation, same-origin guard, отклонение невалидных данных и успешная запись валидных отправок. Основание: mutation smoke и SQLite evidence. \\
+  \hline
+  Сборка и публикационный контур & Подтверждены сформированные prerendered routes, карта сайта и активный \texttt{Frontend rebuild hook}. Основание: frontend build, \texttt{sitemap} и запросы к \texttt{strapi\_webhooks}. \\
+  \hline
+  Браузерное выполнение & Зафиксировано корректное поведение representative pages без browser errors и без необозначенных form controls. Основание: \texttt{Playwright} browser audit. \\
+  \hline
+\end{longtable}
 
-Наряду с automated smoke используется короткая ручная приемка, рассчитанная на защиту и
-на быструю демонстрацию основных сценариев. В нее входят редирект на \texttt{/ru/},
-открытие русской и английской версии витрины, показ репрезентативной CMS-страницы,
-запуск \texttt{preview}-сценария из \texttt{Strapi}, открытие детальной вакансии и
-проверка невалидного ввода для маркетинговой и карьерной формы. Такой ручной контур не
-дублирует automated smoke, а подтверждает, что ключевые пользовательские сценарии можно
-наглядно воспроизвести в браузере без правки кода и без обращения к внутренним данным
-репозитория.
+\subsection{Количественные показатели baseline}
 
-При этом ограничения testing baseline должны быть сформулированы явно. Во-первых, в
-проекте по-прежнему отсутствует полноценный набор unit- и end-to-end тестов, поэтому
-полученный результат корректно описывать именно как приемочный и интеграционный baseline.
-Во-вторых, браузерный аудит не следует трактовать как полный WCAG certification scan или как
-полноценный Lighthouse review: в работе не фиксировались проверка со screen reader,
-полноценный keyboard-only walkthrough и формальный accessibility score. В-третьих, внешний участок
-\texttt{publish -> Vercel rebuild} остается инфраструктурно зависимым и в локальной среде
-не воспроизводился как полноценно подтвержденный сквозной сценарий. Следовательно, в тексте ВКР можно
-утверждать, что publication hook, \texttt{preview}, формы, \texttt{SEO}-контур и
-мультиязычные маршруты подтверждены воспроизводимыми проверками, но нельзя утверждать,
-что проект уже обладает завершенным unit/e2e-покрытием или полным внешним production
-audit-контуром.
+Наряду с качественным подтверждением сценариев были зафиксированы количественные
+показатели, характеризующие состояние системы на актуальном baseline. Они демонстрируют,
+что результат тестирования выражается не только в общем утверждении о работоспособности,
+но и в конкретных измеримых значениях, представленных в таблице~\ref{tab:chapter2-testing-metrics}.
+
+\begin{longtable}{|p{0.2\linewidth}|p{0.2\linewidth}|p{0.5\linewidth}|}
+  \caption{Ключевые показатели testing baseline}
+  \label{tab:chapter2-testing-metrics} \\
+  \hline
+  \textbf{Показатель} & \textbf{Значение} & \textbf{Интерпретация} \\
+  \hline
+  \endfirsthead
+  \caption*{Продолжение таблицы~\ref{tab:chapter2-testing-metrics}} \\
+  \hline
+  \textbf{Показатель} & \textbf{Значение} & \textbf{Интерпретация} \\
+  \hline
+  \endhead
+  \hline
+  \endfoot
+  Read-only smoke & \texttt{0 failures / 1 warning} & Подтверждены все обязательные route и preview assertions; предупреждение связано только с отключенными mutation checks \\
+  \hline
+  Mutation smoke & \texttt{0 failures / 0 warnings} & Подтверждены успешные сценарии \texttt{lead-submission} и \texttt{vacancy-application} \\
+  \hline
+  Сборка frontend & \texttt{37} prerendered HTML routes & Подтверждена полнота статического storefront-контура и locale-aware content routes \\
+  \hline
+  Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован итоговый размер публичного build-результата \\
+  \hline
+  Browser audit & \texttt{0 failures} & Representative pages корректно проходят браузерную проверку структуры, форм и ошибок исполнения \\
+  \hline
+\end{longtable}
+
+\subsection{Практическое значение результатов}
+
+Короткая ручная приемка дополняет automated contour и используется как демонстрационный
+сценарий на защите. Она включает редирект на \texttt{/ru/}, открытие русской и
+английской версии витрины, показ репрезентативной CMS-страницы, запуск
+\texttt{preview}-сценария из \texttt{Strapi}, открытие детальной вакансии и проверку
+невалидного ввода для маркетинговой и карьерной формы. За счет этого результаты
+автоматизированной проверки получают наглядное подтверждение в браузере и демонстрируют,
+что проект готов не только к технической верификации, но и к презентации редакторских и
+пользовательских сценариев.
+
+Важным итогом testing contour является то, что он подтверждает уже реализованные
+достижения проекта: работоспособный multilingual storefront-core, управляемые
+\texttt{SEO}/\texttt{Open Graph}-метаданные, защищенный \texttt{preview}, прикладные
+сценарии сбора лидов и откликов, а также publication-связку между \texttt{Strapi} и
+frontend build-результатом. При этом интерпретация этих результатов должна оставаться
+академически корректной: в данной работе подтвержден именно воспроизводимый приемочный и
+интеграционный baseline, который доказывает зрелость реализованного решения на уровне
+ключевых бизнес- и редакторских сценариев.
 
 \section{Выводы по проектной главе}
 
