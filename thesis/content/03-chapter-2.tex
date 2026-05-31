@@ -417,6 +417,19 @@ hook frontend-приложения в \texttt{Dokploy}.
 получает не неформальную ручную настройку, а управляемый \texttt{env}-контракт между
 \texttt{CMS} и внешним deployment-оркестратором.
 
+Практически этот слой настройки виден на
+рисунке~\ref{fig:chapter2-strapi-webhook}: managed webhook
+\texttt{Frontend rebuild hook} зарегистрирован в \texttt{Settings -> Webhooks},
+указывает на внешний URL rebuild-hook и подписан на события
+\texttt{publish}/\texttt{unpublish} для сущностей типа \texttt{Entry}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/strapi-images/strapi-webhook.png}
+  \caption{Managed rebuild webhook в \texttt{Strapi}: целевой URL и подписка на \texttt{entry.publish}/\texttt{entry.unpublish}}
+  \label{fig:chapter2-strapi-webhook}
+\end{figure}
+
 На стороне frontend этот сценарий опирается на
 \texttt{apps/front/Dockerfile}, где build-stage формирует standalone output
 \texttt{Astro}, а runtime-stage запускает серверное приложение на порту \texttt{4321}.
@@ -450,6 +463,17 @@ runtime-stage запускает серверное приложение на о
 CMS собирается из \texttt{apps/cms/Dockerfile} и исполняет production build
 \texttt{Strapi}. Такое разделение соответствует фактической архитектуре проекта:
 публичная витрина и CMS обслуживаются независимо и могут обновляться раздельно.
+На платформенном уровне это выражается как отдельные сервисы \texttt{astro},
+\texttt{strapi} и \texttt{pg} внутри production-окружения
+\texttt{Dokploy}, что показано на
+рисунке~\ref{fig:chapter2-dokploy-project}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/dokploy/project-home.png}
+  \caption{Production-окружение в \texttt{Dokploy} с раздельными сервисами \texttt{astro}, \texttt{strapi} и \texttt{pg}}
+  \label{fig:chapter2-dokploy-project}
+\end{figure}
 
 Для CMS в репозитории дополнительно зафиксирован production-ориентированный набор
 deployment-файлов на основе \texttt{Docker Compose}. Он состоит из \texttt{Dockerfile},
@@ -473,6 +497,18 @@ unit-ами и одной отдельной зависимостью данны
 выражается через versioned \texttt{Dockerfile} и \texttt{env}-контракт, тогда как сам
 \texttt{Dokploy} хранит платформенные привязки: public domains, реальные секреты и
 настройку нативного rebuild hook.
+
+Платформенная привязка публичного frontend-домена показана на
+рисунке~\ref{fig:chapter2-dokploy-astro-domain}: для приложения \texttt{astro}
+зафиксированы служебный домен \texttt{Dokploy} и пользовательский домен с \texttt{HTTPS}, что соответствует роли
+\texttt{Dokploy} как внешней среды публикации витрины.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{assets/dokploy/astro-domain.png}
+  \caption{Доменная привязка frontend-приложения в \texttt{Dokploy}: служебный домен, пользовательский домен и \texttt{HTTPS}}
+  \label{fig:chapter2-dokploy-astro-domain}
+\end{figure}
 
 Такое разделение важно и методически. В тексте ВКР deployment-архитектура описывается не
 как устная инструкция по ручному развертыванию, а как формализованный контур, где

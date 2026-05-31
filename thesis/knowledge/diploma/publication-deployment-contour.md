@@ -248,6 +248,17 @@ Managed webhook подписан только на:
   DB evidence по `strapi_webhooks`, включая активный `Frontend rebuild hook`.
 - [thesis/knowledge/diploma/acceptance-matrix.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/acceptance-matrix.md):
   строки `PUBF-01`, `PUBF-02`, `PUBF-03` с разделением локально подтвержденного и внешнего сценария.
+- [thesis/assets/dokploy/project-home.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/project-home.png):
+  production-окружение `Dokploy` с раздельными сервисами `astro`, `strapi` и `pg`.
+- [thesis/assets/dokploy/astro-domain.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/astro-domain.png):
+  платформенное доказательство доменной привязки и `HTTPS` для frontend-приложения.
+- [thesis/assets/dokploy/astro-deployment.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/astro-deployment.png):
+  журнал deployment-сборки frontend-приложения `astro` в `Dokploy`.
+- [thesis/assets/dokploy/strapi-deployment.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/strapi-deployment.png):
+  журнал deployment-сборки `Strapi` в `Dokploy`, подтверждающий внешний runtime-сегмент CMS.
+- [thesis/assets/strapi-images/strapi-webhook.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/strapi-images/strapi-webhook.png):
+  визуальное подтверждение того, что `Frontend rebuild hook` реально присутствует в `Strapi`
+  и подписан на `publish/unpublish`.
 - [thesis/assets/strapi-images/page.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/strapi-images/page.png):
   редакторский экран `Strapi`, из которого стартует publish/preview жизненный цикл.
 - [thesis/assets/strapi-images/page-preview-desktop.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/strapi-images/page-preview-desktop.png):
@@ -259,17 +270,18 @@ Managed webhook подписан только на:
 
 ### 8.2. Чего сейчас нет в репозитории и что стоит добрать вручную
 
-В репозитории нет `Dokploy`-скриншотов или логов платформы. Для защиты стоит вручную
-подготовить:
+После добавления новых скриншотов в репозитории уже есть базовая платформенная доказательная база
+по `Dokploy`. Для защиты вручную еще стоит добрать только то, чего эти кадры пока не
+доказывают как причинно-связанную последовательность:
 
-1. Скрин `Dokploy` frontend-приложения с public domain и текущим deployment status.
-2. Скрин или masked export нативного rebuild hook `Dokploy`, который используется в
-   `FRONTEND_REBUILD_HOOK_URL`.
-3. Скрин build/redeploy log в `Dokploy` после одного publish/unpublish события.
-4. Скрин `Strapi -> Settings -> Webhooks` с `Frontend rebuild hook`, событиями
-   `entry.publish` и `entry.unpublish` и статусом `enabled`.
-5. Скрин public route после изменения контента или запись deployment history в `Dokploy`,
-   показывающая, что rebuild действительно произошел после публикации.
+1. Скрин или короткую запись последовательности `publish/unpublish` в `Strapi` ->
+   новая запись deployment history в `Dokploy`, чтобы показать именно факт срабатывания
+   rebuild после редакторского действия.
+2. Скрин public route после изменения контента, если нужно на защите показать итоговое
+   отражение rebuild на опубликованной витрине.
+3. Если планируется публичная PDF или открытая публикация материалов, маскированную
+   версию [astro-deployments.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/astro-deployments.png),
+   поскольку на исходном скрине виден нативный rebuild URL `Dokploy`.
 
 ## 9. Что можно и чего нельзя утверждать в тексте ВКР
 
