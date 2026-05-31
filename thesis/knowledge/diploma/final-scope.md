@@ -72,6 +72,9 @@
 - Главная витрина, `pages`, навигация и футер уже завязаны на локаль.
 - `articles` и `projects` уже используют locale-aware route helpers и локализованные
   public list/detail pages.
+- карьерный модуль уже использует локализуемые записи `vacancy/industry/job-role`,
+  locale-aware `preview` и отдельные production routes `/vacancies/` и
+  `/vacancies/:slug/`.
 - `preview` уже принимает локаль для всех ключевых сущностей.
 
 #### Обязательно реализовать
@@ -85,9 +88,10 @@
 
 #### Останется допустимым ограничением
 
-- `vacancies` могут остаться вне locale-prefixed production routes;
-- для карьерного модуля допускается наличие локализованных записей в `Strapi` и localized
-  preview без обязательного переноса публичных URL на `/:locale/...`;
+- `vacancies` остаются вне locale-prefixed production routes и фиксируются как отдельный
+  прикладной публичный контур;
+- для карьерного модуля итоговый scope включает локализованные записи в `Strapi` и
+  localized preview, но не требует переноса публичных URL на `/:locale/...`;
 - `vacancy-application` и `lead-submission` не входят в `ru/en` как локализуемые прикладные
   записи и остаются нелокализованными.
 
@@ -136,7 +140,8 @@
   оставаться route-owned SEO-поверхностью без отдельного `seo` component;
 - для `article`, `project`, `vacancy` допустим fallback из собственных полей сущности,
   если `seo` component не заполнен полностью;
-- `sitemap` не обязан отражать нелокализованные content sections как двуязычные маршруты.
+- `sitemap` не обязан отражать карьерный модуль как двуязычный набор URL и может
+  публиковать `vacancies` как отдельный публичный раздел.
 
 ### 2.3. Обязательные роли
 
@@ -223,6 +228,8 @@
 - `pages`, `Dynamic Zone` и page builder для `home-page/page`;
 - storefront-core `ru/en` для `global`, `home-page`, `page`;
 - locale-prefixed public routes `ru/en` для `articles` и `projects`;
+- отдельный career contour `/vacancies/` и `/vacancies/:slug/` при сохранении
+  localized CMS data и locale-aware preview;
 - `preview mode` для `home-page`, `page`, `article`, `project`, `vacancy`;
 - CMS-managed `SEO/Open Graph` для `home-page`, `page` и detail entities
   `article/project/vacancy`;
@@ -241,7 +248,7 @@
 ### Останется допустимым ограничением даже в финальной версии
 
 - locale-prefixed production routes ограничены storefront-core плюс `articles/projects`,
-  а карьерный модуль `vacancies` остается отдельным ограничением;
+  а карьерный модуль `vacancies` остается отдельным прикладным контуром;
 - отдельный CMS-managed `SEO` для section list pages не обязателен и может оставаться
   route-owned;
 - тестовый контур может остаться в основном ручным;

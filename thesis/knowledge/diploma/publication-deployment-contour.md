@@ -2,218 +2,300 @@
 
 ## Назначение документа
 
-Этот документ фиксирует единый publish-ready контур публикации и deployment для диплома.
-Он нужен, чтобы следующие этапы не возвращались к переопределению темы и не смешивали:
+Этот документ фиксирует publish-ready описание публикационного и deployment-контура для
+итоговой версии ВКР. Его задача --- связать в одном месте:
 
-- уже реализованный код;
-- доказанные локально сценарии;
-- внешние части production-path, которые не были полностью воспроизведены в текущей среде;
-- допустимые ограничения final scope.
+- versioned deployment-артефакты репозитория;
+- локально доказанный baseline;
+- внешний инфраструктурный сегмент `Dokploy`;
+- границу того, что можно утверждать в тексте диплома без завышения доказанности.
 
-## 1. Итоговый contour
+## 1. Итоговый `Dokploy`-контур
 
-Для текущего дипломного baseline публикационный и deployment-контур трактуется так:
+Для текущего baseline production-модель трактуется так:
 
-1. Редактор публикует или снимает с публикации публичную сущность в `Strapi`.
-2. `Strapi` после commit генерирует событие `entry.publish` или `entry.unpublish`.
-3. Во время `bootstrap` CMS синхронизирует versioned webhook-запись в таблице
-   `strapi_webhooks` и тем самым в разделе `Settings -> Webhooks`.
-4. Встроенный `Strapi webhook runner` отправляет `POST` на `FRONTEND_REBUILD_HOOK_URL`
-   при событиях `entry.publish` и `entry.unpublish`.
-5. В production этот URL должен указывать на внешний webhook/redeploy hook
-   frontend-приложения в `Dokploy`.
-6. `Dokploy` запускает повторную сборку и redeploy frontend `Docker`-приложения, после
-   чего `Astro` заново отдает prerendered-публичные маршруты, использующие данные из CMS.
+1. Редактор публикует или снимает с публикации сущность в `Strapi`.
+2. `Strapi` формирует событие `entry.publish` или `entry.unpublish`.
+3. Во время `bootstrap` CMS синхронизирует managed webhook в `strapi_webhooks` и тем
+   самым в `Settings -> Webhooks`.
+4. Встроенный `Strapi webhook runner` отправляет `POST` на
+   `FRONTEND_REBUILD_HOOK_URL`.
+5. Этот URL адресует нативный rebuild hook frontend-приложения в `Dokploy`.
+6. `Dokploy` выполняет повторную сборку и redeploy отдельного frontend
+   `Docker`-приложения.
+7. После redeploy `Astro` снова отдает предсобранные публичные маршруты, использующие
+   актуальные данные из CMS.
 
-Для диплома этот contour считается самостоятельным инженерным результатом, потому что
-замыкает цепочку `publish -> webhook -> rebuild` без ручного запуска frontend-сборки.
+В инженерном смысле итоговый контур строится вокруг двух deployment-единиц:
 
-## 2. Какие события участвуют в rebuild contour
+- frontend `Astro` как отдельное `Docker`-приложение;
+- CMS `Strapi` как отдельное `Docker`-приложение.
 
-В admin-managed варианте rebuild webhook подписан на:
+Зависимость CMS от `PostgreSQL` также зафиксирована, но выражена отдельно от frontend:
+локально и в repo topology она представлена сервисом `cms-db` в
+[apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml).
+В `Dokploy` эта же зависимость может закрываться отдельным DB-сервисом платформы или
+внешней базой данных, но для приложения сохраняется один и тот же `DATABASE_*`
+контракт.
+
+Важно: source of truth для application bundles и `env`-контракта хранится в
+репозитории, тогда как platform-side привязки `Dokploy` --- публичные домены, реальные
+секреты и фактическая конфигурация rebuild hook --- остаются внешним инфраструктурным
+сегментом.
+
+## 2. Что именно разворачивается
+
+### 2.1. Frontend deployment unit
+
+Frontend разворачивается из
+[apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile).
+Этот bundle фиксирует:
+
+- build-stage с `pnpm --dir apps/front build`;
+- `Astro` с `node()` adapter в standalone-режиме;
+- runtime-процесс `pnpm start`;
+- стандартный runtime-порт `4321`;
+- предсобранные публичные маршруты, `sitemap` и server-side `preview` routes.
+
+Следовательно, в `Dokploy` разворачивается не исходный frontend-код как набор статических
+файлов, а самостоятельное `Node.js`-приложение с production output `Astro`.
+
+### 2.2. CMS deployment unit
+
+CMS разворачивается из
+[apps/cms/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/Dockerfile).
+Этот bundle фиксирует:
+
+- production build `Strapi`;
+- runtime на порту `1337`;
+- versioned application image для CMS;
+- `bootstrap`, который синхронизирует security model и managed publication webhook.
+
+Это означает, что deployment CMS охватывает не только подъем admin/API runtime, но и
+автоматическое восстановление publication-контура при старте приложения в новой среде.
+
+### 2.3. CMS database/runtime dependency
+
+Для CMS в repo topology дополнительно зафиксирован переносимый runtime-бандл:
+
+- сервис `cms` с приложением `Strapi`;
+- сервис `cms-db` с `PostgreSQL`;
+- persistent volume для `public/uploads`;
+- persistent volume для данных `PostgreSQL`.
+
+Эта схема не подменяет `Dokploy` собственной оркестрацией, а формализует минимально
+необходимую инфраструктурную топологию CMS в versioned виде.
+
+## 3. Как работает `publish -> webhook -> Dokploy rebuild/redeploy`
+
+Публикационный сценарий устроен так:
+
+1. Редактор переводит локализуемую `draft/publish`-сущность в состояние `published` или
+   снимает ее с публикации.
+2. `Strapi` генерирует `entry.publish` или `entry.unpublish`.
+3. В
+   [apps/cms/src/utils/publication-webhook.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/publication-webhook.ts)
+   из `env` собирается конфигурация managed webhook:
+   имя, URL, заголовки, список событий и состояние `enabled`.
+4. Во время `bootstrap` CMS вызывает `syncManagedPublicationWebhook()` и приводит запись в
+   `strapi_webhooks` к versioned состоянию:
+   create, update, disable или noop.
+5. Если `FRONTEND_REBUILD_HOOK_URL` не задан, CMS явно логирует предупреждение и не
+   оставляет незавершенный rebuild-контур в полуактивном состоянии: webhook остается
+   disabled.
+6. Если URL задан, `Strapi` отправляет `POST` на `FRONTEND_REBUILD_HOOK_URL`, а при
+   наличии `FRONTEND_REBUILD_HOOK_TOKEN` добавляет header `x-rebuild-token`.
+7. В production этот endpoint является нативным rebuild hook `Dokploy`.
+8. `Dokploy` пересобирает и redeploy-ит frontend-приложение, собранное из
+   [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile).
+9. После redeploy frontend повторно читает опубликованные данные из CMS и отдает
+   обновленный набор публичных маршрутов.
+
+Ключевая инженерная граница здесь состоит в том, что публикация управляет только
+frontend rebuild path. CMS не пытается выполнять локальные обходы, не содержит
+собственного runtime-rebuild сервиса и не подменяет собой оркестратор deployment.
+
+## 4. Какие события участвуют в rebuild-контуре
+
+Managed webhook подписан только на:
 
 - `entry.publish`
 - `entry.unpublish`
 
-Для текущего baseline этого достаточно, потому что webhook runner реагирует только на
-события `draft/publish`, а прикладные сущности `lead-submission` и `vacancy-application`
-не участвуют в таком жизненном цикле.
+Для текущего scope этого достаточно:
 
-## 3. Что реализовано в коде
+- именно эти события меняют видимость публичного контента для предсобранной витрины;
+- прикладные сущности `lead-submission` и `vacancy-application` не участвуют в
+  `draft/publish` жизненном цикле;
+- изменение черновика без публикации не должно инициировать production rebuild.
 
-### 3.1. Publication hook
+## 5. `Env`-контракт для `Dokploy`
 
-Реализовано:
-
-- в [apps/cms/src/index.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/index.ts)
-  выполняется `bootstrap`-синхронизация managed webhook;
-- в
-  [apps/cms/src/utils/publication-webhook.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/publication-webhook.ts)
-  вынесены:
-  - environment contract для managed rebuild webhook;
-  - детерминированное имя webhook;
-  - формирование версии webhook-записи;
-  - `create/update/disable` синхронизация через `webhookStore` и `webhookRunner`.
-
-Versioned webhook-запись содержит:
-
-- имя webhook;
-- URL rebuild hook;
-- optional header `x-rebuild-token`;
-- события `entry.publish` и `entry.unpublish`;
-- флаг `enabled`.
-
-### 3.2. Frontend side of the contour
-
-На стороне frontend уже существовали и используются как часть итогового contour:
-
-- `Astro`-конфигурация с `node()` adapter в
-  [apps/front/astro.config.mjs](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/astro.config.mjs);
-- frontend `Dockerfile` в
-  [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile);
-- `site` на основе `SITE_URL`;
-- `@astrojs/sitemap`;
-- prerendered публичные маршруты;
-- server-side preview routes для draft-контента.
-
-Отдельный repo-hosted rebuild endpoint во frontend не добавлялся. Production-сценарий
-строится вокруг внешнего webhook/redeploy hook `Dokploy`, а webhook в `Strapi` лишь
-управляемо вызывает этот внешний endpoint.
-
-### 3.3. Docker contour for CMS
-
-Реализовано:
-
-- versioned
-  [apps/cms/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/Dockerfile);
-- versioned
-  [apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml)
-  с сервисами `cms` и `cms-db`;
-- versioned
-  [apps/cms/.env.docker.example](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/.env.docker.example);
-- scripts `docker:build`, `docker:up`, `docker:down` в
-  [apps/cms/package.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/package.json);
-- root
-  [.dockerignore](/Users/arthur/Documents/projects/Диплом/app-monorepo/.dockerignore)
-  для Docker build context.
-
-Архитектурно CMS deployment bundle фиксирует:
-
-- отдельный контейнер `Strapi`;
-- отдельный `PostgreSQL` контейнер;
-- host port mapping `POSTGRES_PORT -> 5432` для локального доступа к БД;
-- persistent volume для `public/uploads`;
-- production-style secrets и DB env;
-- versioned image tag `CMS_IMAGE_TAG`.
-
-## 4. Env contract
-
-### 4.1. Обязательные переменные публичного frontend/CMS contour
+### 5.1. Обязательные переменные frontend-приложения
 
 | Переменная | Где используется | Назначение |
 |---|---|---|
-| `SITE_URL` | `apps/front`, `apps/cms` | canonical URL, `sitemap`, preview link base |
-| `PUBLIC_URL` | `apps/cms` | внешний базовый URL CMS |
+| `SITE_URL` | `apps/front`, `apps/cms` | canonical URL, `sitemap`, публичный base URL сайта и preview link base |
+| `PUBLIC_SITE_URL` | `apps/front` | fallback/alias для публичного URL витрины |
+| `CMS_URL` | `apps/front` | внутренний адрес CMS для server-side запросов frontend |
+| `PUBLIC_CMS_URL` | `apps/front` | публичный адрес CMS для asset links и client-side ссылок |
+| `CMS_API_TOKEN` | `apps/front` | server-side доступ frontend к приватным операциям CMS |
+| `PREVIEW_SECRET` | `apps/front`, `apps/cms` | общий секрет для draft preview |
+
+Практическая оговорка: `HOST` и `PORT` у frontend имеют безопасные runtime defaults
+`0.0.0.0:4321` и обычно не являются критическим `Dokploy`-специфичным `env`, если
+платформа не требует явного override.
+
+### 5.2. Обязательные переменные CMS-приложения
+
+| Переменная | Где используется | Назначение |
+|---|---|---|
+| `PUBLIC_URL` | `apps/cms` | внешний base URL CMS, OpenAPI servers и абсолютные CMS links |
+| `SITE_URL` | `apps/cms`, `apps/front` | base URL фронтенда для preview и публичных ссылок |
 | `IS_PROXIED` | `apps/cms` | корректная работа CMS за reverse proxy |
-| `PREVIEW_SECRET` | `apps/front`, `apps/cms` | защищенный preview для draft-контента |
-| `CMS_URL` | `apps/front` | private access frontend к CMS |
-| `CMS_API_TOKEN` | `apps/front` | server-side чтение/запись через Astro API routes |
-| `PUBLIC_CMS_URL` | `apps/front` | публичный URL CMS для frontend assets/links |
-
-### 4.2. Обязательные переменные rebuild contour
-
-| Переменная | Где используется | Назначение |
-|---|---|---|
-| `FRONTEND_REBUILD_HOOK_URL` | `apps/cms` | внешний deploy/rebuild hook frontend |
-| `FRONTEND_REBUILD_HOOK_TOKEN` | `apps/cms` | optional header для webhook-записи в `Strapi` |
+| `PREVIEW_SECRET` | `apps/cms`, `apps/front` | общий секрет preview-контура |
+| `FRONTEND_REBUILD_HOOK_URL` | `apps/cms` | URL нативного rebuild hook frontend-приложения в `Dokploy` |
+| `FRONTEND_REBUILD_HOOK_TOKEN` | `apps/cms` | optional token, передаваемый как `x-rebuild-token` |
 | `FRONTEND_REBUILD_WEBHOOK_NAME` | `apps/cms` | детерминированное имя managed webhook в admin UI |
+| `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`, `ENCRYPTION_KEY` | `apps/cms` | обязательный secret block `Strapi` |
+| `DATABASE_CLIENT` | `apps/cms` | выбор backend БД (`postgres` для production topology) |
+| `DATABASE_URL` или `DATABASE_HOST`, `DATABASE_PORT`, `DATABASE_NAME`, `DATABASE_USERNAME`, `DATABASE_PASSWORD`, `DATABASE_SCHEMA`, `DATABASE_SSL` | `apps/cms` | connection contract CMS к production БД |
 
-### 4.3. Обязательные переменные Docker contour
+### 5.3. Переменные локального и переносимого DB-bundle
 
 | Переменная | Где используется | Назначение |
 |---|---|---|
-| `CMS_IMAGE_TAG` | `compose.yml` | versioned tag образа CMS |
-| `DATABASE_CLIENT` | `apps/cms` | `sqlite` или `postgres` |
-| `DATABASE_HOST` | `apps/cms` | host базы данных |
-| `DATABASE_PORT` | `apps/cms` | порт базы данных |
-| `DATABASE_NAME` | `apps/cms` | имя базы |
-| `DATABASE_USERNAME` | `apps/cms` | пользователь БД |
-| `DATABASE_PASSWORD` | `apps/cms` | пароль БД |
-| `DATABASE_SCHEMA` | `apps/cms` | схема PostgreSQL |
-| `DATABASE_SSL` | `apps/cms` | SSL policy БД |
-| `POSTGRES_DB` | `compose.yml` | имя базы контейнера `PostgreSQL` |
-| `POSTGRES_USER` | `compose.yml` | пользователь контейнера `PostgreSQL` |
-| `POSTGRES_PASSWORD` | `compose.yml` | пароль контейнера `PostgreSQL` |
-| `POSTGRES_PORT` | `compose.yml` | host port контейнера `PostgreSQL` |
-| `APP_KEYS` | `apps/cms` | application keys Strapi |
-| `API_TOKEN_SALT` | `apps/cms` | salt API tokens |
-| `ADMIN_JWT_SECRET` | `apps/cms` | JWT secret admin |
-| `TRANSFER_TOKEN_SALT` | `apps/cms` | transfer token salt |
-| `JWT_SECRET` | `apps/cms` | JWT secret |
-| `ENCRYPTION_KEY` | `apps/cms` | encryption key |
+| `CMS_IMAGE_TAG` | `apps/cms/compose.yml` | versioned tag образа CMS |
+| `POSTGRES_DB` | `apps/cms/compose.yml` | имя БД контейнера `cms-db` |
+| `POSTGRES_USER` | `apps/cms/compose.yml` | пользователь `PostgreSQL` |
+| `POSTGRES_PASSWORD` | `apps/cms/compose.yml` | пароль `PostgreSQL` |
+| `POSTGRES_PORT` | `apps/cms/compose.yml` | host port локального DB runtime |
 
-## 5. Что доказано локально
+Этот блок обязателен именно для versioned
+[apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml).
+Если `Dokploy` использует отдельный DB-сервис или внешнюю БД, в platform runtime
+критичен прежде всего `DATABASE_*` контракт приложения CMS.
+
+## 6. Что доказано локально
 
 В текущей среде воспроизводимо подтверждено:
 
-- `TypeScript`-компиляция CMS через `pnpm --dir apps/cms exec tsc -p tsconfig.json`;
+- production build frontend через `pnpm --dir apps/front build`, включая генерацию
+  предсобранных маршрутов и `sitemap`;
 - production build CMS через `pnpm --dir apps/cms build`;
-- синхронизация managed webhook через `publication-webhook.ts` на моках store/runner;
-- реальный запуск `Strapi` на временной sqlite-базе с созданием записи в `strapi_webhooks`;
-- прямое чтение временной sqlite-базы с подтверждением полей webhook: `name`, `url`,
-  `headers`, `events`, `enabled`;
-- синтаксическая и env-level валидация Docker bundle через
-  `docker compose --env-file apps/cms/.env.docker -f apps/cms/compose.yml config`.
-- наличие отдельного `PostgreSQL` runtime-сервиса `cms-db` в versioned `compose` bundle.
+- `TypeScript`-компиляция CMS;
+- синхронизация managed webhook через `publication-webhook.ts` на моках `store/runner`;
+- реальный запуск `Strapi` на временной `sqlite`-базе с созданием записи в
+  `strapi_webhooks`;
+- прямое чтение `sqlite` с подтверждением полей webhook:
+  `name`, `url`, `headers`, `events`, `enabled`;
+- синтаксическая и `env`-уровневая валидация
+  [apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml)
+  через `docker compose ... config`;
+- наличие отдельного `cms-db` runtime-сервиса и volume-контуров для БД и `uploads`;
+- наличие versioned deployment-файлов:
+  [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile),
+  [apps/cms/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/Dockerfile),
+  [apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml),
+  [apps/cms/.env.docker.example](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/.env.docker.example).
 
-Этого достаточно, чтобы в дипломе честно писать:
+Этого достаточно, чтобы в дипломе фактически утверждать:
 
-- versioned publication hook реализован;
-- webhook отражается в `Settings -> Webhooks` после старта CMS с настроенным env;
-- versioned Docker contour существует;
-- bootstrap-синхронизация admin-managed webhook доказана локально;
-- CMS сборка доказана локально.
+- финальная deployment-модель ориентирована на `Dokploy`;
+- frontend и CMS описаны как раздельные `Docker`-приложения;
+- managed publication webhook является частью репозитория и `bootstrap`-процесса;
+- rebuild-контур со стороны CMS доказан локально лучше, чем просто наличием кода;
+- frontend deployment bundle и CMS deployment bundle существуют как versioned артефакты.
 
-## 6. Что не доказано полностью в текущей среде
+## 7. Внешний инфраструктурный сегмент и зона дополнительного подтверждения
 
-Не следует описывать как полностью воспроизведенный факт:
+Во внешний сегмент `Dokploy`, который не хранится в репозитории как versioned state,
+входят:
 
-- конечный внешний `Dokploy` rebuild/redeploy после вызова production hook;
-- полный `docker build` образа CMS как завершенный локальный результат текущей сессии.
+- platform-side настройки frontend-приложения в `Dokploy`;
+- platform-side настройки CMS-приложения в `Dokploy`;
+- фактический нативный rebuild hook `Dokploy`;
+- build/redeploy history и public deployment status.
 
-Причины:
+Эти части входят в итоговую архитектуру, но требуют отдельного платформенного
+подтверждения. В пределах текущего локального baseline не следует описывать как уже
+воспроизведенный факт:
 
-- webhook/redeploy hook `Dokploy` является внешним инфраструктурным участком цепочки;
-- при проверке `docker build` Dockerfile дошел до стадии установки зависимостей, но
-  завершение оборвалось внешним сетевым сбоем при загрузке `pnpm` через `corepack`
-  (`ECONNRESET` к `registry.npmjs.org`), а не на синтаксической ошибке versioned bundle.
-- при попытке отдельно поднять `cms-db` runtime-проверка оборвалась на внешнем pull
-  `postgres:16-bookworm` из Docker Hub (`EOF` при обращении к registry), а не на ошибке
-  `compose.yml`.
+- полный внешний `Dokploy rebuild/redeploy` после вызова production hook;
+- сквозной путь `Strapi -> webhook -> Dokploy -> rebuilt public site` как локально
+  повторенный `end-to-end` сценарий;
+- любой конкретный platform-side state `Dokploy`, который не сохранен отдельным артефактом.
 
-Следствие для текста ВКР:
+При этом граница доказанности остается инженерно корректной:
 
-- можно писать, что rebuild-hook на стороне CMS реализован и локально доказан;
-- можно писать, что Docker contour versioned и config-validated;
-- нельзя писать, что полный production path `Strapi -> Dokploy rebuild/redeploy -> deployed site`
-  был воспроизведен end-to-end внутри репозитория.
+- repo доказывает application bundles и `env`-контракт;
+- локальный baseline доказывает регистрацию webhook и build-ready состояние приложений;
+- внешний `Dokploy`-сегмент подтверждается отдельно через platform artifacts, а не
+  выдается за локально воспроизведенный кодовый тест.
 
-## 7. Что обязательно осталось сделать
+## 8. Артефакты для защиты
 
-После закрытия publication/deployment contour обязательный остаток финального scope
-сводится к двум блокам:
+### 8.1. Что уже можно показать из репозитория
 
-- формальная матрица `roles/permissions`;
-- воспроизводимая тестовая матрица и метрики `SEO`, `accessibility`, `performance`,
-  включая фиксацию факта rebuild как проверяемого сценария.
+- [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile)
+  и [apps/cms/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/Dockerfile):
+  два раздельных deployment unit-а.
+- [apps/cms/compose.yml](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/compose.yml)
+  и [apps/cms/.env.docker.example](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/.env.docker.example):
+  CMS topology и переносимый `env`-контракт.
+- [thesis/knowledge/diploma/testing-evidence-pack.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-evidence-pack.md):
+  DB evidence по `strapi_webhooks`, включая активный `Frontend rebuild hook`.
+- [thesis/knowledge/diploma/acceptance-matrix.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/acceptance-matrix.md):
+  строки `PUBF-01`, `PUBF-02`, `PUBF-03` с разделением локально подтвержденного и внешнего сценария.
+- [thesis/assets/strapi-images/page.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/strapi-images/page.png):
+  редакторский экран `Strapi`, из которого стартует publish/preview жизненный цикл.
+- [thesis/assets/strapi-images/page-preview-desktop.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/strapi-images/page-preview-desktop.png):
+  доказательство того, что draft preview отделен от production publication.
+- [thesis/assets/front/home-en-with-url.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/front/home-en-with-url.png):
+  representative published storefront route.
+- [thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/evidence-artifacts/browser-baseline-audit.json):
+  browser-level baseline публичных маршрутов после build/runtime.
 
-## 8. Что останется допустимым ограничением
+### 8.2. Чего сейчас нет в репозитории и что стоит добрать вручную
 
-Даже в финальной версии допустимо:
+В репозитории нет `Dokploy`-скриншотов или platform-side логов. Для защиты стоит вручную
+подготовить:
+
+1. Скрин `Dokploy` frontend-приложения с public domain и текущим deployment status.
+2. Скрин или masked export нативного rebuild hook `Dokploy`, который используется в
+   `FRONTEND_REBUILD_HOOK_URL`.
+3. Скрин build/redeploy log в `Dokploy` после одного publish/unpublish события.
+4. Скрин `Strapi -> Settings -> Webhooks` с `Frontend rebuild hook`, событиями
+   `entry.publish` и `entry.unpublish` и статусом `enabled`.
+5. Скрин public route после изменения контента или запись deployment history в `Dokploy`,
+   показывающая, что rebuild действительно произошел после публикации.
+
+## 9. Что можно и чего нельзя утверждать в тексте ВКР
+
+Корректно утверждать:
+
+- финальная deployment-модель проекта строится вокруг `Dokploy`, а не `Vercel`;
+- frontend и CMS оформлены как отдельные `Docker`-приложения;
+- CMS управляет frontend rebuild path через managed webhook;
+- `Dokploy` выступает внешним оркестратором rebuild/redeploy, а не случайным ручным шагом;
+- локально доказаны frontend/CMS build artifacts, webhook registration и `compose`-validation.
+
+Некорректно утверждать без дополнительных внешних артефактов:
+
+- что весь путь `Strapi -> Dokploy rebuild/redeploy -> deployed site` был повторен
+  `end-to-end` внутри локального репозитория;
+- что platform-side конфигурация `Dokploy` полностью зафиксирована versioned средствами
+  самого репозитория;
+- что любой конкретный rebuild/redeploy в `Dokploy` уже доказан, если не показан
+  соответствующим логом или скрином платформы.
+
+## 10. Что остается допустимым ограничением
+
+Даже в финальной версии работы допустимо:
 
 - оставлять публикацию rebuild-based без real-time invalidation;
-- опираться на внешний webhook/redeploy hook `Dokploy` вместо самостоятельного runtime-rebuild сервиса;
-- сохранять тестовый contour преимущественно ручным;
-- не расширять locale-prefixed public routes дальше карьерного модуля `vacancies`;
-- не вводить отдельный CMS-managed `SEO` schema для всех section list pages;
+- опираться на нативный rebuild hook `Dokploy`, а не на собственный runtime-rebuild сервис;
+- сохранять тестовый contour преимущественно приемочным и manual-friendly;
+- не расширять locale-prefixed public routes дальше текущей route-границы карьерного модуля;
+- не вводить отдельную `CMS`-управляемую `SEO`-схему для всех section list pages;
 - не добавлять `CRM`, `email automation`, `rate limit` и более тяжелый editorial workflow.
