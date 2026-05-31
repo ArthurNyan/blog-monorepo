@@ -288,7 +288,7 @@ description: Презентация к выпускной квалификаци
 ### Текущие ограничения
 
 - Полный browser-level `WCAG audit` и production-like `Lighthouse` профиль не входили в обязательный контур ВКР.
-- Внешний `Dokploy rebuild/redeploy` не воспроизводился `end-to-end` внутри репозитория.
+- Конфигурация `Dokploy` остается внешним platform state, хотя сквозной `rebuild/redeploy` уже подтвержден на стенде проекта.
 - Дальнейшее развитие: новые блоки `Dynamic Zone`, расширение workflow и аналитики контента.
 
 </div>

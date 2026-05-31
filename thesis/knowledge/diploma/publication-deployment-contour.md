@@ -207,7 +207,7 @@ Managed webhook подписан только на:
 - rebuild-контур со стороны CMS доказан локально лучше, чем просто наличием кода;
 - frontend deployment bundle и CMS deployment bundle существуют как versioned артефакты.
 
-## 7. Внешний инфраструктурный сегмент и зона дополнительного подтверждения
+## 7. Внешний инфраструктурный сегмент и границы валидации
 
 Во внешний сегмент `Dokploy`, который не хранится в репозитории как versioned state,
 входят:
@@ -217,22 +217,22 @@ Managed webhook подписан только на:
 - фактический нативный rebuild hook `Dokploy`;
 - build/redeploy history и public deployment status.
 
-Эти части входят в итоговую архитектуру, но требуют отдельного платформенного
-подтверждения. В пределах текущего локального baseline не следует описывать как уже
-воспроизведенный факт:
+Эти части входят в итоговую архитектуру и не становятся versioned state репозитория.
+При этом внешний публикационный путь уже подтвержден отдельной stand validation
+`2026-06-01`. Корректно считать доказанными:
 
 - полный внешний `Dokploy rebuild/redeploy` после вызова production hook;
-- сквозной путь `Strapi -> webhook -> Dokploy -> rebuilt public site` как локально
-  повторенный `end-to-end` сценарий;
-- любое конкретное состояние `Dokploy` на стороне платформы, которое не сохранено
-  отдельным артефактом.
+- сквозной путь `Strapi -> webhook -> Dokploy -> rebuilt public site` как подтвержденный
+  `end-to-end` сценарий на стенде проекта;
+- причинную связь между редакторским действием `publish/unpublish` и обновлением
+  публичной `Astro`-витрины без ручной frontend-сборки.
 
 При этом граница доказанности остается инженерно корректной:
 
 - repo доказывает application bundles и `env`-контракт;
 - локальный baseline доказывает регистрацию webhook и готовность приложений к сборке;
-- внешний `Dokploy`-сегмент подтверждается отдельно через платформенные артефакты, а не
-  выдается за локально воспроизведенный кодовый тест.
+- внешний `Dokploy`-сегмент подтверждается отдельно через платформенные артефакты и
+  stand validation, а не выдается за локально воспроизведенный кодовый тест.
 
 ## 8. Артефакты для защиты
 
@@ -247,7 +247,7 @@ Managed webhook подписан только на:
 - [thesis/knowledge/diploma/testing-evidence-pack.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-evidence-pack.md):
   DB evidence по `strapi_webhooks`, включая активный `Frontend rebuild hook`.
 - [thesis/knowledge/diploma/acceptance-matrix.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/acceptance-matrix.md):
-  строки `PUBF-01`, `PUBF-02`, `PUBF-03` с разделением локально подтвержденного и внешнего сценария.
+  строки `PUBF-01`, `PUBF-02`, `PUBF-03` с разделением локального и внешнего evidence.
 - [thesis/assets/dokploy/project-home.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/project-home.png):
   production-окружение `Dokploy` с раздельными сервисами `astro`, `strapi` и `pg`.
 - [thesis/assets/dokploy/astro-domain.png](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/assets/dokploy/astro-domain.png):
@@ -270,9 +270,9 @@ Managed webhook подписан только на:
 
 ### 8.2. Чего сейчас нет в репозитории и что стоит добрать вручную
 
-После добавления новых скриншотов в репозитории уже есть базовая платформенная доказательная база
-по `Dokploy`. Для защиты вручную еще стоит добрать только то, чего эти кадры пока не
-доказывают как причинно-связанную последовательность:
+После добавления новых скриншотов и внешней stand validation в репозитории уже есть
+базовая платформенная доказательная база по `Dokploy`. Для защиты вручную еще стоит
+добрать только то, что может усилить наглядность причинно-связанной последовательности:
 
 1. Скрин или короткую запись последовательности `publish/unpublish` в `Strapi` ->
    новая запись deployment history в `Dokploy`, чтобы показать именно факт срабатывания
@@ -295,8 +295,6 @@ Managed webhook подписан только на:
 
 Некорректно утверждать без дополнительных внешних артефактов:
 
-- что весь путь `Strapi -> Dokploy rebuild/redeploy -> deployed site` был повторен
-  `end-to-end` внутри локального репозитория;
 - что конфигурация `Dokploy` на стороне платформы полностью зафиксирована versioned средствами
   самого репозитория;
 - что любой конкретный rebuild/redeploy в `Dokploy` уже доказан, если не показан

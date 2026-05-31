@@ -1,6 +1,6 @@
 # Testing Evidence Pack
 
-Дата актуализации: `2026-05-31`.
+Дата актуализации: `2026-06-01`.
 
 ## Назначение
 
@@ -411,7 +411,7 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 ## 4. Failures And Gaps
 
-По состоянию на актуальный baseline `2026-05-31` основные прежние acceptance gaps закрыты:
+По состоянию на актуальный baseline `2026-06-01` основные прежние acceptance gaps закрыты:
 
 - public `noindex` на `home-page/page` устранен через нормализацию versioned
   `seed-storefront.js` и `seed-pages.js`;
@@ -420,10 +420,10 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 - browser-level accessibility/performance baseline теперь зафиксирован в локальном
   Playwright artifact.
 
-Остается один сознательно незакрытый внешний сценарий:
+Дополнительно `2026-06-01` на внешнем стенде проекта подтвержден и внешний сценарий:
 
-- внешний `Dokploy` rebuild/redeploy после publish/unpublish не воспроизводился локально и не
-  должен маркироваться как `Pass` без реального прогона.
+- `Strapi publish/unpublish -> managed webhook -> Dokploy rebuild/redeploy -> обновление
+  публичной Astro-витрины` воспроизведен как реальный `end-to-end` path.
 
 ## 5. What Is Ready For Chapter 2
 
@@ -432,8 +432,8 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 - проект имеет не только реализованный код, но и воспроизводимую acceptance matrix;
 - public routes, preview, forms, sitemap и managed rebuild webhook подтверждены фактами;
 - testing contour отделяет automated, manual и external части;
-- основной локальный acceptance baseline закрыт без скрытых gaps; отдельно вынесен
-  только внешний rebuild contour.
+- основной локальный acceptance baseline закрыт без скрытых gaps, а внешний rebuild
+  contour дополнительно подтвержден stand validation `2026-06-01`.
 
 ## 6. Appendix-Friendly Command Set
 

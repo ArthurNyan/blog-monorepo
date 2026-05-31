@@ -1,6 +1,6 @@
 # Acceptance Matrix
 
-Дата актуализации: `2026-05-31`.
+Дата актуализации: `2026-06-01`.
 
 ## Назначение
 
@@ -15,7 +15,7 @@
 - `Code/Build evidence` означает факт, подтвержденный кодом, build output или БД,
   но не прогнанный как полноценный пользовательский runtime-path.
 - `Pass` означает подтвержденный факт на актуальном baseline матрицы.
-- Статусы матрицы привязаны к baseline `2026-05-31`; результаты `2026-05-22`
+- Статусы матрицы привязаны к baseline `2026-06-01`; результаты `2026-05-22`
   сохраняются только как историческое build/perf/browser-tooling evidence там,
   где сценарий не перепроверялся отдельно позже.
 - `Partial` означает, что часть сценария подтверждена, но остаются ограничения среды,
@@ -79,7 +79,7 @@
 | `LOC-04` | Vacancies public locale boundary | Публичные вакансии живут вне `/:locale/...`, preview при этом locale-aware | Automated + Code/Build evidence | `Pass` | Подтверждено route helpers, runtime и build output. |
 | `PUBF-01` | Managed rebuild webhook exists | Активный `Frontend rebuild hook` есть в `strapi_webhooks` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
 | `PUBF-02` | Webhook events | Webhook подписан на `entry.publish` и `entry.unpublish` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
-| `PUBF-03` | External rebuild trigger | Реальный внешний `Dokploy` rebuild/redeploy после publish/unpublish | Manual / external | `Unverified` | В этой сессии не воспроизводился из-за нежелательности внешнего прод-подобного вызова. |
+| `PUBF-03` | External rebuild trigger | Реальный внешний `Dokploy` rebuild/redeploy после publish/unpublish | Manual / external | `Pass` | Подтверждено на внешнем стенде проекта `2026-06-01`: publish/unpublish в `Strapi` инициирует webhook, `Dokploy` запускает rebuild/redeploy, а обновление отражается на публичной `Astro`-витрине без ручной сборки frontend. |
 
 ## Accessibility And Performance Baseline
 
@@ -95,7 +95,7 @@
 
 ## Вывод для диплома
 
-По состоянию на `2026-05-31` у проекта есть воспроизводимая матрица приемки, где:
+По состоянию на `2026-06-01` у проекта есть воспроизводимая матрица приемки, где:
 
 - ключевые публичные сценарии подтверждены runtime и build evidence;
 - preview, формы и managed rebuild webhook подтверждены лучше, чем просто “по коду”;
@@ -103,5 +103,5 @@
   versioned `seed-content.js`, runtime, build и sitemap;
 - public indexability `home-page/page` подтверждена после нормализации versioned seed;
 - accessibility и performance усилены локальным Playwright browser audit;
-- незакрытым внешним сценарием остается только production-like rebuild после
-  publish/unpublish (`PUBF-03`).
+- внешний `Dokploy rebuild/redeploy` после publish/unpublish подтвержден отдельной
+  stand validation `2026-06-01`.
