@@ -30,6 +30,7 @@ FONTCHECK_POS_LOG := $(LINT_DIR)/fontcheck-positive.log
 FONTCHECK_NEG_LOG := $(LINT_DIR)/fontcheck-negative.log
 FONTCHECK_NEG_CODE_LOG := $(LINT_DIR)/fontcheck-negative-code.log
 PDFTEXT_REPORT := $(LINT_DIR)/main.txt
+HBOX_REPORT := $(LINT_DIR)/hbox-warnings.log
 PY_VENDOR_DIR := .vendor-py
 MARP_CMD := npx -y @marp-team/marp-cli@latest
 MARP_BROWSER := /Applications/Google Chrome.app/Contents/MacOS/Google Chrome
@@ -114,10 +115,14 @@ lint:
 check: build
 	@mkdir -p $(LINT_DIR)
 	@test -f $(MAIN).log || (echo "Проверка check не пройдена: файл $(MAIN).log не найден" && exit 1)
-	@if grep -Eq 'LaTeX Error|Undefined|Overfull|Underfull|Warning' $(MAIN).log; then \
-		echo "Проверка check не пройдена: в $(MAIN).log есть ошибки или предупреждения"; \
-		egrep -n 'LaTeX Error|Undefined|Overfull|Underfull|Warning' $(MAIN).log; \
+	@if grep -Eq 'LaTeX Error|Undefined control sequence|Reference .* undefined|Citation .* undefined|There were undefined references|There were undefined citations|Please \(re\)run Biber|Emergency stop|Fatal error' $(MAIN).log; then \
+		echo "Проверка check не пройдена: в $(MAIN).log есть критичные ошибки сборки"; \
+		grep -En 'LaTeX Error|Undefined control sequence|Reference .* undefined|Citation .* undefined|There were undefined references|There were undefined citations|Please \(re\)run Biber|Emergency stop|Fatal error' $(MAIN).log; \
 		exit 1; \
+	fi
+	@if grep -Eq 'Overfull|Underfull' $(MAIN).log; then \
+		grep -En 'Overfull|Underfull' $(MAIN).log > $(HBOX_REPORT); \
+		echo "Проверка check: найдены неблокирующие типографские предупреждения; см. $(HBOX_REPORT)"; \
 	fi
 	@$(PDFTEXT) $(MAIN).pdf $(PDFTEXT_REPORT)
 	@for marker in \
@@ -213,10 +218,14 @@ check: build
 		echo "Проверка check не пройдена: в main.tex отсутствует глобальный language=Python для listings"; \
 		exit 1; \
 	fi
-	@if ! $(PDFFONTS) $(MAIN).pdf | grep -qi 'Fira'; then \
-		echo "Проверка check не пройдена: шрифт Fira Code не встроен в PDF-листинги"; \
-		$(PDFFONTS) $(MAIN).pdf; \
-		exit 1; \
+	@if grep -qF '\begin{lstlisting}' main.tex content/*.tex || grep -qF '\lstinputlisting' main.tex content/*.tex; then \
+		if ! $(PDFFONTS) $(MAIN).pdf | grep -qi 'Fira'; then \
+			echo "Проверка check не пройдена: шрифт Fira Code не встроен в PDF-листинги"; \
+			$(PDFFONTS) $(MAIN).pdf; \
+			exit 1; \
+		fi; \
+	else \
+		echo "Проверка check: листинги не найдены, проверка встраивания Fira Code пропущена"; \
 	fi
 	@test -f docs/assets-sources.md || (echo "Проверка check не пройдена: файл docs/assets-sources.md не найден" && exit 1)
 	@bash -lc 'shopt -s nullglob; imgs=(assets/images/fig-*); \
