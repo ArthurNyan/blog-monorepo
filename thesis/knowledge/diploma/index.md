@@ -12,6 +12,7 @@
 - `agent-rules.md` — правила для агента по работе с LaTeX, проектом и содержанием диплома.
 - `chapter-2-evidence.md` — доказательная база по текущему состоянию `apps/cms` и `apps/front` для проектной главы.
 - `reference-theses-analysis.md` — сравнительный анализ похожих дипломов и выводы для собственной ВКР.
+- `chapter-1-restructure-plan.md` — исторический plan/rationale по переделке аналитической главы без блока про “исходное состояние проекта”; не основной active guidance source.
 - `iteration-roadmaps.md` — несколько дорожных карт для итерационной реализации максимального варианта и готовые промпты для агентов.
 - `improvement-prompts.md` — актуальный backlog доработок по проекту и диплому с приоритетами и готовыми промптами для агентов.
 
@@ -24,3 +25,6 @@
 5. При подготовке глав и аргументации сверяться с `reference-theses-analysis.md`.
 6. При доработке проекта и сборе материалов отмечать прогресс по `checkpoints.md`.
 7. Для любой агентной работы над дипломом или фронтендом соблюдать `agent-rules.md`.
+8. Для активной структуры главы 1 и новых prompts опираться на `thesis-structure.md`,
+   `final-thesis-outline.md`, `agent-rules.md` и `decision-log.md`, а
+   `chapter-1-restructure-plan.md` читать как history note перехода.

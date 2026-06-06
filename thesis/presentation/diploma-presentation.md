@@ -265,7 +265,7 @@ description: Презентация к выпускной квалификаци
 | SEO и sitemap | Проверены `title`, `canonical`, `og`-поля и генерация `sitemap-index.xml`. |
 | Форменные сценарии | `lead-submission` и `vacancy-application` валидируются на `server-side` и пишутся через технический токен. |
 | Rebuild contour | Managed webhook зарегистрирован в `Strapi` и привязан к событиям `publish/unpublish`. |
-| Security baseline | Public content API `read-only`; публикация отделена от редактирования ролями. |
+| Security contour | Public content API `read-only`; публикация отделена от редактирования ролями. |
 
 <div class="note center">Результаты опираются на локальную сборку, smoke-checks, browser/runtime-проверки и прямую верификацию CMS/SQLite evidence.</div>
 
