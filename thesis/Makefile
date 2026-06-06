@@ -126,7 +126,7 @@ check: build
 	fi
 	@$(PDFTEXT) $(MAIN).pdf $(PDFTEXT_REPORT)
 	@for marker in \
-		"Оглавление" \
+		"ОГЛАВЛЕНИЕ" \
 		"ВВЕДЕНИЕ" \
 		"Глава 1." \
 		"Аналитическая часть" \

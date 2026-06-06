@@ -129,21 +129,24 @@
 % Абзацная модель и колонтитул.
 \onehalfspacing
 \raggedbottom
+\newcommand{\gostvkr@pagenumber}{\textcolor[gray]{0.45}{\thepage}}
 \fancyhf{}
-\fancyfoot[R]{\thepage}
+\fancyhead[C]{\gostvkr@pagenumber}
 \renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 \pagestyle{fancy}
 \fancypagestyle{plain}{%
   \fancyhf{}
-  \fancyfoot[R]{\thepage}
+  \fancyhead[C]{\gostvkr@pagenumber}
   \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
 }
-% extbook в конце загрузки задаёт \pagestyle{headings} (номер страницы сверху).
-% Переопределяем headings и повторно фиксируем fancy после всех пакетов документа.
+% extbook в конце загрузки задаёт \pagestyle{headings}; фиксируем единый верхний колонтитул.
 \fancypagestyle{headings}{%
   \fancyhf{}%
-  \fancyhead[C]{\thepage}%
+  \fancyhead[C]{\gostvkr@pagenumber}%
   \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
 }
 \AtBeginDocument{%
   \pagestyle{fancy}%
@@ -167,21 +170,22 @@
 \renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
-\titleformat{\chapter}[block]{\normalfont\bfseries\normalsize\centering}{\chaptername\ \thechapter.}{0.5em}{}
-\titleformat{name=\chapter,numberless}[block]{\normalfont\bfseries\normalsize\centering}{}{0pt}{}
-\titlespacing*{\chapter}{0pt}{\baselineskip}{\baselineskip}
+\newcommand{\gostvkr@chapterfont}{\normalfont\bfseries\fontsize{16pt}{24pt}\selectfont}
+\titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\chaptername\ \thechapter.}{0.5em}{}
+\titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{}
+\titlespacing*{\chapter}{0pt}{0pt}{2\baselineskip}
 \titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{}
-\titlespacing*{\section}{\parindent}{\baselineskip}{0.5\baselineskip}
+\titlespacing*{\section}{\parindent}{0.75\baselineskip}{1.25\baselineskip}
 \titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{\thesubsection}{1em}{}
-\titlespacing*{\subsection}{\parindent}{\baselineskip}{0.5\baselineskip}
+\titlespacing*{\subsection}{\parindent}{0.5\baselineskip}{0.35\baselineskip}
 \titleformat{\subsubsection}[block]{\normalfont\bfseries\normalsize}{\thesubsubsection}{1em}{}
-\titlespacing*{\subsubsection}{\parindent}{0.75\baselineskip}{0.5\baselineskip}
+\titlespacing*{\subsubsection}{\parindent}{0.5\baselineskip}{0.25\baselineskip}
 
 % Оглавление всегда на отдельной странице и в центре.
-\renewcommand{\contentsname}{Оглавление}
-\gappto\captionsrussian{\renewcommand{\contentsname}{Оглавление}}
+\renewcommand{\contentsname}{ОГЛАВЛЕНИЕ}
+\gappto\captionsrussian{\renewcommand{\contentsname}{ОГЛАВЛЕНИЕ}}
 \AtBeginDocument{%
-  \renewcommand{\contentsname}{Оглавление}%
+  \renewcommand{\contentsname}{ОГЛАВЛЕНИЕ}%
   \renewcommand{\tableofcontents}{%
     \clearpage
     \chapter*{\contentsname}
@@ -209,9 +213,9 @@
 \settowidth{\cftchapnumwidth}{\chaptername\ 10.\ }
 
 % Подписи объектов и гиперссылки.
-\captionsetup{font=normalfont,labelfont=normalfont,singlelinecheck=false}
+\captionsetup{font=small,labelfont=normalfont,singlelinecheck=false}
 \captionsetup[figure]{name=Рисунок,labelsep=endash,justification=centering}
-\captionsetup[table]{name=Таблица,labelsep=endash,justification=raggedright,singlelinecheck=false,position=top}
+\captionsetup[table]{name=Таблица,labelsep=endash,justification=raggedright,singlelinecheck=false,position=top,indention=\parindent}
 
 \hypersetup{
   unicode=true,
