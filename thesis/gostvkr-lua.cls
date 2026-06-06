@@ -129,6 +129,8 @@
 % Абзацная модель и колонтитул.
 \onehalfspacing
 \raggedbottom
+\setlength{\emergencystretch}{3em}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \newcommand{\gostvkr@pagenumber}{\textcolor[gray]{0.45}{\thepage}}
 \fancyhf{}
 \fancyhead[C]{\gostvkr@pagenumber}
@@ -153,7 +155,6 @@
 }
 \setlength{\parindent}{1.25cm}
 \setlength{\parskip}{0pt}
-\setlength{\emergencystretch}{3em}
 \setlist{nosep,topsep=0.5\baselineskip,leftmargin=1.6\parindent}
 
 \clubpenalty=10000
@@ -234,6 +235,7 @@
   bibencoding=utf8
 }
 \expandafter\RequirePackage\expandafter[\gostvkr@biblatexoptions]{biblatex}
+\AtBeginBibliography{\sloppy\hbadness=10000}
 \DefineBibliographyStrings{russian}{%
   urlseen = {дата обращения}%
 }
