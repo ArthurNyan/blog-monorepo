@@ -10,7 +10,7 @@ actor "Посетитель сайта" as Visitor
 rectangle "Monorepo Nx + pnpm" {
   package "apps/cms\nStrapi 5" as CmsApp {
     component "Strapi Admin UI" as AdminUi
-    component "Content types\npage, home-page, global,\narticle, project, vacancy,\nvacancy-application" as ContentModel
+    component "Content types\npage, home-page, global,\narticle, author, project,\nvacancy, vacancy-application,\nlead-submission, industry,\njob-role" as ContentModel
     component "Preview config\nconfig/admin.ts" as PreviewConfig
     component "Published-only middleware\nenforce-published.ts" as PublishGuard
     component "REST API + OpenAPI docs" as CmsApi
@@ -18,7 +18,7 @@ rectangle "Monorepo Nx + pnpm" {
 
   package "apps/front\nAstro 6" as FrontApp {
     component "Localized public routes\n/ru/, /en/, /:locale/:slug/" as PublicRoutes
-    component "Collection routes\n/articles, /projects, /vacancies" as CollectionRoutes
+    component "Content routes\n/:locale/articles, /:locale/projects,\n/vacancies, /vacancies/:slug/" as CollectionRoutes
     component "Preview routes\n/api/preview, /preview/..." as PreviewRoutes
     component "Layout + SEO rendering\nmain.astro" as LayoutSeo
     component "Generated SDK + custom data layer" as FrontData
@@ -39,12 +39,12 @@ PublishGuard --> CmsApi : ограничивает публичные GET\nstatu
 CmsApi --> SqliteDb : чтение и запись данных
 CmsApi --> OpenApiJson : публикует схему API
 
-FrontData ..> OpenApiJson : generated client\narticles/projects
+FrontData ..> OpenApiJson : generated client\narticles/projects/vacancies
 FrontData ..> CmsApi : published API requests
 PreviewRoutes ..> CmsApi : draft requests\nx-preview-secret
 
 PublicRoutes --> FrontData : home-page + pages
-CollectionRoutes --> FrontData : articles/projects/vacancies
+CollectionRoutes --> FrontData : locale-prefixed\narticles/projects + vacancies
 PreviewRoutes --> FrontData : draft fetchers
 
 PublicRoutes --> LayoutSeo
@@ -55,12 +55,13 @@ Visitor --> PublicRoutes : открывает локализованную ви�
 Visitor --> CollectionRoutes : открывает контентные разделы
 Editor --> PreviewRoutes : открывает ссылку preview
 
-note right of PublicRoutes
-Locale-prefixed public routes
-currently cover home-page and pages.
-articles, projects and vacancies
-remain outside the full locale-prefixed
-public routing contour.
+note right of CollectionRoutes
+articles and projects use
+locale-prefixed public routes.
+legacy /articles and /projects
+redirect to the default locale.
+vacancies remain standalone
+outside the /:locale/... contour.
 end note
 
 note bottom of PreviewRoutes

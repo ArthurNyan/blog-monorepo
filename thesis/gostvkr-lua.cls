@@ -171,8 +171,8 @@
 \renewcommand{\thesubsubsection}{\thesubsection.\arabic{subsubsection}}
 
 \newcommand{\gostvkr@chapterfont}{\normalfont\bfseries\fontsize{16pt}{24pt}\selectfont}
-\titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\chaptername\ \thechapter.}{0.5em}{}
-\titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{}
+\titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\MakeUppercase{\chaptername}\ \thechapter.}{0.5em}{\MakeUppercase}
+\titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{2\baselineskip}
 \titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{}
 \titlespacing*{\section}{\parindent}{0.75\baselineskip}{1.25\baselineskip}
@@ -234,6 +234,9 @@
   bibencoding=utf8
 }
 \expandafter\RequirePackage\expandafter[\gostvkr@biblatexoptions]{biblatex}
+\DefineBibliographyStrings{russian}{%
+  urlseen = {дата обращения}%
+}
 
 % ----------------------- Данные титульного листа -----------------------------
 % Значения по умолчанию можно переопределить через \gostsetup{...}.

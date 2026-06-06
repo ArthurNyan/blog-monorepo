@@ -91,6 +91,21 @@ class VacancyApplication {
   +source: string?
 }
 
+class LeadSubmission {
+  +fullName: string
+  +email: email
+  +phone: string?
+  +companyName: string?
+  +message: text
+  +consent: boolean
+  +submittedAt: datetime?
+  +source: string?
+  +formName: string?
+  +pagePath: string?
+  +pageTitle: string?
+  +locale: string?
+}
+
 class Industry {
   +name: string
   +slug: uid
@@ -105,6 +120,16 @@ class UploadFile {
   +url: string
   +mime: string
   +size: number
+}
+
+class LeadFormBlock {
+  +formName: string
+  +eyebrow: string?
+  +heading: string
+  +description: text?
+  +submitLabel: string?
+  +successMessage: text?
+  +consentLabel: text?
 }
 
 LocalizedDraftEntity <|-- Page
@@ -132,6 +157,7 @@ Article "0..*" -- "0..*" Author : authors
 Vacancy "0..*" --> "1" Industry : industry
 Vacancy "0..*" --> "1" JobRole : role
 VacancyApplication "0..*" --> "1" Vacancy : vacancy
+PageBlock ..> LeadFormBlock : blocks.lead-form
 
 note right of PageBlock
 Dynamic Zone currently supports:
@@ -139,7 +165,8 @@ hero, rich-text, feature-cards, cta,
 preview-list, logo-cloud, testimonials,
 stats, feature-highlight, faq,
 process-timeline, quote, checklist,
-content-columns, numbered-points
+content-columns, numbered-points,
+lead-form
 end note
 
 note bottom of LocalizedDraftEntity
@@ -149,6 +176,12 @@ end note
 
 note bottom of VacancyApplication
 Vacancy application is an applied record:
+it does not use i18n or draft/publish.
+end note
+
+note bottom of LeadSubmission
+Lead submission is an applied record
+created from the lead-form block context:
 it does not use i18n or draft/publish.
 end note
 
