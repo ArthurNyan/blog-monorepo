@@ -177,9 +177,9 @@
 \titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\MakeUppercase{\chaptername}\ \thechapter.}{0.5em}{\MakeUppercase}
 \titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{-0.5\baselineskip}{1.1\baselineskip}
-\titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{\MakeUppercase}
-\titleformat{name=\section,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{\MakeUppercase}
-\titlespacing*{\section}{\parindent}{0.75\baselineskip}{0.55\baselineskip}
+\titleformat{\section}[block]{\normalfont\bfseries\normalsize\centering}{\thesection}{1em}{\MakeUppercase}
+\titleformat{name=\section,numberless}[block]{\normalfont\bfseries\normalsize\centering}{}{0pt}{\MakeUppercase}
+\titlespacing*{\section}{0pt}{0.75\baselineskip}{0.55\baselineskip}
 \titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titleformat{name=\subsection,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titlespacing*{\subsection}{\parindent}{0.25\baselineskip}{0.1\baselineskip}
