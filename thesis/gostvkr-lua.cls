@@ -176,7 +176,7 @@
 \newcommand{\gostvkr@chapterfont}{\normalfont\bfseries\fontsize{16pt}{24pt}\selectfont}
 \titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\MakeUppercase{\chaptername}\ \thechapter.}{0.5em}{\MakeUppercase}
 \titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{\MakeUppercase}
-\titlespacing*{\chapter}{0pt}{0pt}{2\baselineskip}
+\titlespacing*{\chapter}{0pt}{-0.5\baselineskip}{1.1\baselineskip}
 \titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{\MakeUppercase}
 \titleformat{name=\section,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{\MakeUppercase}
 \titlespacing*{\section}{\parindent}{0.75\baselineskip}{0.55\baselineskip}
