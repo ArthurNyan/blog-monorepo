@@ -60,12 +60,12 @@ backend и потребителями данных. Во-вторых, для \t
 контент создается и проходит публикационный жизненный цикл в \texttt{Strapi}, после
 чего frontend запрашивает уже опубликованные данные и использует их для формирования
 публичных страниц. Для \texttt{home-page}, \texttt{page}, а также для разделов
-\texttt{articles} и \texttt{projects} эта схема реализована в locale-prefixed
-маршрутах, тогда как карьерный модуль \texttt{vacancies} публикуется как отдельный
+\texttt{articles} и \texttt{projects} эта схема реализована в маршрутах с языковым
+префиксом, тогда как карьерный модуль \texttt{vacancies} публикуется как отдельный
 прикладной контур с маршрутами \texttt{/vacancies/} и \texttt{/vacancies/:slug/}. Тем
-самым маршрутная граница витрины следует принятому scope: storefront-core строится как
-двуязычный маркетинговый контур, а кадровый сценарий сохраняет собственную публичную
-поверхность при общей \texttt{CMS}-модели данных.
+самым маршрутная граница витрины следует принятому объему работы: основная витрина
+строится как двуязычный маркетинговый контур, а кадровый сценарий сохраняет собственную
+публичную поверхность при общей \texttt{CMS}-модели данных.
 
 На стороне frontend этот подход поддерживается конфигурацией \texttt{Astro}: подключены
 адаптер \texttt{Node.js}, модуль \texttt{sitemap} и абсолютный \texttt{site}-контракт
@@ -73,7 +73,7 @@ backend и потребителями данных. Во-вторых, для \t
 основой для отдельного \texttt{Docker}-приложения витрины, которое далее разворачивается
 в \texttt{Dokploy}. При этом базовый режим работы остается статически ориентированным:
 основные публичные маршруты публикуются как заранее подготовленный результат, а
-server-side логика используется только там, где она действительно нужна, прежде всего
+серверная логика используется только там, где она действительно нужна, прежде всего
 для \texttt{preview}. Практический эффект заключается в предсказуемой публикации
 контента: \texttt{CMS} управляет данными и событиями публикации, а витрина отдает уже
 сформированное представление.
@@ -223,19 +223,19 @@ frontend, а в \texttt{Dynamic Zone} на стороне \texttt{CMS}. Имен
 собираются из разрозненных frontend-констант.
 
 С инженерной точки зрения это означает, что главная витрина и маркетинговые
-\texttt{slug}-страницы уже работают как единый \texttt{CMS-first} storefront: появление
+\texttt{slug}-страницы уже работают как единая \texttt{CMS-first} витрина: появление
 или изменение страницы определяется публикацией записи в \texttt{Strapi}, а не созданием
-нового route-файла. Такой способ построения multilingual route-контура соответствует как
+нового route-файла. Такой способ построения мультиязычного маршрутного контура соответствует как
 встроенной \texttt{i18n}-модели \texttt{Astro}, так и рекомендациям по публикации
 локализованных версий страниц для поисковых систем~\cite{astro-i18n-routing,google-international-sites}.
 На рисунке~\ref{fig:chapter2-home-en-route} показана английская версия главной страницы
-по маршруту \texttt{/en/}; тот же принцип locale-prefixed адресации используется и для
-управляемых \texttt{CMS}-страниц с маршрутами вида \texttt{/:locale/:slug/}.
+по маршруту \texttt{/en/}; тот же принцип адресации с языковым префиксом используется и
+для управляемых \texttt{CMS}-страниц с маршрутами вида \texttt{/:locale/:slug/}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{assets/front/home-en-with-url.png}
-  \caption{Публичная витрина в locale-prefixed маршруте \texttt{/en/}, опубликованная на основе данных из CMS}\label{fig:chapter2-home-en-route}
+  \caption{Публичная витрина в маршруте с языковым префиксом \texttt{/en/}, опубликованная на основе данных из CMS}\label{fig:chapter2-home-en-route}
 \end{figure}
 
 \subsection{Статьи, проекты и карьерный модуль}
@@ -243,7 +243,7 @@ frontend, а в \texttt{Dynamic Zone} на стороне \texttt{CMS}. Имен
 Frontend не ограничивается page builder-маршрутами и тем самым завершает превращение
 \texttt{CMS} из хранилища страниц в источник всей публичной витрины. Для
 \texttt{articles} и \texttt{projects} реализованы отдельные коллекционные разделы,
-встроенные в locale-prefixed маршрутный контур \texttt{/:locale/articles/*} и
+встроенные в маршрутный контур с языковым префиксом \texttt{/:locale/articles/*} и
 \texttt{/:locale/projects/*}. Списковые страницы этих разделов используют
 сгенерированный типизированный клиент, а детальные страницы загружают полную сущность по
 \texttt{slug}. Практический эффект такого решения состоит в том, что одна и та же
@@ -273,9 +273,9 @@ Frontend не ограничивается page builder-маршрутами и 
 Отдельно от карьерного сценария реализован маркетинговый прикладной контур для
 \texttt{home-page} и \texttt{page}. Если редактор добавляет в \texttt{Dynamic Zone}
 блок \texttt{lead-form}, frontend рендерит встроенную форму, валидирует ее на клиенте и
-затем передает данные в server-side маршрут \texttt{/api/lead-submissions}. Этот маршрут
+затем передает данные в серверный маршрут \texttt{/api/lead-submissions}. Этот маршрут
 повторно проверяет payload, применяет \texttt{honeypot} и создает запись
-\texttt{lead-submission} в \texttt{Strapi} через server-side \texttt{API token}. За счет
+\texttt{lead-submission} в \texttt{Strapi} через технический серверный \texttt{API token}. За счет
 этого page builder доводится до полного практического цикла: \texttt{CMS} определяет не
 только состав секций страницы, но и сценарий получения маркетингового лида с сохранением
 контекста страницы и локали.
@@ -304,8 +304,8 @@ frontend как к слою публикации этого контента в 
 frontend, а в самой модели данных, включая \texttt{slug} и связанные поля.
 
 Публичная витрина использует этот слой данных в трех взаимосвязанных точках. Во-первых,
-локали участвуют в генерации storefront-core маршрутов \texttt{/ru/}, \texttt{/en/},
-\texttt{/:locale/:slug/}, а также locale-prefixed разделов \texttt{articles} и
+локали участвуют в генерации маршрутов основной витрины \texttt{/ru/}, \texttt{/en/},
+\texttt{/:locale/:slug/}, а также локализованных разделов \texttt{articles} и
 \texttt{projects}. Во-вторых, layout вычисляет по активной локали атрибут
 \texttt{html[lang]}, \texttt{canonical} и значение \texttt{og:locale}. В-третьих,
 локаль передается в \texttt{preview}-сценарий, поэтому редактор видит черновую версию
@@ -317,11 +317,11 @@ frontend, а в самой модели данных, включая \texttt{slu
 Граница охвата при этом проведена явно. Для карьерного модуля локализуются сущности
 \texttt{vacancy}, \texttt{industry} и \texttt{job-role}, а \texttt{preview} вакансий
 принимает явную локаль и обращается к соответствующей версии записи. Однако
-production-публикация карьерного сценария не переводится в обязательный
-locale-prefixed контур \texttt{/:locale/vacancies/*}. В итоговом scope это означает
-не ``полную мультиязычность всего сайта'', а двуязычный storefront-core плюс отдельный
-прикладной production-контур \texttt{/vacancies/*} с локализуемыми данными на стороне
-\texttt{CMS}.
+production-публикация карьерного сценария не переводится в обязательный контур
+\texttt{/:locale/vacancies/*} с языковым префиксом. В итоговом объеме работы это
+означает не ``полную мультиязычность всего сайта'', а двуязычную основную витрину плюс
+отдельный прикладной публичный контур \texttt{/vacancies/*} с локализуемыми данными на
+стороне \texttt{CMS}.
 
 \subsection{CMS-управляемые глобальные данные}
 
@@ -330,18 +330,18 @@ locale-prefixed контур \texttt{/:locale/vacancies/*}. В итоговом 
 активной локали и передает в \texttt{Header} и \texttt{Footer} навигацию, \texttt{CTA},
 описание компании, колонки футера и другие общие данные сайта. Практический эффект
 этого решения состоит в том, что редактор управляет не только телом конкретной страницы,
-но и общей языковой конфигурацией storefront-core без правки frontend-кода.
+но и общей языковой конфигурацией основной витрины без правки frontend-кода.
 
-Этот контур подтверждается кодом layout-слоя и route-level загрузкой
-\texttt{global}-данных для активной локали, а также браузерными и smoke-проверками
+Этот контур подтверждается кодом layout-слоя и загрузкой \texttt{global}-данных на
+уровне маршрутов для активной локали, а также браузерными и smoke-проверками
 репрезентативных маршрутов \texttt{ru/en}. Его текущая граница также зафиксирована
-явно: \texttt{CMS}-управляемыми являются общие данные storefront-core, тогда как часть
-\texttt{UI}-copy отдельного карьерного production-контура остается route-owned и не
-заявляется как полностью редакторски локализованный слой.
+явно: \texttt{CMS}-управляемыми являются общие данные основной витрины, тогда как часть
+интерфейсных текстов отдельного карьерного публичного контура остается заданной на
+уровне маршрутов и не заявляется как полностью редакторски локализованный слой.
 
 \section{Preview и защищенный доступ к черновикам}
 
-\subsection{Server-side \texttt{preview} на стороне frontend}
+\subsection{Серверный \texttt{preview} на стороне frontend}
 
 Контур \texttt{preview} нужен системе для разведения редакторской проверки и публичной
 публикации. Для маркетинговой витрины и карьерного модуля это принципиально, поскольку
@@ -360,7 +360,7 @@ locale-prefixed контур \texttt{/:locale/vacancies/*}. В итоговом 
 допустимые preview-ссылки для \texttt{home-page}, \texttt{page}, \texttt{article},
 \texttt{project} и \texttt{vacancy}. Для \texttt{home-page} используется отдельная цель
 \texttt{home}, а для остальных сущностей \texttt{CMS} извлекает \texttt{slug} и строит
-ссылку на frontend entry point \texttt{/api/preview}. Последовательность этого сценария
+ссылку на точку входа frontend \texttt{/api/preview}. Последовательность этого сценария
 приведена на рисунке~\ref{fig:chapter2-cms-preview-sequence} в приложении~Г.
 
 Для хранения preview-сессии frontend использует отдельный \texttt{httpOnly} cookie.
@@ -394,9 +394,9 @@ published-адресу и наличие \texttt{noindex} на preview-стра�
 документации и не содержащих корректный \texttt{x-preview-secret}, принудительно
 выставляет \texttt{status=published}. Тем самым обычный запрос витрины или внешнего
 клиента получает только опубликованные данные, а чтение черновиков остается доступным
-лишь для server-side preview-контура.
+лишь для серверного preview-контура.
 
-Этот слой подтверждается кодом middleware и route-level поведением preview-маршрутов.
+Этот слой подтверждается кодом middleware и маршрутным поведением preview-маршрутов.
 Приемочные проверки отдельно воспроизводят отказ по неверному секрету и корректный
 доступ к draft-версии только через \texttt{/preview/*}. Граница здесь сознательно
 консервативна. Доступ к черновикам строится на общем секрете между \texttt{CMS} и
@@ -438,19 +438,20 @@ public, так и для preview-страниц.
 \texttt{slug}-страницы и детальные маршруты \texttt{article}, \texttt{project} и
 \texttt{vacancy}. Следовательно, страницы \texttt{/:locale/articles/:slug/},
 \texttt{/:locale/projects/:slug/} и \texttt{/vacancies/:slug/}, а также их preview-аналоги
-используют тот же editor-managed \texttt{SEO}-контракт, что и
-\texttt{home-page}/\texttt{page}. Для вакансий это особенно важно: отдельная production
+используют тот же управляемый через \texttt{CMS} \texttt{SEO}-контракт, что и
+\texttt{home-page}/\texttt{page}. Для вакансий это особенно важно: отдельная публичная
 маршрутная граница карьерного модуля не выводит детальные вакансии за пределы общего
 \texttt{SEO}-контура.
 
 В то же время списковые страницы \texttt{/:locale/articles/}, \texttt{/:locale/projects/}
-и \texttt{/vacancies/} не получают отдельного \texttt{CMS}-driven editing flow. Для них
-заголовок, описание и маршрутная семантика формируются на уровне route-файлов и затем
-проходят через тот же \texttt{buildSeoMetadata}- и layout-механизм. Это означает, что
-list-page \texttt{SEO} остается route-owned поверхностью: единый рендер метатегов
-охватывает весь storefront, но редакторски управляемая поверхность намеренно ограничена
-ключевыми страницами и detail entries. Такая граница подтверждается самими route-файлами
-списков \texttt{articles/projects/vacancies} и не должна подменяться формулировкой о
+и \texttt{/vacancies/} не получают отдельной редакторской настройки через \texttt{CMS}.
+Для них заголовок, описание и маршрутная семантика формируются на уровне файлов маршрутов
+и затем проходят через тот же \texttt{buildSeoMetadata}- и layout-механизм. Это означает,
+что метаданные списковых страниц формируются на уровне маршрутов: единый рендер
+метатегов охватывает всю витрину, но редакторски управляемая поверхность намеренно
+ограничена ключевыми страницами и детальными страницами сущностей. Такая граница
+подтверждается самими route-файлами списков \texttt{articles/projects/vacancies} и не
+должна подменяться формулировкой о
 ``полностью \texttt{CMS}-управляемом \texttt{SEO}'' для всех публичных разделов.
 
 Конфигурация frontend дополнительно подключает \texttt{@astrojs/sitemap}, а абсолютный
@@ -459,44 +460,45 @@ list-page \texttt{SEO} остается route-owned поверхностью: е
 \texttt{URL}-контракта. Этот слой подтверждается конфигурацией \texttt{Astro}, сборочным
 выводом \texttt{sitemap-index.xml}/\texttt{sitemap-0.xml} и приемочными проверками
 публичных маршрутов. Его текущая граница также определена явно: \texttt{sitemap}
-публикует public storefront и карьерный раздел как отдельную публичную поверхность, но
-не трактует \texttt{vacancies} как двуязычный набор locale-prefixed маршрутов.
+публикует основную витрину и карьерный раздел как отдельные публичные поверхности, но
+не трактует \texttt{vacancies} как двуязычный набор маршрутов с языковым префиксом.
 
-\subsection{Публикационный контур и rebuild frontend}
+\subsection{Публикационный контур и пересборка frontend}
 
 Публикационный контур нужен для того, чтобы редакторское действие \texttt{publish} в
 \texttt{Strapi} приводило к воспроизводимому обновлению предсобранной витрины, а не к
-ручному запуску frontend-сборки. В архитектуре с раздельными \texttt{CMS} и storefront
+ручному запуску frontend-сборки. В архитектуре с раздельными \texttt{CMS} и витриной
 это обязательный эксплуатационный слой: после публикации запись должна не только стать
 доступной по \texttt{API}, но и попасть в новый build публичного frontend-приложения.
 
-Реализация выстроена как versioned \texttt{CMS}-owned entry point с внешним платформенным
-исполнителем. Во время \texttt{bootstrap} backend синхронизирует managed webhook в
+Реализация выстроена как версионируемая точка входа \texttt{CMS} с внешним платформенным
+исполнителем. Во время \texttt{bootstrap} backend синхронизирует автоматически
+регистрируемый webhook в
 \texttt{strapi\_webhooks} и, соответственно, в разделе \texttt{Settings -> Webhooks}
 административной панели. Этот webhook имеет детерминированное имя, подписан только на
-\texttt{entry.publish} и \texttt{entry.unpublish} и указывает не на внешний rebuild hook
-напрямую, а на versioned маршрут \texttt{\$\{PUBLIC\_URL\}/api/rebuild}. Если
+\texttt{entry.publish} и \texttt{entry.unpublish} и указывает не на внешний webhook
+пересборки напрямую, а на версионируемый маршрут \texttt{\$\{PUBLIC\_URL\}/api/rebuild}. Если
 \texttt{FRONTEND\_REBUILD\_HOOK\_TOKEN} задан, \texttt{Strapi} добавляет
 \texttt{x-rebuild-token}; контроллер \texttt{POST /api/rebuild} валидирует его и уже
 серверно вызывает внешний \texttt{DOKPLOY\_DEPLOY\_WEBHOOK\_URL}, передавая branch и
 repository через \texttt{DOKPLOY\_DEPLOY\_BRANCH} и
 \texttt{DOKPLOY\_DEPLOY\_REPOSITORY}. Тем самым публикация оформлена как схема
-\texttt{Strapi -> managed webhook -> CMS /api/rebuild -> Dokploy deploy webhook}, а не
+\texttt{Strapi -> автоматически регистрируемый webhook -> CMS /api/rebuild -> Dokploy deploy webhook}, а не
 как неформальная ручная связка между редактором и платформой.
 
 Если \texttt{PUBLIC\_URL} или \texttt{DOKPLOY\_DEPLOY\_WEBHOOK\_URL} не заданы, \texttt{CMS}
 не пытается эмулировать внешний deployment: при \texttt{bootstrap} фиксируется
-предупреждение, а managed webhook остается disabled. Эта граница принципиальна для
-академически корректного описания системы: versioned в репозитории является
-\texttt{CMS}-owned publication path и \texttt{env}-контракт, но не platform-state
-\texttt{Dokploy}. Практически контур подтвержден тремя слоями evidence: кодом
-\texttt{publication-webhook.ts} и \texttt{/api/rebuild}, локальным появлением записи в
+предупреждение, а webhook остается неактивным. Эта граница принципиальна для
+академически корректного описания системы: в репозитории зафиксированы
+\texttt{CMS}-маршрут публикации и \texttt{env}-контракт, но не текущее состояние
+платформы \texttt{Dokploy}. Практически контур подтвержден тремя слоями доказательств:
+кодом \texttt{publication-webhook.ts} и \texttt{/api/rebuild}, локальным появлением записи в
 \texttt{strapi\_webhooks} при запуске \texttt{Strapi}, а также внешней стендовой
 валидацией от 1 июня 2026 года, где был воспроизведен полный путь
 \texttt{publish/unpublish -> webhook -> Dokploy rebuild/redeploy -> обновление Astro-витрины}.
 
 Практически этот слой настройки виден на
-рисунке~\ref{fig:chapter2-strapi-webhook}: managed webhook
+рисунке~\ref{fig:chapter2-strapi-webhook}: автоматически регистрируемый webhook
 \texttt{Frontend rebuild hook} зарегистрирован в \texttt{Settings -> Webhooks},
 указывает на внешний URL rebuild-hook и подписан на события
 \texttt{publish}/\texttt{unpublish} для сущностей типа \texttt{Entry}.
@@ -504,23 +506,23 @@ repository через \texttt{DOKPLOY\_DEPLOY\_BRANCH} и
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{assets/strapi-images/strapi-webhook.png}
-  \caption{Managed rebuild webhook в \texttt{Strapi}: целевой URL и подписка на \texttt{entry.publish}/\texttt{entry.unpublish}}\label{fig:chapter2-strapi-webhook}
+  \caption{Автоматически регистрируемый webhook пересборки в \texttt{Strapi}: целевой URL и подписка на \texttt{entry.publish}/\texttt{entry.unpublish}}\label{fig:chapter2-strapi-webhook}
 \end{figure}
 
-На стороне frontend этот сценарий опирается на отдельный deployment bundle
+На стороне frontend этот сценарий опирается на отдельный пакет развертывания
 \texttt{apps/front/Dockerfile}, где build-stage формирует standalone output
 \texttt{Astro}, а runtime-stage запускает серверное приложение на порту \texttt{4321}.
 Именно это отдельное frontend \texttt{Docker}-приложение пересобирается и повторно
 развертывается в \texttt{Dokploy}. Публичные маршруты при этом сохраняют модель
 предварительной сборки, \texttt{sitemap} генерируется как часть build-контура, а
-server-side логика используется точечно для \texttt{preview}. Следовательно, публикация
+серверная логика используется точечно для \texttt{preview}. Следовательно, публикация
 в рамках ВКР описывается как зрелый эксплуатационный контур без ручного участия
-редактора в build/deploy-процедурах и без утверждения, что весь runtime
-\texttt{Dokploy} versioned внутри репозитория.
+редактора в build/deploy-процедурах и без утверждения, что вся runtime-конфигурация
+\texttt{Dokploy} зафиксирована внутри репозитория.
 
-\subsection{Deployment-архитектура frontend и CMS}
+\subsection{Архитектура развертывания frontend и CMS}
 
-Deployment-контур нужен системе для воспроизводимого разведения двух исполняемых ролей:
+Контур развертывания нужен системе для воспроизводимого разведения двух исполняемых ролей:
 публичной витрины и \texttt{CMS}-ядра. В production-модели, ориентированной на
 \texttt{Dokploy}, frontend и \texttt{CMS} разворачиваются как два независимых
 \texttt{Docker}-приложения. Frontend собирается из \texttt{apps/front/Dockerfile},
@@ -528,14 +530,14 @@ Deployment-контур нужен системе для воспроизвод�
 \texttt{Node.js}-приложение. \texttt{CMS} собирается из \texttt{apps/cms/Dockerfile} и
 запускает production build \texttt{Strapi}. Такое разделение соответствует фактической
 архитектуре проекта: витрина и \texttt{CMS} обслуживаются независимо, но остаются
-связаны единым publication-контуром. На платформенном уровне это выражается как
+связаны единым публикационным контуром. На платформенном уровне это выражается как
 отдельные сервисы \texttt{astro}, \texttt{strapi} и \texttt{pg} в
 \texttt{Dokploy}, что показано на рисунке~\ref{fig:chapter2-dokploy-project}.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{assets/dokploy/project-home.png}
-  \caption{Production-окружение в \texttt{Dokploy} с раздельными сервисами \texttt{astro}, \texttt{strapi} и \texttt{pg}}\label{fig:chapter2-dokploy-project}
+  \caption{Рабочее окружение в \texttt{Dokploy} с раздельными сервисами \texttt{astro}, \texttt{strapi} и \texttt{pg}}\label{fig:chapter2-dokploy-project}
 \end{figure}
 
 Для \texttt{CMS} в репозитории дополнительно зафиксирован переносимый runtime-контур на
@@ -543,22 +545,22 @@ Deployment-контур нужен системе для воспроизвод�
 сервис \texttt{cms} с приложением \texttt{Strapi}, сервис \texttt{cms-db} с
 \texttt{PostgreSQL} и persistent volume для \texttt{uploads}. Этот слой нужен не как
 замена \texttt{Dokploy}, а как фиксируемое в репозитории описание минимально
-необходимой инфраструктуры \texttt{CMS}. На практике deployment-модель выражается
-через раздельные bundles frontend и \texttt{CMS}, а также через согласованный
+необходимой инфраструктуры \texttt{CMS}. На практике модель развертывания выражается
+через раздельные пакеты развертывания frontend и \texttt{CMS}, а также через согласованный
 \texttt{env}-контракт. Для frontend в нем задаются публичный адрес витрины, адрес
 \texttt{CMS}, API-токен и preview-секрет. Для \texttt{CMS} задаются внешний адрес,
 proxy-настройка, параметры rebuild-контура, параметры БД и секреты \texttt{Strapi}.
 Конкретные значения и учетные данные остаются ручной эксплуатационной настройкой и не
-экспортируются в репозиторий как versioned секреты.
+экспортируются в репозиторий как версионируемые секреты.
 
-Доказательная база deployment-контура разделена по уровням. Репозиторий подтверждает
+Доказательная база контура развертывания разделена по уровням. Репозиторий подтверждает
 наличие \texttt{Dockerfile}, \texttt{compose.yml} и \texttt{env}-контракта; локальный
 контур проверки подтверждает успешные production build frontend и \texttt{CMS}, а также
 валидацию итоговой \texttt{compose}-конфигурации; внешний \texttt{Dokploy}-сегмент
 подтверждается отдельными платформенными артефактами и стендовой валидацией. Поэтому
 в тексте ВКР корректно говорить именно о \texttt{Dokploy}-ориентированном
-deployment-контуре с versioned application bundles в репозитории и внешним
-platform-state на стороне оркестратора.
+контуре развертывания с версионируемыми пакетами приложения в репозитории и внешним
+состоянием платформы на стороне оркестратора.
 
 Платформенная привязка публичного frontend-домена показана на
 рисунке~\ref{fig:chapter2-dokploy-astro-domain}: для приложения \texttt{astro}
@@ -572,17 +574,18 @@ platform-state на стороне оркестратора.
 \end{figure}
 
 Такое разделение важно и методически. В тексте ВКР контур развертывания описывается не
-как устная инструкция по ручному запуску, а как формализованная схема, где application
-bundles, инфраструктурные зависимости и публикационный механизм выражены в
+как устная инструкция по ручному запуску, а как формализованная схема, где пакеты
+приложений, инфраструктурные зависимости и публикационный механизм выражены в
 репозитории, а внешняя платформа выступает исполнителем этих артефактов.
 
 Локально был подтвержден корректный синтаксис и связность \texttt{compose}-контура через
 валидацию итоговой конфигурации. Дополнительно production build самого приложения
 \texttt{Strapi} был выполнен успешно; отдельно воспроизводился и production build
-frontend с генерацией публичных маршрутов и \texttt{sitemap}. При этом сама platform-state
-конфигурация \texttt{Dokploy} относится к внешнему инфраструктурному сегменту. Поэтому
+frontend с генерацией публичных маршрутов и \texttt{sitemap}. При этом сама
+конфигурация \texttt{Dokploy} как состояние внешней платформы относится к внешнему
+инфраструктурному сегменту. Поэтому
 данный результат корректно описывать как \texttt{Dokploy}-ориентированный
-deployment-контур, зафиксированный в репозитории, локально подтвержденный сборками
+контур развертывания, зафиксированный в репозитории, локально подтвержденный сборками
 приложений и конфигурационной валидацией, а также дополнительно подтвержденный внешней
 \texttt{end-to-end} валидацией на стенде проекта.
 
@@ -590,7 +593,7 @@ deployment-контур, зафиксированный в репозитори�
 
 \subsection{Валидация публичных форм}
 
-Публичные формы являются главным прикладным security-контуром витрины, поскольку именно
+Публичные формы являются главным прикладным контуром безопасности витрины, поскольку именно
 здесь внешний пользователь взаимодействует с системой не только на чтение, но и на
 создание данных. Поэтому задача этого раздела состоит не в описании абстрактной защиты
 \texttt{CMS}, а в показе того, как система ограничивает публичную поверхность ввода и
@@ -601,7 +604,7 @@ deployment-контур, зафиксированный в репозитори�
 email и телефон, подтвердить согласие на обработку персональных данных и прикрепить
 резюме допустимого типа \texttt{.pdf}/\texttt{.doc}/\texttt{.docx} размером не более
 \texttt{10 MB}. Дополнительным антиспам-механизмом служит \texttt{honeypot}-поле. После
-клиентской проверки данные передаются не напрямую в \texttt{CMS}, а в server-side
+клиентской проверки данные передаются не напрямую в \texttt{CMS}, а в серверный
 маршрут \texttt{POST /api/vacancy-applications}, который повторно валидирует
 \texttt{FormData} и только затем записывает \texttt{vacancy-application} через
 \texttt{CMS\_API\_TOKEN}. Тем самым браузер не получает прямой привилегированный доступ
@@ -616,29 +619,29 @@ email и телефон, подтвердить согласие на обраб
 заголовку страницы, локали и имени формы. Практически оба сценария подтверждены
 мутационным smoke, HTTP-проверками и появлением новых записей в
 \texttt{lead\_submissions}/\texttt{vacancy\_applications}. Их текущая граница охвата
-сформулирована явно: в системе уже есть server-side validation, \texttt{consent} и
+сформулирована явно: в системе уже есть серверная валидация, \texttt{consent} и
 \texttt{honeypot}, но не заявляются \texttt{rate limit}, CRM/email automation и
-расширенный post-submit workflow. Значение \texttt{CMS\_API\_TOKEN} при этом остается
-ручным эксплуатационным шагом, а не versioned секретом репозитория.
+расширенный сценарий обработки после отправки. Значение \texttt{CMS\_API\_TOKEN} при этом остается
+ручным эксплуатационным шагом, а не версионируемым секретом репозитория.
 
 \subsection{Публичные справочники карьерного модуля}
 
-Карьерный production-контур требует публично доступных справочников для фильтрации
+Публичный контур карьерного модуля требует публично доступных справочников для фильтрации
 вакансий, но не требует открывать дополнительные write-операции. Поэтому в \texttt{CMS}
 отдельно зафиксированы публичные справочники \texttt{industry} и \texttt{job-role}, а их
 роуты ограничены действиями \texttt{find} и \texttt{findOne}. Это позволяет
 \texttt{VacancyExplorer} загружать значения для фильтров и карточек вакансий, сохраняя
 минимальную публичную поверхность доступа.
 
-Данный контур подтверждается route-конфигурацией \texttt{CMS}, read-only настройкой
-\texttt{public} role и runtime-поведением карьерного каталога. Его граница также
-сформулирована явно: справочники являются служебными read-only данными прикладного
-production-контура \texttt{/vacancies/*} и не переводят карьерный модуль в общий
-locale-prefixed storefront-core.
+Данный контур подтверждается конфигурацией маршрутов \texttt{CMS}, настройкой
+\texttt{public} role только на чтение и runtime-поведением карьерного каталога. Его граница также
+сформулирована явно: справочники являются служебными данными только для чтения прикладного
+публичного контура \texttt{/vacancies/*} и не переводят карьерный модуль в общий
+двуязычный контур основной витрины.
 
 \subsection{Роли, права и разграничение доступа}
 
-Ролевая модель нужна системе для того, чтобы редакторский workflow, публикация и
+Ролевая модель нужна системе для того, чтобы редакторский процесс, публикация и
 системное администрирование были разведены не декларативно, а в воспроизводимой
 матрице полномочий. В административной панели \texttt{Strapi} зафиксированы четыре
 человеческие роли: \texttt{administrator}, \texttt{marketer/content-manager},
@@ -649,41 +652,42 @@ locale-prefixed storefront-core.
 \texttt{project}; \texttt{editor} готовит те же сущности как черновики, но не получает
 права публикации; \texttt{hr} изолирован в пределах карьерного контура и управляет
 \texttt{vacancy}, \texttt{industry}, \texttt{job-role} и
-\texttt{vacancy-application}. Такая матрица совпадает с редакторским workflow: маркетинговый
+\texttt{vacancy-application}. Такая матрица совпадает с редакторским процессом: маркетинговый
 и карьерный контуры разделены по полномочиям, а публикация отделена от подготовки
 материала.
 
-Технически эта схема закреплена как versioned source of truth в
+Технически эта схема закреплена как версионируемый источник истины в
 \texttt{security-model.ts} и синхронизируется во время \texttt{Strapi bootstrap}. Для
 content \texttt{API} дополнительно зафиксированы роли \texttt{public} и
 \texttt{authenticated}: \texttt{public} получает только \texttt{find}/\texttt{findOne}
 для опубликованного контента, а \texttt{authenticated} в финальном scope остается без
-permissions. Поверх этого работают route-level ограничения: контентные сущности не
+permissions. Поверх этого работают ограничения на уровне маршрутов: контентные сущности не
 открывают write-операции через публичный \texttt{API}, тогда как
 \texttt{lead-submission} и \texttt{vacancy-application} разрешают только \texttt{create}.
 Человеческие роли дополняются техническими каналами доступа:
-\texttt{CMS\_API\_TOKEN} используется только server-side маршрутами frontend для записи
+\texttt{CMS\_API\_TOKEN} используется только серверными маршрутами frontend для записи
 форм, а \texttt{PREVIEW\_SECRET} --- для чтения черновиков в \texttt{/preview/*}.
 
 Доказательная база этого контура опирается на \texttt{security-model.ts}, код
-\texttt{bootstrap}, route-конфигурации \texttt{CMS}, \texttt{editor-workflow} и
-приемочные проверки preview/public boundary. Его текущая граница охвата сформулирована
-аккуратно: versioned и воспроизводимыми являются сама матрица ролей и
+\texttt{bootstrap}, route-конфигурации \texttt{CMS}, описание редакторского процесса и
+приемочные проверки границы между \texttt{preview} и публичным режимом. Его текущая граница охвата сформулирована
+аккуратно: версионируемыми и воспроизводимыми являются сама матрица ролей и
 \texttt{permissions}, тогда как фактические admin users, значения секретов и выпуск
 \texttt{CMS\_API\_TOKEN} остаются ручным эксплуатационным шагом. Это не ослабляет
-security-контур, поскольку ручной шаг
+контур безопасности, поскольку ручной шаг
 относится к эксплуатационной настройке секретов, а не к проектированию модели доступа.
 
 \section{Тестирование}
 
 \subsection{Организация проверки и полученные результаты}
 
-Тестирование разработанной системы было организовано как воспроизводимый приемочный
-контур, выстроенный от функциональных и нефункциональных требований, зафиксированных в
+Тестирование разработанной системы было организовано как воспроизводимый набор
+приемочных проверок, выстроенный от функциональных и нефункциональных требований,
+зафиксированных в
 таблицах~\ref{tab:functional-requirements-traceability} и~\ref{tab:nonfunctional-requirements-traceability}. Поэтому проверка охватывала не
 абстрактную ``работоспособность сайта вообще'', а именно те эксплуатационные свойства,
-которые были заявлены в первой главе: независимый редакторский цикл, storefront-core
-\texttt{ru/en}, editor-managed \texttt{SEO}/\texttt{Open Graph}, защищенный
+которые были заявлены в первой главе: независимый редакторский цикл, основную витрину
+\texttt{ru/en}, управляемые через \texttt{CMS} \texttt{SEO}/\texttt{Open Graph}, защищенный
 \texttt{preview}, публичные формы и публикацию через схему
 \texttt{webhook -> rebuild}.
 
@@ -693,15 +697,15 @@ security-контур, поскольку ручной шаг
 \texttt{pnpm evidence:testing}, \texttt{pnpm audit:browser}, \texttt{pnpm build:front}
 и \texttt{pnpm build:cms}. Мутационная часть приемки не оформлялась как отдельная
 несвязанная проверка: она включалась для той же smoke-команды через переменную
-\texttt{SMOKE\_ALLOW\_MUTATIONS=true} и тем самым сохраняла общий acceptance-контур при
-явном разделении read-only и data-changing сценариев.
+\texttt{SMOKE\_ALLOW\_MUTATIONS=true} и тем самым сохраняла общую логику приемочной
+проверки при явном разделении read-only и data-changing сценариев.
 
 Такое разделение принципиально для корректной интерпретации результатов. Read-only smoke
 фиксирует маршрутные, preview- и build-инварианты без изменения данных. Mutation checks
 проверяют только те сценарии, в которых допустимо осознанное изменение прикладных
 записей, то есть отправку \texttt{lead-submission} и \texttt{vacancy-application}.
-Browser audit отвечает за browser-level выполнение репрезентативных страниц, а
-build/\texttt{sitemap}- и database-side evidence подтверждают соответственно состав
+Browser audit отвечает за браузерное выполнение репрезентативных страниц, а
+build/\texttt{sitemap}- и проверки по данным БД подтверждают соответственно состав
 публичного артефакта и факт прикладных или публикационных побочных эффектов. Отдельно от
 локального контура сохраняется короткая ручная демонстрационная приемка для защиты: она
 используется как показ уже подтвержденных сценариев, а не как источник более сильного
@@ -730,32 +734,32 @@ preview-поведение для \texttt{home-page}, \texttt{page}, \texttt{art
 сценария, а не как самостоятельная замена runtime-приемки.
 
 Сборочные и публикационные доказательные артефакты выделялись отдельно от
-browser/runtime проверки.
+браузерных и runtime-проверок.
 Команда \texttt{pnpm build:front} успешно сформировала \texttt{37} предсобранных
 HTML-маршрутов, \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml}; анализ карты сайта
 подтвердил \texttt{31} публичный URL, включая \texttt{/ru/}, \texttt{/en/},
-locale-prefixed детальные маршруты для \texttt{articles/projects} и публичные маршруты
+детальные маршруты с языковым префиксом для \texttt{articles/projects} и публичные маршруты
 \texttt{/vacancies/*}, при отсутствии legacy URL без локали. На стороне SQLite
 отдельно подтверждено наличие активного \texttt{Frontend rebuild hook} в
 \texttt{strapi\_webhooks}, указывающего на \texttt{CMS /api/rebuild}. Это локально
-доказывает регистрацию managed webhook и route-owned entry point публикации, а не
+доказывает регистрацию автоматически создаваемого webhook и маршрутной точки входа публикации, а не
 подменяет внешний платформенный rebuild недоказанным предположением.
 
-Дополнительный browser-level слой был зафиксирован командой \texttt{pnpm audit:browser}.
+Дополнительный браузерный слой был зафиксирован командой \texttt{pnpm audit:browser}.
 Проверка на четырех репрезентативных маршрутах завершилась с \texttt{0 failures} и
 подтвердила наличие \texttt{html[lang]} и \texttt{h1}, доступность форм, отсутствие
-необозначенных form controls, \texttt{page errors} и same-origin runtime/resource
-failures, а также фиксацию базовых navigation timing measurements. Этот слой нужен не для
+необозначенных элементов формы, ошибок страницы и \texttt{same-origin} сбоев выполнения
+и загрузки ресурсов, а также фиксацию базовых измерений \texttt{navigation timing}. Этот слой нужен не для
 подмены полного \texttt{WCAG}-аудита или production \texttt{Web Vitals}, а для
-подтверждения того, что acceptance-контур выдерживается не только на уровне HTML-ответов
-и build-артефактов, но и в реальном браузерном исполнении. Сводная трассировка ключевых
+подтверждения того, что приемочная проверка выдерживается не только на уровне
+HTML-ответов и build-артефактов, но и в реальном браузерном исполнении. Сводная трассировка ключевых
 контуров проверки представлена в таблице~\ref{tab:chapter2-testing-results}.
 
 \Needspace{12\baselineskip}
 \begingroup
 \scriptsize
 \begin{longtable}{L{0.17\linewidth}L{0.21\linewidth}L{0.17\linewidth}L{0.31\linewidth}}
-  \caption{Трассировка требований, evidence и интерпретации в testing-контуре}\label{tab:chapter2-testing-results} \\
+  \caption{Трассировка требований, способов проверки и интерпретации результатов}\label{tab:chapter2-testing-results} \\
   \toprule
   \textbf{Контур / требование} & \textbf{Способ проверки} & \textbf{Результат} & \textbf{Корректная интерпретация} \\
   \midrule
@@ -767,21 +771,21 @@ failures, а также фиксацию базовых navigation timing measur
   \endhead
   \bottomrule
   \endfoot
-  Storefront-core \texttt{ru/en} и маршрутная граница карьерного контура & Read-only smoke, runtime route checks, build/\texttt{sitemap} evidence & \texttt{Pass}: подтверждены \texttt{/ru/}, \texttt{/en/}, representative \texttt{page/article/project} routes, legacy redirects и публичные \texttt{/vacancies/*} & Доказывается работоспособность двуязычного storefront-core с отдельно зафиксированной production-границей \texttt{/vacancies/*}; результат не переинтерпретируется как наличие locale-prefixed публичных URL для карьерного модуля. \\
+  Основная витрина \texttt{ru/en} и маршрутная граница карьерного модуля & Read-only smoke, runtime-проверки маршрутов, build/\texttt{sitemap}-артефакты & Подтверждено: доступны \texttt{/ru/}, \texttt{/en/}, репрезентативные маршруты \texttt{page/article/project}, редиректы со старых \texttt{/articles/*} и \texttt{/projects/*}, а также публичные \texttt{/vacancies/*} & Доказывается работоспособность двуязычной основной витрины с отдельно зафиксированной публичной границей \texttt{/vacancies/*}; результат не переинтерпретируется как наличие публичных URL с языковым префиксом для карьерного модуля. \\
   \midrule
-  Editor-managed \texttt{SEO}/\texttt{Open Graph}, indexability и \texttt{sitemap} & Read-only smoke, build output, browser audit, \texttt{sitemap} inspection & \texttt{Pass}: подтверждены \texttt{title}, \texttt{canonical}, \texttt{og:*}, public indexability и наличие \texttt{sitemap-index.xml}/\texttt{sitemap-0.xml} & Доказывается единый metadata-contour для \texttt{home-page}, \texttt{page} и detail entities при route-owned \texttt{SEO} для list pages; этот результат не превращается в утверждение о полном \texttt{CMS}-driven editing flow для всех списковых разделов. \\
+  Управляемые через \texttt{CMS} \texttt{SEO}/\texttt{Open Graph}, индексируемость и \texttt{sitemap} & Read-only smoke, build output, browser audit, проверка \texttt{sitemap} & Подтверждено: присутствуют \texttt{title}, \texttt{canonical}, \texttt{og:*}, корректная публичная индексируемость и файлы \texttt{sitemap-index.xml}/\texttt{sitemap-0.xml} & Доказывается единый контур метаданных для \texttt{home-page}, \texttt{page} и детальных страниц сущностей при метаданных списковых страниц, формируемых на уровне маршрутов; этот результат не превращается в утверждение о полном редакторском управлении \texttt{SEO} для всех списковых разделов. \\
   \midrule
-  Защищенный \texttt{preview} и разведение draft/public состояний & Read-only smoke, preview runtime checks, representative browser walkthrough & \texttt{Pass}: подтверждены \texttt{401} по неверному секрету, \texttt{307} redirect, draft cookie и \texttt{noindex} для \texttt{home-page}, \texttt{page}, \texttt{article}, \texttt{project}, \texttt{vacancy} & Доказывается управляемый preview-boundary между опубликованным и черновым контентом; результат относится к server-side preview-контуру и не трактуется как отдельная пользовательская система аутентификации. \\
+  Защищенный \texttt{preview} и разведение draft/public состояний & Read-only smoke, runtime-проверки \texttt{preview}, репрезентативная браузерная проверка сценария & Подтверждено: по неверному секрету возвращается \texttt{401}, выполняется \texttt{307} redirect, устанавливается draft-cookie и выставляется \texttt{noindex} для \texttt{home-page}, \texttt{page}, \texttt{article}, \texttt{project}, \texttt{vacancy} & Доказывается управляемая граница между опубликованным и черновым контентом; результат относится к серверному preview-контуру и не трактуется как отдельная пользовательская система аутентификации. \\
   \midrule
-  Публичные формы и прикладные записи & Mutation checks, HTTP validation checks, SQLite evidence & \texttt{Pass}: подтверждены \texttt{400}/\texttt{201}, same-origin guard, file constraints и рост \texttt{lead\_submissions} и \texttt{vacancy\_applications} & Доказывается server-side валидация и сохранение результатов валидной отправки; это evidence прикладного сценария, а не нагрузочная или эксплуатационная метрика очередей, почты или внешних интеграций. \\
+  Публичные формы и прикладные записи & Mutation checks, HTTP-проверки валидации, данные SQLite & Подтверждено: воспроизводятся ответы \texttt{400}/\texttt{201}, защита \texttt{same-origin}, ограничения на файлы и рост \texttt{lead\_submissions} и \texttt{vacancy\_applications} & Доказывается серверная валидация и сохранение результатов валидной отправки; это подтверждение прикладного сценария, а не нагрузочная или эксплуатационная метрика очередей, почты или внешних интеграций. \\
   \midrule
-  Build/\texttt{sitemap} evidence публичной витрины & \texttt{pnpm build:front}, inspection \texttt{dist/client}, \texttt{pnpm evidence:testing} & \texttt{Pass}: зафиксированы \texttt{37} предсобранных HTML-маршрутов и \texttt{31} URL в \texttt{sitemap-0.xml} & Доказывается состав publishable build-артефакта и покрытие публичных маршрутов; размер \texttt{dist/client} и число маршрутов интерпретируются как свойства контрольной сборки, а не как прямые пользовательские метрики производительности. \\
+  Сборка публичной витрины и \texttt{sitemap} & \texttt{pnpm build:front}, проверка \texttt{dist/client}, \texttt{pnpm evidence:testing} & Подтверждено: зафиксированы \texttt{37} предсобранных HTML-маршрутов и \texttt{31} URL в \texttt{sitemap-0.xml} & Доказывается состав артефакта сборки, готового к публикации, и покрытие публичных маршрутов; размер \texttt{dist/client} и число маршрутов интерпретируются как свойства контрольной сборки, а не как прямые пользовательские метрики производительности. \\
   \midrule
-  Публикационный путь \texttt{webhook -> rebuild} & SQLite evidence для \texttt{strapi\_webhooks}, code/build inspection, внешняя стендовая валидация от 1 июня 2026 года & \texttt{Pass}: активен \texttt{Frontend rebuild hook}, локально подтвержден \texttt{CMS /api/rebuild}, на стенде воспроизведен полный путь до \texttt{Dokploy rebuild/redeploy} & Локальный evidence подтверждает versioned publication entry point и регистрацию webhook; внешняя стендовая валидация отдельно подтверждает платформенный runtime-path без подмены локального факта состоянием внешней инфраструктуры. \\
+  Публикационный путь \texttt{webhook -> rebuild} & Данные SQLite для \texttt{strapi\_webhooks}, анализ кода и сборки, внешняя стендовая валидация от 1 июня 2026 года & Подтверждено: активен \texttt{Frontend rebuild hook}, локально доступен \texttt{CMS /api/rebuild}, на стенде воспроизведен полный путь до \texttt{Dokploy rebuild/redeploy} & Локальные данные подтверждают версионируемую точку входа публикации и регистрацию webhook; внешняя стендовая валидация отдельно подтверждает платформенный путь выполнения без подмены локального факта состоянием внешней инфраструктуры. \\
   \midrule
-  Browser-level доступность и runtime contour & \texttt{pnpm audit:browser} на representative routes & \texttt{Pass}: \texttt{4} маршрута, \texttt{0 failures} & Доказывается локальный browser-level контур по структуре документа, формам и ошибкам исполнения; этот результат не следует называть полным \texttt{WCAG}-аудитом или production \texttt{Web Vitals}-валидацией. \\
+  Браузерная доступность и выполнение страниц во время работы & \texttt{pnpm audit:browser} на репрезентативных маршрутах & Подтверждено: \texttt{4} маршрута, \texttt{0 failures} & Доказывается локальный браузерный контур проверки структуры документа, форм и ошибок исполнения; этот результат не следует называть полным \texttt{WCAG}-аудитом или проверкой production-\texttt{Web Vitals}. \\
   \midrule
-  Демонстрационная приемка для защиты & Короткий ручной walkthrough representative routes и \texttt{preview} flow & Representative demo & Сценарий служит воспроизводимым live-подтверждением уже проверенных путей и не повышает статус доказательства сверх automated, build и DB evidence. \\
+  Демонстрационная приемка для защиты & Короткий ручной показ репрезентативных маршрутов и \texttt{preview}-сценария & Репрезентативная демонстрация & Сценарий служит воспроизводимым подтверждением уже проверенных путей и не повышает статус доказательства сверх автоматизированных, сборочных и базовых проверок данных. \\
 \end{longtable}
 \endgroup
 
@@ -806,36 +810,36 @@ failures, а также фиксацию базовых navigation timing measur
   \endhead
   \bottomrule
   \endfoot
-  Read-only smoke & \texttt{0 failures / 1 warning} & Подтверждены обязательные route-, \texttt{SEO}- и preview-invariants; предупреждение относится только к невключенной мутационной части проверки \\
+  Read-only smoke & \texttt{0 failures / 1 warning} & Подтверждены обязательные маршрутные инварианты, требования к \texttt{SEO} и preview; предупреждение относится только к невключенной мутационной части проверки \\
   \midrule
-  Mutation checks & \texttt{0 failures / 0 warnings} & Подтверждены data-changing сценарии \texttt{lead-submission} и \texttt{vacancy-application}; результат относится к прикладным отправкам, а не к полной нагрузочной модели форм \\
+  Mutation checks & \texttt{0 failures / 0 warnings} & Подтверждены сценарии изменения данных для \texttt{lead-submission} и \texttt{vacancy-application}; результат относится к прикладным отправкам, а не к полной нагрузочной модели форм \\
   \midrule
-  Browser audit & \texttt{4} маршрута / \texttt{0 failures} & Зафиксирован browser-level контур для representative pages; численное значение относится к текущей выборке маршрутов, а не ко всему множеству страниц витрины \\
+  Browser audit & \texttt{4} маршрута / \texttt{0 failures} & Зафиксирован браузерный контур для репрезентативных страниц; численное значение относится к текущей выборке маршрутов, а не ко всему множеству страниц витрины \\
   \midrule
-  Сборка frontend & \texttt{37} предсобранных HTML-маршрутов & Зафиксирован объем публичного build-route contour; число маршрутов характеризует результат сборки в контрольной серии от 31 мая 2026 года \\
+  Сборка frontend & \texttt{37} предсобранных HTML-маршрутов & Зафиксирован объем публичного результата сборки; число маршрутов характеризует результат контрольной серии от 31 мая 2026 года \\
   \midrule
-  \texttt{Sitemap} coverage & \texttt{31} URL в \texttt{sitemap-0.xml} & Подтвержден состав публичной карты сайта для storefront-core, locale-prefixed content routes и карьерного раздела в его текущей route-границе \\
+  \texttt{Sitemap} coverage & \texttt{31} URL в \texttt{sitemap-0.xml} & Подтвержден состав публичной карты сайта для основной витрины, локализованных контентных маршрутов и карьерного раздела в его текущей маршрутной границе \\
   \midrule
-  Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован размер build-артефакта публичной витрины; он описывает состояние контрольной сборки и не подменяет browser-level performance measurement \\
+  Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован размер build-артефакта публичной витрины; он описывает состояние контрольной сборки и не подменяет полноценное браузерное измерение производительности \\
 \end{longtable}
 
 \subsection{Практическое значение результатов}
 
 Короткая ручная приемка в этом контуре имеет отдельную роль. Она воспроизводит
-редирект на \texttt{/ru/}, открытие русской и английской storefront-версии, показ
+редирект на \texttt{/ru/}, открытие русской и английской версии основной витрины, показ
 репрезентативной \texttt{CMS}-страницы, запуск \texttt{preview} из \texttt{Strapi},
 открытие детальной вакансии и проверку невалидного ввода для маркетинговой и карьерной
 формы. Тем самым на защите демонстрируются именно те маршруты и сценарии, которые уже
-подтверждены автоматизированным, browser-level, build- и database-side evidence.
+подтверждены автоматизированными, браузерными, сборочными и базовыми проверками данных.
 
 Практическое значение результатов состоит в том, что ключевые требования первой главы
-доведены до состояния воспроизводимого acceptance contour. Независимый редакторский цикл
+доведены до состояния воспроизводимого набора приемочных проверок. Независимый редакторский цикл
 подтверждается сочетанием \texttt{CMS}-страницы, \texttt{Dynamic Zone} и защищенного
-\texttt{preview}; storefront-core \texttt{ru/en} --- route- и build-проверками;
-editor-managed \texttt{SEO}/\texttt{Open Graph} --- metadata-проверками и
+\texttt{preview}; основная витрина \texttt{ru/en} --- маршрутными и сборочными проверками;
+управляемые через \texttt{CMS} \texttt{SEO}/\texttt{Open Graph} --- проверками метаданных и
 \texttt{sitemap}; защищенные публичные формы --- мутационной приемкой и прикладными
 записями в БД; публикация через \texttt{webhook -> rebuild} --- локальной регистрацией
-managed webhook и отдельной внешней стендовой валидацией полного пути
+автоматически регистрируемого webhook и отдельной внешней стендовой валидацией полного пути
 \texttt{publish/unpublish -> rebuild/redeploy}. В результате зрелость решения
 подтверждается не общим тезисом о ``наличии функций'', а воспроизводимым соответствием
 между требованием, способом проверки и наблюдаемым результатом.
@@ -844,11 +848,11 @@ managed webhook и отдельной внешней стендовой вали
 заявленного дипломного scope система уже подтверждена как рабочий инженерный контур
 управления маркетинговым контентом, в котором изменение страницы, предварительная
 проверка, публикация и прикладная обработка пользовательских отправок не зависят от
-неформальных ручных действий в коде. При этом каждый класс evidence сохраняет свою
-границу: browser audit характеризует локальный browser-level контур, размер
-\texttt{dist/client} описывает build-артефакт, а внешний \texttt{Dokploy} путь
+неформальных ручных действий в коде. При этом каждый класс доказательств сохраняет свою
+границу: browser audit характеризует локальный браузерный контур, размер
+\texttt{dist/client} описывает артефакт сборки, а внешний \texttt{Dokploy} путь
 фиксируется как отдельный стендовый факт. Такая интерпретация делает выводы по testing
-section строгими: они показывают зрелость решения в границах измеренного acceptance
+section строгими: они показывают зрелость решения в границах измеренного приемочного
 контура и не приписывают системе свойства, которые в данной работе специально не
 измерялись.
 
@@ -870,7 +874,7 @@ OpenAPI-контур интеграции между backend и frontend.
 используют тот же \texttt{SEO}-контур и тот же механизм preview-метаданных. Карьерный
 модуль при этом включает прикладной пользовательский путь от просмотра вакансии до
 отправки отклика. Вместе с этим page builder уже поддерживает собственный блок
-маркетинговой формы и отдельный сценарий сбора лидов через frontend server route.
+маркетинговой формы и отдельный сценарий сбора лидов через серверный маршрут frontend.
 
 Дополнительным результатом стало оформление публикационного контура и контура
 развертывания как отдельного инженерного слоя. В репозитории зафиксированы

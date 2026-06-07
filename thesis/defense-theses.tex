@@ -103,14 +103,14 @@ frontend-коде, публикация изменений требует уча
 \texttt{lead-submission} и \texttt{vacancy-application}. Для главной страницы и CMS-страниц
 реализован конструктор контента на основе \texttt{Dynamic Zone}.
 
-На стороне frontend реализован locale-prefixed маршрутный контур для storefront-core,
-охватывающий главную витрину, \texttt{CMS}-страницы, а также разделы
+На стороне frontend реализован маршрутный контур с языковым префиксом для основной
+витрины, охватывающий главную витрину, \texttt{CMS}-страницы, а также разделы
 \texttt{articles/projects} в локалях \texttt{ru/en}. Это позволяет публиковать
 локализованный контент в обеих локалях и централизованно управлять навигацией,
 \texttt{SEO} и страницами. Карьерный
 модуль при этом сохраняет отдельный прикладной публичный контур с маршрутами
 \texttt{/vacancies/*}: локализуемые записи и \texttt{preview} входят в общую
-\texttt{CMS}-модель, но production-адресация осознанно не переводится в
+\texttt{CMS}-модель, но адресация опубликованной версии осознанно не переводится в
 \texttt{/:locale/*}.
 
 \section*{4. Реализованный функциональный результат}
@@ -119,15 +119,15 @@ frontend-коде, публикация изменений требует уча
 \begin{itemize}
   \item реализовано управление главной страницей, CMS-страницами, статьями, проектами,
   вакансиями, маркетинговыми лидами и откликами на вакансии через \texttt{Strapi};
-  \item реализован защищенный \texttt{preview mode} для \texttt{home-page}, \texttt{page},
+  \item реализован защищенный режим \texttt{preview} для \texttt{home-page}, \texttt{page},
   \texttt{article}, \texttt{project}, \texttt{vacancy};
   \item реализован \texttt{SEO/Open Graph}-контур для ключевых сущностей, а также генерация
   \texttt{sitemap};
   \item реализованы серверные маршруты для отправки маркетинговой lead form и формы отклика
   на вакансию с валидацией, \texttt{consent}, \texttt{honeypot} и ограничениями на загрузку
   файла;
-  \item реализован эксплуатационный контур: \texttt{OpenAPI}-документация, versioned
-  security model, \texttt{Docker}-конфигурация для CMS и managed
+  \item реализован эксплуатационный контур: \texttt{OpenAPI}-документация, версионируемая
+  модель безопасности, \texttt{Docker}-конфигурация для CMS и автоматически
   \texttt{webhook -> rebuild} для обновления публичной витрины.
 \end{itemize}
 
@@ -139,22 +139,22 @@ frontend-коде, публикация изменений требует уча
 В контрольной серии проверок в локальном контуре от 31 мая 2026 года и во внешней
 стендовой валидации 1 июня 2026 года подтверждено:
 \begin{itemize}
-  \item публичные маршруты \texttt{/ru/}, \texttt{/en/}, representative
-  \texttt{page/article/project} и \texttt{/vacancies/*} открываются корректно, а legacy
-  \texttt{/articles/*} и \texttt{/projects/*} редиректят в locale-prefixed контур;
+  \item публичные маршруты \texttt{/ru/}, \texttt{/en/}, репрезентативные
+  \texttt{page/article/project} и \texttt{/vacancies/*} открываются корректно, а старые
+  \texttt{/articles/*} и \texttt{/projects/*} редиректят в контур с языковым префиксом;
   \item \texttt{/api/preview} с неверным секретом возвращает \texttt{401}, а draft-preview
   корректно устанавливает preview-cookie и отдает страницы с \texttt{noindex} для
   \texttt{home-page/page/article/project/vacancy};
   \item валидные отправки \texttt{lead-submission} и \texttt{vacancy-application} дают
-  \texttt{201}, сохраняются в \texttt{SQLite} и проходят server-side ограничения
-  same-origin и upload validation;
+  \texttt{201}, сохраняются в \texttt{SQLite} и проходят серверные ограничения
+  \texttt{same-origin} и проверку загружаемых файлов;
   \item frontend-сборка проходит успешно и формирует \texttt{37} prerendered static routes;
   \item после сборки генерируются \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml} с
   \texttt{31} публичным \texttt{URL};
   \item в БД подтвержден активный \texttt{Frontend rebuild hook}, а 1 июня 2026 года на
   внешнем стенде подтвержден полный путь \texttt{Strapi -> webhook -> Dokploy rebuild/redeploy};
-  \item browser-level аудит четырех репрезентативных маршрутов завершился с
-  \texttt{0} failures; размер клиентского build output составляет около \texttt{2.4 МБ}.
+  \item браузерный аудит четырех репрезентативных маршрутов завершился с
+  \texttt{0} failures; размер клиентского артефакта сборки составляет около \texttt{2.4 МБ}.
 \end{itemize}
 
 Таким образом, результат работы подтвержден не только кодом, но и воспроизводимым
@@ -181,16 +181,16 @@ frontend-коде, публикация изменений требует уча
 
 Наряду с подтвержденными результатами для системы сохраняются и осознанные ограничения.
 
-Во-первых, публичный двуязычный контур охватывает storefront-core, маркетинговые страницы,
-статьи и проекты, тогда как карьерный модуль сохраняется как отдельный прикладной
-production-контур с маршрутами \texttt{/vacancies/*}. При этом локализуемая
+Во-первых, публичный двуязычный контур охватывает основную витрину, маркетинговые
+страницы, статьи и проекты, тогда как карьерный модуль сохраняется как отдельный
+прикладной публичный контур с маршрутами \texttt{/vacancies/*}. При этом локализуемая
 \texttt{CMS}-модель для \texttt{vacancy}, \texttt{industry} и \texttt{job-role}, а также
-locale-aware \texttt{preview} уже входят в реализованный результат.
+локализованный \texttt{preview} уже входят в реализованный результат.
 
 Во-вторых, \texttt{CMS}-управляемый \texttt{SEO}/\texttt{Open Graph} доведен до
 \texttt{home-page}, \texttt{page} и детальных страниц \texttt{article/project/vacancy},
-тогда как списковые страницы \texttt{articles/projects/vacancies} используют route-owned
-metadata layer.
+тогда как метаданные списковых страниц \texttt{articles/projects/vacancies} формируются
+на уровне маршрутов.
 
 В-третьих, тестовый контур является воспроизводимым приемочным и интеграционным набором
 проверок, но не полным набором unit- и \texttt{end-to-end} тестов; конфигурация
@@ -200,7 +200,7 @@ metadata layer.
 В качестве направлений дальнейшего развития можно выделить:
 \begin{itemize}
   \item расширение библиотеки \texttt{Dynamic Zone} блоков;
-  \item развитие редакционных ролей, workflow публикации и внешних интеграций для
+  \item развитие редакционных ролей, процесса публикации и внешних интеграций для
   обработки лидов и откликов;
   \item расширение мультиязычного публичного контура карьерного модуля как отдельного
   продуктового этапа;

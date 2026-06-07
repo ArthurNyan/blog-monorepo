@@ -49,7 +49,7 @@ description: Презентация к выпускной квалификаци
 
 <div class="chips">
 <span class="chip">ru/en</span>
-<span class="chip">preview mode</span>
+<span class="chip">preview</span>
 <span class="chip">SEO / sitemap</span>
 </div>
 
@@ -84,7 +84,7 @@ description: Презентация к выпускной квалификаци
 1. Обосновать выбор `headless CMS` и связки `Strapi + Astro`.
 2. Спроектировать требования, архитектуру и модель данных.
 3. Реализовать CMS-контур для `pages`, `articles`, `projects`, `vacancies`.
-4. Добавить `ru/en`, `preview mode`, `SEO/Open Graph` и `sitemap`.
+4. Добавить `ru/en`, режим `preview`, `SEO/Open Graph` и `sitemap`.
 5. Организовать `roles/permissions`, `webhook -> rebuild`, `Dokploy`, раздельный deployment `Docker`-приложений и проверку результата.
 
 </div>
@@ -100,7 +100,7 @@ description: Презентация к выпускной квалификаци
 ### `Headless CMS`
 
 - Разделяет хранение контента и рендеринг витрины.
-- Централизует editor workflow и API-контракт.
+- Централизует редакторский процесс и API-контракт.
 - Подходит для мультиязычного маркетингового сайта с разными публичными разделами.
 
 </div>
@@ -118,7 +118,7 @@ description: Презентация к выпускной квалификаци
 ### `Astro 6`
 
 - `Prerender` для предсказуемой отдачи контента.
-- Server routes для `preview` и форменных сценариев.
+- Серверные маршруты для `preview` и форменных сценариев.
 - `Node adapter`, `sitemap` и deployment через `Dokploy` как отдельного `Docker`-приложения.
 
 </div>
@@ -139,7 +139,7 @@ description: Презентация к выпускной квалификаци
 </div>
 <div class="soft-card">
 <strong>Frontend-слой</strong><br>
-`Astro` строит публичные маршруты, preview и server-side формы.
+`Astro` строит публичные маршруты, `preview` и серверные формы.
 </div>
 <div class="soft-card">
 <strong>Эксплуатационный слой</strong><br>
@@ -165,7 +165,7 @@ description: Презентация к выпускной квалификаци
 - `article`, `project`, `vacancy`;
 - `author`, `industry`, `job-role`;
 - единый компонент `shared.seo`;
-- локализуемые поля для `storefront-core`, `articles` и `projects`;
+- локализуемые поля для основной витрины, `articles` и `projects`;
 - форменные сущности `lead-submission` и `vacancy-application`.
 
 <div class="note">Сущности ориентированы на предметную область, а не на набор жестко зашитых шаблонов.</div>
@@ -196,7 +196,7 @@ description: Презентация к выпускной квалификаци
 
 - `page` стала самостоятельной контентной единицей со `slug`, `SEO` и блоками `Dynamic Zone`.
 - Редактор собирает страницу из готовых блоков без изменения frontend-кода.
-- `preview mode` открывает `draft`-версию через защищенный server-side сценарий без раскрытия черновиков в публичном API.
+- режим `preview` открывает `draft`-версию через защищенный серверный сценарий без раскрытия черновиков в публичном API.
 
 </div>
 
@@ -209,10 +209,10 @@ description: Презентация к выпускной квалификаци
 
 ### Реализованные возможности
 
-- locale-prefixed публичные маршруты `/ru/` и `/en/` для storefront-core;
-- `CMS-managed SEO/Open Graph` для `home-page`, `page`, `article`, `project`, `vacancy`;
+- публичные маршруты `/ru/` и `/en/` с языковым префиксом для основной витрины;
+- `SEO/Open Graph`, управляемые через `CMS`, для `home-page`, `page`, `article`, `project`, `vacancy`;
 - автоматическая генерация `sitemap` в build pipeline `Astro`;
-- формы лидов и откликов проходят через `Astro server routes`, а не пишут напрямую в `Strapi` из браузера.
+- формы лидов и откликов проходят через серверные маршруты `Astro`, а не пишут напрямую в `Strapi` из браузера.
 
 <div class="chips">
 <span class="chip">meta title</span>
@@ -226,7 +226,7 @@ description: Презентация к выпускной квалификаци
 
 ![w:100%](../assets/front/home-en-with-url.png)
 
-<div class="note">Публичная витрина использует единый metadata pipeline и отдает уже собранные маршруты.</div>
+<div class="note">Публичная витрина использует единый механизм формирования метаданных и отдает уже собранные маршруты.</div>
 
 </div>
 </div>
@@ -245,11 +245,11 @@ description: Презентация к выпускной квалификаци
 
 ### Эксплуатационный контур
 
-- versioned webhook в `Strapi` подписан на `entry.publish` и `entry.unpublish`;
+- автоматически регистрируемый webhook в `Strapi` подписан на `entry.publish` и `entry.unpublish`;
 - frontend deployment ориентирован на webhook/redeploy механизм `Dokploy`;
 - frontend и CMS оформлены как отдельные `Docker`-приложения, а CMS дополнительно имеет локальный `Docker Compose` bundle с `PostgreSQL`;
 - роли: `administrator`, `marketer/content-manager`, `editor`, `HR`;
-- `draft`-доступ выдается только через `preview-secret`, а public API ограничен опубликованными данными.
+- `draft`-доступ выдается только через `preview-secret`, а публичный API ограничен опубликованными данными.
 
 </div>
 </div>
@@ -260,14 +260,14 @@ description: Презентация к выпускной квалификаци
 
 | Что проверено | Результат |
 |---|---|
-| Frontend build и prerender | Собирается `37` публичных HTML-маршрутов без `runtime errors`. |
-| Preview contour | Черновики доступны только через `/api/preview` и `x-preview-secret`. |
+| Frontend build и prerender | Собирается `37` публичных HTML-маршрутов без ошибок выполнения. |
+| Контур preview | Черновики доступны только через `/api/preview` и `x-preview-secret`. |
 | SEO и sitemap | Проверены `title`, `canonical`, `og`-поля и генерация `sitemap-index.xml`. |
-| Форменные сценарии | `lead-submission` и `vacancy-application` валидируются на `server-side` и пишутся через технический токен. |
-| Rebuild contour | Managed webhook зарегистрирован в `Strapi`; 1 июня 2026 года подтвержден и внешний путь до `Dokploy rebuild/redeploy`. |
-| Security contour | Public content API `read-only`; публикация отделена от редактирования ролями. |
+| Форменные сценарии | `lead-submission` и `vacancy-application` валидируются на сервере и пишутся через технический токен. |
+| Контур пересборки | Автоматически регистрируемый webhook зарегистрирован в `Strapi`; 1 июня 2026 года подтвержден и внешний путь до `Dokploy rebuild/redeploy`. |
+| Контур безопасности | Публичный API контента работает в режиме `read-only`; публикация отделена от редактирования ролями. |
 
-<div class="note center">Результаты опираются на локальную сборку, smoke-checks, browser/runtime-проверки и прямую верификацию CMS/SQLite evidence.</div>
+<div class="note center">Результаты опираются на локальную сборку, smoke-проверки, браузерные и runtime-проверки, а также прямую верификацию CMS и SQLite.</div>
 
 ---
 
@@ -280,15 +280,15 @@ description: Презентация к выпускной квалификаци
 
 - Редактор может создавать и публиковать страницы, статьи, кейсы и вакансии без изменения frontend-кода.
 - Контент, `SEO` и локализация переводятся в единый `CMS-first` контур.
-- Публикация становится воспроизводимой благодаря `webhook -> rebuild` и versioned deployment bundle.
+- Публикация становится воспроизводимой благодаря `webhook -> rebuild` и версионируемой конфигурации развертывания.
 
 </div>
 <div class="card">
 
 ### Ограничения решения
 
-- Публичный `ru/en` контур охватывает storefront-core, статьи и проекты; карьерный модуль осознанно остается под `/vacancies/*`, хотя `CMS`-данные и `preview` для него локализованы.
-- `CMS-managed SEO` доведен до `home-page`, `page`, `article`, `project`, `vacancy`; list pages `articles/projects/vacancies` используют route-owned metadata layer.
+- Публичный `ru/en` контур охватывает основную витрину, статьи и проекты; карьерный модуль осознанно остается под `/vacancies/*`, хотя `CMS`-данные и `preview` для него локализованы.
+- `SEO`, управляемое через `CMS`, доведено до `home-page`, `page`, `article`, `project`, `vacancy`; метаданные списковых страниц `articles/projects/vacancies` формируются на уровне маршрутов.
 - Контур проверки воспроизводим на smoke/build/browser/DB-уровне, но не подменяет полный `WCAG`/`Lighthouse` аудит; `Dokploy` остается внешним платформенным сегментом, хотя `rebuild/redeploy` уже подтвержден на стенде 1 июня 2026 года.
 
 </div>
