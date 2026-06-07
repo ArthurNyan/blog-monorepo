@@ -685,138 +685,181 @@ security-контур, поскольку ручной шаг
 
 \subsection{Организация проверки и полученные результаты}
 
-Тестирование разработанной системы было организовано как воспроизводимый контур
-приемочной проверки, ориентированный на реальные пользовательские и редакторские
-сценарии. Проверка выполнялась в локальном окружении с отдельными процессами
-\texttt{Strapi}, runtime frontend и preview-сервера для собранной витрины. Для
-повторяемого запуска были зафиксированы workspace-команды smoke-проверки,
-мутационного smoke, evidence-сбора и браузерного аудита. Такая организация позволила
-перейти от разовой ручной проверки к формализованному набору процедур, который
-подтверждает работоспособность ключевых частей \texttt{CMS-first} контура.
+Тестирование разработанной системы было организовано как воспроизводимый приемочный
+контур, выстроенный от функциональных и нефункциональных требований, зафиксированных в
+таблицах~\ref{tab:functional-requirements-traceability} и
+\ref{tab:nonfunctional-requirements-traceability}. Поэтому проверка охватывала не
+абстрактную ``работоспособность сайта вообще'', а именно те эксплуатационные свойства,
+которые были заявлены в первой главе: независимый редакторский цикл, storefront-core
+\texttt{ru/en}, editor-managed \texttt{SEO}/\texttt{Open Graph}, защищенный
+\texttt{preview}, публичные формы и публикацию через схему
+\texttt{webhook -> rebuild}.
 
-Центральным результатом стала автоматизированная smoke-проверка публичной витрины. Она
-подтвердила корректность публичных маршрутов, режима предварительного просмотра,
-сборочных артефактов и прикладных форм. В контрольной серии проверок от 31 мая 2026 года
-read-only прогон завершился без отказов и содержал только одно ожидаемое
-предупреждение, связанное с отключенными mutation checks, тогда как мутационный прогон
-также прошел без отказов. Тем самым был подтвержден не только факт доступности
-маршрутов, но и корректная работа сценариев отправки маркетингового лида и отклика на
-вакансию.
+Контрольный локальный baseline был повторно зафиксирован 31 мая 2026 года. Для него были
+использованы отдельные процессы \texttt{Strapi}, runtime frontend и preview-сервера для
+собранной витрины, а также workspace-команды \texttt{pnpm smoke:front},
+\texttt{pnpm evidence:testing}, \texttt{pnpm audit:browser}, \texttt{pnpm build:front}
+и \texttt{pnpm build:cms}. Мутационная часть приемки не оформлялась как отдельная
+несвязанная проверка: она включалась для той же smoke-команды через переменную
+\texttt{SMOKE\_ALLOW\_MUTATIONS=true} и тем самым сохраняла общий acceptance-контур при
+явном разделении read-only и data-changing сценариев.
 
-В автоматизированной проверке были подтверждены редирект \texttt{/ -> /ru/}, доступность
-локализованных маршрутов \texttt{/ru/} и \texttt{/en/}, работа репрезентативных
-CMS-страниц, статей, проектов и вакансий, корректность редиректов со старых адресов, а также
-наличие \texttt{title}, \texttt{canonical}, \texttt{Open Graph}-метаданных,
-\texttt{html[lang]} и основного заголовка \texttt{h1}. Отдельным достижением стало
-подтверждение редакторского \texttt{preview}-контура: были воспроизведены отказ по
-неверному секрету, корректный переход на опубликованный маршрут для статуса
+Такое разделение принципиально для корректной интерпретации результатов. Read-only smoke
+фиксирует маршрутные, preview- и build-инварианты без изменения данных. Mutation checks
+проверяют только те сценарии, в которых допустимо осознанное изменение прикладных
+записей, то есть отправку \texttt{lead-submission} и \texttt{vacancy-application}.
+Browser audit отвечает за browser-level выполнение репрезентативных страниц, а
+build/\texttt{sitemap}- и database-side evidence подтверждают соответственно состав
+публичного артефакта и факт прикладных или публикационных побочных эффектов. Отдельно от
+локального контура сохраняется короткая ручная демонстрационная приемка для защиты: она
+используется как показ уже подтвержденных сценариев, а не как источник более сильного
+статуса доказательства.
+
+Read-only smoke подтвердил редирект \texttt{/ -> /ru/}, доступность маршрутов
+\texttt{/ru/} и \texttt{/en/}, работу репрезентативных \texttt{CMS}-страниц, статей,
+проектов и вакансий, корректность legacy redirect-правил, наличие \texttt{title},
+\texttt{canonical}, \texttt{Open Graph}, \texttt{html[lang]} и \texttt{h1}, а также
+preview-поведение для \texttt{home-page}, \texttt{page}, \texttt{article},
+\texttt{project} и \texttt{vacancy}. В этой же серии были воспроизведены отказ по
+неверному секрету, переход на опубликованный маршрут для статуса
 \texttt{published}, установка \texttt{httpOnly} cookie для статуса \texttt{draft} и
-наличие \texttt{robots=noindex, nofollow} на preview-страницах не только для
-\texttt{home-page} и \texttt{page}, но и для детальных страниц сущностей
-\texttt{article}, \texttt{project} и \texttt{vacancy}.
+\texttt{robots=noindex, nofollow} на preview-страницах. Результат read-only baseline
+составил \texttt{0 failures / 1 warning}; единственное предупреждение относилось к
+отключенным mutation checks и тем самым фиксировало не ошибку системы, а границу данного
+прогона.
 
-Существенную часть доказательной базы составили сборочные результаты и результаты на
-уровне базы данных. Сборка frontend завершилась успешно и сформировала \texttt{37}
-предсобранных HTML-маршрутов, \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml}. Анализ
-карты сайта подтвердил наличие маршрутов \texttt{/ru/}, \texttt{/en/}, локализованных детальных страниц
-для \texttt{articles/projects}, а также публичных маршрутов \texttt{/vacancies/...}.
-SQL-проверки зафиксировали появление новых записей в таблицах
-\texttt{lead\_submissions} и \texttt{vacancy\_applications} после мутационного smoke, а
-также наличие активного \texttt{Frontend rebuild hook} в таблице
-\texttt{strapi\_webhooks}. Это позволяет рассматривать тестирование не только как
-проверку интерфейса, но и как подтверждение корректности прикладных записей и
-публикационного механизма на уровне данных.
+Мутационная часть приемки показала, что runtime-сценарии публичных форм не
+ограничиваются только валидацией интерфейса. При включении mutation checks были
+подтверждены \texttt{400} для невалидных отправок, \texttt{201} для валидных
+\texttt{lead-submission} и \texttt{vacancy-application}, same-origin guard для формы
+отклика, файловые ограничения для резюме и появление новых записей в таблицах
+\texttt{lead\_submissions} и \texttt{vacancy\_applications}. Соответственно DB evidence
+здесь интерпретируется как подтверждение side effect уже проверенного пользовательского
+сценария, а не как самостоятельная замена runtime-приемки.
 
-Дополнительно был выполнен браузерный аудит репрезентативных маршрутов через
-\texttt{Playwright}. Он подтвердил наличие \texttt{html[lang]} и \texttt{h1},
-доступность форм, отсутствие необозначенных элементов форм, \texttt{page errors} и
-same-origin runtime/resource failures, а также зафиксировал базовые показатели времени навигации для
-\texttt{RU/EN home},
-репрезентативной CMS-страницы и детальной вакансии. В совокупности это позволяет
-утверждать, что на уровне браузерного исполнения проект продемонстрировал стабильное
-поведение как для основной публичной витрины, так и для прикладных публичных сценариев. Сводные
-результаты проверки ключевых контуров системы представлены в
-таблице~\ref{tab:chapter2-testing-results}.
+Сборочные и публикационные evidence выделялись отдельно от browser/runtime проверки.
+Команда \texttt{pnpm build:front} успешно сформировала \texttt{37} предсобранных
+HTML-маршрутов, \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml}; анализ карты сайта
+подтвердил \texttt{31} публичный URL, включая \texttt{/ru/}, \texttt{/en/},
+locale-prefixed detail routes для \texttt{articles/projects} и публичные маршруты
+\texttt{/vacancies/...}, при отсутствии legacy URL без локали. На стороне SQLite
+отдельно подтверждено наличие активного \texttt{Frontend rebuild hook} в
+\texttt{strapi\_webhooks}, указывающего на \texttt{CMS /api/rebuild}. Это локально
+доказывает регистрацию managed webhook и route-owned entry point публикации, а не
+подменяет внешний платформенный rebuild недоказанным предположением.
 
-\begin{longtable}{|L{0.28\linewidth}|L{0.62\linewidth}|}
-  \caption{Сводные результаты проверки ключевых контуров системы}
+Дополнительный browser-level слой был зафиксирован командой \texttt{pnpm audit:browser}.
+Проверка на четырех репрезентативных маршрутах завершилась с \texttt{0 failures} и
+подтвердила наличие \texttt{html[lang]} и \texttt{h1}, доступность форм, отсутствие
+необозначенных form controls, \texttt{page errors} и same-origin runtime/resource
+failures, а также фиксацию базовых navigation timing measurements. Этот слой нужен не для
+подмены полного \texttt{WCAG}-аудита или production \texttt{Web Vitals}, а для
+подтверждения того, что acceptance-контур выдерживается не только на уровне HTML-ответов
+и build-артефактов, но и в реальном браузерном исполнении. Сводная трассировка ключевых
+контуров проверки представлена в таблице~\ref{tab:chapter2-testing-results}.
+
+\begingroup
+\scriptsize
+\begin{longtable}{|L{0.17\linewidth}|L{0.21\linewidth}|L{0.17\linewidth}|L{0.31\linewidth}|}
+  \caption{Трассировка требований, evidence и интерпретации в testing-контуре}
   \label{tab:chapter2-testing-results} \\
   \hline
-  \textbf{Контур} & \textbf{Результат проверки} \\
+  \textbf{Контур / требование} & \textbf{Способ проверки} & \textbf{Результат} & \textbf{Корректная интерпретация} \\
   \hline
   \endfirsthead
   \caption*{Продолжение таблицы~\ref{tab:chapter2-testing-results}} \\
   \hline
-  \textbf{Контур} & \textbf{Результат проверки} \\
+  \textbf{Контур / требование} & \textbf{Способ проверки} & \textbf{Результат} & \textbf{Корректная интерпретация} \\
   \hline
   \endhead
   \hline
   \endfoot
-  Публичные маршруты и мультиязычность & Подтверждена доступность маршрутов \texttt{/ru/}, \texttt{/en/}, локализованных CMS-страниц, статей и проектов; устаревшие URL корректно перенаправляются. Основание: автоматизированная smoke-проверка, runtime-проверки, сборочный вывод и \texttt{sitemap}. \\
+  Storefront-core \texttt{ru/en} и маршрутная граница карьерного контура & Read-only smoke, runtime route checks, build/\texttt{sitemap} evidence & \texttt{Pass}: подтверждены \texttt{/ru/}, \texttt{/en/}, representative \texttt{page/article/project} routes, legacy redirects и публичные \texttt{/vacancies/...} & Доказывается работоспособность двуязычного storefront-core с отдельно зафиксированной production-границей \texttt{/vacancies/*}; результат не переинтерпретируется как наличие locale-prefixed публичных URL для карьерного модуля. \\
   \hline
-  \texttt{Preview}-сценарии & Подтверждены проверка секрета, установка draft cookie, переход на опубликованный маршрут и применение \texttt{noindex} для preview-страниц. Основание: автоматизированная smoke-проверка и runtime-проверки preview. \\
+  Editor-managed \texttt{SEO}/\texttt{Open Graph}, indexability и \texttt{sitemap} & Read-only smoke, build output, browser audit, \texttt{sitemap} inspection & \texttt{Pass}: подтверждены \texttt{title}, \texttt{canonical}, \texttt{og:*}, public indexability и наличие \texttt{sitemap-index.xml}/\texttt{sitemap-0.xml} & Доказывается единый metadata-contour для \texttt{home-page}, \texttt{page} и detail entities при route-owned \texttt{SEO} для list pages; этот результат не превращается в утверждение о полном \texttt{CMS}-driven editing flow для всех списковых разделов. \\
   \hline
-  Публичные формы & Подтверждены server-side валидация, защита по same-origin, отклонение невалидных данных и успешная запись валидных отправок. Основание: mutation smoke и данные SQLite. \\
+  Защищенный \texttt{preview} и разведение draft/public состояний & Read-only smoke, preview runtime checks, representative browser walkthrough & \texttt{Pass}: подтверждены \texttt{401} по неверному секрету, \texttt{307} redirect, draft cookie и \texttt{noindex} для \texttt{home-page}, \texttt{page}, \texttt{article}, \texttt{project}, \texttt{vacancy} & Доказывается управляемый preview-boundary между опубликованным и черновым контентом; результат относится к server-side preview-контуру и не трактуется как отдельная пользовательская система аутентификации. \\
   \hline
-  Сборка и публикационный контур & Подтверждены сформированные предсобранные маршруты, карта сайта и активный \texttt{Frontend rebuild hook}. Основание: frontend build, \texttt{sitemap} и запросы к \texttt{strapi\_webhooks}. \\
+  Публичные формы и прикладные записи & Mutation checks, HTTP validation checks, SQLite evidence & \texttt{Pass}: подтверждены \texttt{400}/\texttt{201}, same-origin guard, file constraints и рост \texttt{lead\_submissions} и \texttt{vacancy\_applications} & Доказывается server-side валидация и сохранение результатов валидной отправки; это evidence прикладного сценария, а не нагрузочная или эксплуатационная метрика очередей, почты или внешних интеграций. \\
   \hline
-  Браузерное выполнение & Зафиксировано корректное поведение репрезентативных страниц без \texttt{page errors}, same-origin runtime/resource failures и без необозначенных элементов форм. Основание: браузерный аудит \texttt{Playwright}. \\
+  Build/\texttt{sitemap} evidence публичной витрины & \texttt{pnpm build:front}, inspection \texttt{dist/client}, \texttt{pnpm evidence:testing} & \texttt{Pass}: зафиксированы \texttt{37} предсобранных HTML-маршрутов и \texttt{31} URL в \texttt{sitemap-0.xml} & Доказывается состав publishable build-артефакта и покрытие публичных маршрутов; размер \texttt{dist/client} и число маршрутов интерпретируются как свойства build baseline, а не как прямые пользовательские метрики производительности. \\
+  \hline
+  Публикационный путь \texttt{webhook -> rebuild} & SQLite evidence для \texttt{strapi\_webhooks}, code/build inspection, внешняя стендовая валидация от 1 июня 2026 года & \texttt{Pass}: активен \texttt{Frontend rebuild hook}, локально подтвержден \texttt{CMS /api/rebuild}, на стенде воспроизведен полный путь до \texttt{Dokploy rebuild/redeploy} & Локальный evidence подтверждает versioned publication entry point и регистрацию webhook; внешняя стендовая валидация отдельно подтверждает платформенный runtime-path без подмены локального факта состоянием внешней инфраструктуры. \\
+  \hline
+  Browser-level доступность и runtime baseline & \texttt{pnpm audit:browser} на representative routes & \texttt{Pass}: \texttt{4} маршрута, \texttt{0 failures} & Доказывается локальный browser baseline по структуре документа, формам и ошибкам исполнения; этот результат не следует называть полным \texttt{WCAG}-аудитом или production \texttt{Web Vitals}-валидацией. \\
+  \hline
+  Демонстрационная приемка для защиты & Короткий ручной walkthrough representative routes и \texttt{preview} flow & Representative demo & Сценарий служит воспроизводимым live-подтверждением уже проверенных путей и не повышает статус доказательства сверх automated, build и DB evidence. \\
   \hline
 \end{longtable}
+\endgroup
 
 \subsection{Количественные показатели контрольной серии проверок}
 
-Наряду с качественным подтверждением сценариев были зафиксированы количественные
-показатели, характеризующие состояние системы в контрольной серии проверок. Они
-демонстрируют,
-что результат тестирования выражается не только в общем утверждении о работоспособности,
-но и в конкретных измеримых значениях, представленных в таблице~\ref{tab:chapter2-testing-metrics}.
+Наряду с качественной трассировкой были зафиксированы и количественные результаты
+контрольной серии. В таблицу~\ref{tab:chapter2-testing-metrics} включены только те
+значения, которые непосредственно измерялись в локальном baseline; архитектурные выводы
+или границы scope не подаются здесь как ``метрики''.
 
 \begin{longtable}{|L{0.2\linewidth}|L{0.2\linewidth}|L{0.5\linewidth}|}
   \caption{Ключевые показатели контрольной серии проверок}
   \label{tab:chapter2-testing-metrics} \\
   \hline
-  \textbf{Показатель} & \textbf{Значение} & \textbf{Интерпретация} \\
+  \textbf{Показатель} & \textbf{Значение} & \textbf{Граница интерпретации} \\
   \hline
   \endfirsthead
   \caption*{Продолжение таблицы~\ref{tab:chapter2-testing-metrics}} \\
   \hline
-  \textbf{Показатель} & \textbf{Значение} & \textbf{Интерпретация} \\
+  \textbf{Показатель} & \textbf{Значение} & \textbf{Граница интерпретации} \\
   \hline
   \endhead
   \hline
   \endfoot
-  Read-only smoke & \texttt{0 failures / 1 warning} & Подтверждены все обязательные маршрутные и preview-проверки; предупреждение связано только с отключенными mutation checks \\
+  Read-only smoke & \texttt{0 failures / 1 warning} & Подтверждены обязательные route-, \texttt{SEO}- и preview-invariants; предупреждение относится только к невключенной мутационной части проверки \\
   \hline
-  Mutation smoke & \texttt{0 failures / 0 warnings} & Подтверждены успешные сценарии \texttt{lead-submission} и \texttt{vacancy-application} \\
+  Mutation checks & \texttt{0 failures / 0 warnings} & Подтверждены data-changing сценарии \texttt{lead-submission} и \texttt{vacancy-application}; результат относится к прикладным отправкам, а не к полной нагрузочной модели форм \\
   \hline
-  Сборка frontend & \texttt{37} предсобранных HTML-маршрутов & Подтверждена полнота статического контура витрины и локализованных контентных маршрутов \\
+  Browser audit & \texttt{4} маршрута / \texttt{0 failures} & Зафиксирован browser-level baseline для representative pages; численное значение относится к текущей выборке маршрутов, а не ко всему множеству страниц витрины \\
   \hline
-  Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован итоговый размер публичного результата сборки \\
+  Сборка frontend & \texttt{37} предсобранных HTML-маршрутов & Зафиксирован объем публичного build-route contour; число маршрутов характеризует результат сборки на baseline от 31 мая 2026 года \\
   \hline
-  Browser audit & \texttt{0 failures} & Репрезентативные страницы корректно проходят браузерную проверку структуры, форм и ошибок исполнения \\
+  \texttt{Sitemap} coverage & \texttt{31} URL в \texttt{sitemap-0.xml} & Подтвержден состав публичной карты сайта для storefront-core, locale-prefixed content routes и карьерного раздела в его текущей route-границе \\
+  \hline
+  Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован размер build-артефакта публичной витрины; он описывает baseline сборки и не подменяет browser-level performance measurement \\
   \hline
 \end{longtable}
 
 \subsection{Практическое значение результатов}
 
-Короткая ручная приемка дополняет автоматизированную проверку и используется как демонстрационный
-сценарий на защите. Она включает редирект на \texttt{/ru/}, открытие русской и
-английской версии витрины, показ репрезентативной CMS-страницы, запуск
-\texttt{preview}-сценария из \texttt{Strapi}, открытие детальной вакансии и проверку
-невалидного ввода для маркетинговой и карьерной формы. За счет этого результаты
-автоматизированной проверки получают наглядное подтверждение в браузере и демонстрируют,
-что проект готов не только к технической верификации, но и к презентации редакторских и
-пользовательских сценариев.
+Короткая ручная приемка в этом контуре имеет отдельную роль. Она воспроизводит
+редирект на \texttt{/ru/}, открытие русской и английской storefront-версии, показ
+репрезентативной \texttt{CMS}-страницы, запуск \texttt{preview} из \texttt{Strapi},
+открытие детальной вакансии и проверку невалидного ввода для маркетинговой и карьерной
+формы. Тем самым на защите демонстрируются именно те маршруты и сценарии, которые уже
+подтверждены автоматизированным, browser-level, build- и database-side evidence.
 
-Важным итогом этой серии проверок является то, что она подтверждает уже реализованные
-достижения проекта: работоспособный двуязычный контур публичной витрины, управляемые
-\texttt{SEO}/\texttt{Open Graph}-метаданные, защищенный \texttt{preview}, прикладные
-сценарии сбора лидов и откликов, а также публикационную связку между \texttt{Strapi} и
-результатом сборки frontend. При этом интерпретация этих результатов должна оставаться
-академически корректной: в данной работе подтвержден именно воспроизводимый приемочный и
-интеграционный контур проверки, который доказывает зрелость реализованного решения на уровне
-ключевых бизнес- и редакторских сценариев.
+Практическое значение результатов состоит в том, что ключевые требования первой главы
+доведены до состояния воспроизводимого acceptance contour. Независимый редакторский цикл
+подтверждается сочетанием \texttt{CMS}-страницы, \texttt{Dynamic Zone} и защищенного
+\texttt{preview}; storefront-core \texttt{ru/en} --- route- и build-проверками;
+editor-managed \texttt{SEO}/\texttt{Open Graph} --- metadata-проверками и
+\texttt{sitemap}; защищенные публичные формы --- мутационной приемкой и прикладными
+записями в БД; публикация через \texttt{webhook -> rebuild} --- локальной регистрацией
+managed webhook и отдельной внешней стендовой валидацией полного пути
+\texttt{publish/unpublish -> rebuild/redeploy}. В результате зрелость решения
+подтверждается не общим тезисом о ``наличии функций'', а воспроизводимым соответствием
+между требованием, способом проверки и наблюдаемым результатом.
+
+Корректная интерпретация этой доказательной базы заключается в следующем: для
+заявленного дипломного scope система уже подтверждена как рабочий инженерный контур
+управления маркетинговым контентом, в котором изменение страницы, предварительная
+проверка, публикация и прикладная обработка пользовательских отправок не зависят от
+неформальных ручных действий в коде. При этом каждый класс evidence сохраняет свою
+границу: browser audit характеризует локальный browser-level baseline, размер
+\texttt{dist/client} описывает build-артефакт, а внешний \texttt{Dokploy} путь
+фиксируется как отдельный стендовый факт. Такая интерпретация делает выводы по testing
+section строгими: они показывают зрелость решения в границах измеренного acceptance
+контура и не приписывают системе свойства, которые в данной работе специально не
+измерялись.
 
 \section{Выводы по проектной главе}
 
