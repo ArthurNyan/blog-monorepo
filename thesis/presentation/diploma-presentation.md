@@ -264,7 +264,7 @@ description: Презентация к выпускной квалификаци
 | Preview contour | Черновики доступны только через `/api/preview` и `x-preview-secret`. |
 | SEO и sitemap | Проверены `title`, `canonical`, `og`-поля и генерация `sitemap-index.xml`. |
 | Форменные сценарии | `lead-submission` и `vacancy-application` валидируются на `server-side` и пишутся через технический токен. |
-| Rebuild contour | Managed webhook зарегистрирован в `Strapi` и привязан к событиям `publish/unpublish`. |
+| Rebuild contour | Managed webhook зарегистрирован в `Strapi`; 1 июня 2026 года подтвержден и внешний путь до `Dokploy rebuild/redeploy`. |
 | Security contour | Public content API `read-only`; публикация отделена от редактирования ролями. |
 
 <div class="note center">Результаты опираются на локальную сборку, smoke-checks, browser/runtime-проверки и прямую верификацию CMS/SQLite evidence.</div>
@@ -287,9 +287,9 @@ description: Презентация к выпускной квалификаци
 
 ### Текущие ограничения
 
-- Полный browser-level `WCAG audit` и production-like `Lighthouse` профиль не входили в обязательный контур ВКР.
-- Конфигурация `Dokploy` остается внешним platform state, хотя сквозной `rebuild/redeploy` уже подтвержден на стенде проекта.
-- Дальнейшее развитие: новые блоки `Dynamic Zone`, расширение workflow и аналитики контента.
+- Публичный `ru/en` контур охватывает storefront-core, статьи и проекты; карьерный модуль осознанно остается под `/vacancies/*`, хотя `CMS`-данные и `preview` для него локализованы.
+- `CMS-managed SEO` доведен до `home-page`, `page`, `article`, `project`, `vacancy`; list pages `articles/projects/vacancies` используют route-owned metadata layer.
+- Контур проверки воспроизводим на smoke/build/browser/DB-уровне, но не подменяет полный `WCAG`/`Lighthouse` аудит; `Dokploy` остается внешним platform state, хотя `rebuild/redeploy` уже подтвержден на стенде 1 июня 2026 года.
 
 </div>
 </div>
