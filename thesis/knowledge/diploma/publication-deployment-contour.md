@@ -1,5 +1,7 @@
 # Publication And Deployment Contour
 
+Дата актуализации: `2026-06-07`.
+
 ## Назначение документа
 
 Этот документ фиксирует publish-ready описание публикационного и deployment-контура для
@@ -18,11 +20,14 @@
 2. `Strapi` формирует событие `entry.publish` или `entry.unpublish`.
 3. Во время `bootstrap` CMS синхронизирует managed webhook в `strapi_webhooks` и тем
    самым в `Settings -> Webhooks`.
-4. Встроенный `Strapi webhook runner` отправляет `POST` на
-   `FRONTEND_REBUILD_HOOK_URL`.
-5. Этот URL адресует нативный rebuild hook frontend-приложения в `Dokploy`.
+4. Встроенный `Strapi webhook runner` отправляет `POST` на versioned CMS-owned
+   маршрут `${PUBLIC_URL}/api/rebuild`, который синхронизируется как managed webhook.
+5. Контроллер `POST /api/rebuild` на стороне CMS валидирует `x-rebuild-token` при
+   наличии `FRONTEND_REBUILD_HOOK_TOKEN` и уже серверно вызывает внешний
+   `DOKPLOY_DEPLOY_WEBHOOK_URL`.
 6. `Dokploy` выполняет повторную сборку и redeploy отдельного frontend
-   `Docker`-приложения.
+   `Docker`-приложения на основе payload `push`-события с branch/repository из
+   `DOKPLOY_DEPLOY_BRANCH` и `DOKPLOY_DEPLOY_REPOSITORY`.
 7. После redeploy `Astro` снова отдает предсобранные публичные маршруты, использующие
    актуальные данные из CMS.
 
@@ -100,12 +105,14 @@ CMS разворачивается из
 4. Во время `bootstrap` CMS вызывает `syncManagedPublicationWebhook()` и приводит запись в
    `strapi_webhooks` к versioned состоянию:
    create, update, disable или noop.
-5. Если `FRONTEND_REBUILD_HOOK_URL` не задан, CMS явно логирует предупреждение и не
-   оставляет незавершенный rebuild-контур в полуактивном состоянии: webhook остается
-   disabled.
-6. Если URL задан, `Strapi` отправляет `POST` на `FRONTEND_REBUILD_HOOK_URL`, а при
-   наличии `FRONTEND_REBUILD_HOOK_TOKEN` добавляет header `x-rebuild-token`.
-7. В production этот endpoint является нативным rebuild hook `Dokploy`.
+5. Если `PUBLIC_URL` или `DOKPLOY_DEPLOY_WEBHOOK_URL` не заданы, CMS явно логирует
+   предупреждение и не оставляет незавершенный rebuild-контур в полуактивном
+   состоянии: managed webhook остается disabled.
+6. Если значения заданы, `Strapi` отправляет `POST` на `${PUBLIC_URL}/api/rebuild`, а
+   при наличии `FRONTEND_REBUILD_HOOK_TOKEN` добавляет header `x-rebuild-token`.
+7. Контроллер
+   [apps/cms/src/api/rebuild/controllers/rebuild.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/rebuild/controllers/rebuild.ts)
+   уже внутри CMS вызывает внешний `DOKPLOY_DEPLOY_WEBHOOK_URL`.
 8. `Dokploy` пересобирает и redeploy-ит frontend-приложение, собранное из
    [apps/front/Dockerfile](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/Dockerfile).
 9. После redeploy frontend повторно читает опубликованные данные из CMS и отдает
@@ -113,7 +120,8 @@ CMS разворачивается из
 
 Ключевая инженерная граница здесь состоит в том, что публикация управляет только
 frontend rebuild path. CMS не пытается выполнять локальные обходы, не содержит
-собственного runtime-rebuild сервиса и не подменяет собой оркестратор deployment.
+собственного runtime-rebuild оркестратора вне versioned `/api/rebuild` entry point и не
+подменяет собой платформенный deployment layer `Dokploy`.
 
 ## 4. Какие события участвуют в rebuild-контуре
 
@@ -154,8 +162,10 @@ Managed webhook подписан только на:
 | `SITE_URL` | `apps/cms`, `apps/front` | base URL фронтенда для preview и публичных ссылок |
 | `IS_PROXIED` | `apps/cms` | корректная работа CMS за reverse proxy |
 | `PREVIEW_SECRET` | `apps/cms`, `apps/front` | общий секрет preview-контура |
-| `FRONTEND_REBUILD_HOOK_URL` | `apps/cms` | URL нативного rebuild hook frontend-приложения в `Dokploy` |
-| `FRONTEND_REBUILD_HOOK_TOKEN` | `apps/cms` | optional token, передаваемый как `x-rebuild-token` |
+| `DOKPLOY_DEPLOY_WEBHOOK_URL` | `apps/cms` | внешний deploy webhook `Dokploy`, который CMS вызывает из `/api/rebuild` |
+| `DOKPLOY_DEPLOY_BRANCH` | `apps/cms` | branch, передаваемый в payload `push`-события для `Dokploy` |
+| `DOKPLOY_DEPLOY_REPOSITORY` | `apps/cms` | repository name, передаваемый в payload deploy trigger |
+| `FRONTEND_REBUILD_HOOK_TOKEN` | `apps/cms` | optional token между managed webhook `Strapi` и route `POST /api/rebuild` |
 | `FRONTEND_REBUILD_WEBHOOK_NAME` | `apps/cms` | детерминированное имя managed webhook в admin UI |
 | `APP_KEYS`, `API_TOKEN_SALT`, `ADMIN_JWT_SECRET`, `TRANSFER_TOKEN_SALT`, `JWT_SECRET`, `ENCRYPTION_KEY` | `apps/cms` | обязательный secret block `Strapi` |
 | `DATABASE_CLIENT` | `apps/cms` | выбор backend БД (`postgres` для production topology) |
@@ -184,6 +194,10 @@ Managed webhook подписан только на:
   предсобранных маршрутов и `sitemap`;
 - production build CMS через `pnpm --dir apps/cms build`;
 - `TypeScript`-компиляция CMS;
+- наличие versioned route
+  [apps/cms/src/api/rebuild/routes/rebuild.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/rebuild/routes/rebuild.ts)
+  и контроллера, которые принимают managed webhook и серверно передают trigger в
+  `Dokploy`;
 - синхронизация managed webhook через `publication-webhook.ts` на моках `store/runner`;
 - реальный запуск `Strapi` на временной `sqlite`-базе с созданием записи в
   `strapi_webhooks`;
@@ -204,7 +218,8 @@ Managed webhook подписан только на:
 - финальная deployment-модель ориентирована на `Dokploy`;
 - frontend и CMS описаны как раздельные `Docker`-приложения;
 - managed publication webhook является частью репозитория и `bootstrap`-процесса;
-- rebuild-контур со стороны CMS доказан локально лучше, чем просто наличием кода;
+- route-owned rebuild entry point `/api/rebuild` на стороне CMS доказан локально лучше,
+  чем просто наличием кода;
 - frontend deployment bundle и CMS deployment bundle существуют как versioned артефакты.
 
 ## 7. Внешний инфраструктурный сегмент и границы валидации
@@ -289,7 +304,8 @@ Managed webhook подписан только на:
 
 - финальная deployment-модель проекта строится вокруг `Dokploy`;
 - frontend и CMS оформлены как отдельные `Docker`-приложения;
-- CMS управляет frontend rebuild path через managed webhook;
+- CMS управляет frontend rebuild path через managed webhook и versioned route
+  `/api/rebuild`;
 - `Dokploy` выступает внешним оркестратором rebuild/redeploy, а не случайным ручным шагом;
 - локально доказаны frontend/CMS build artifacts, webhook registration и `compose`-validation.
 
@@ -297,6 +313,8 @@ Managed webhook подписан только на:
 
 - что конфигурация `Dokploy` на стороне платформы полностью зафиксирована versioned средствами
   самого репозитория;
+- что `Strapi` напрямую вызывает нативный `Dokploy` hook из записи `strapi_webhooks`,
+  минуя server-side route `/api/rebuild`;
 - что любой конкретный rebuild/redeploy в `Dokploy` уже доказан, если не показан
   соответствующим логом или скрином платформы.
 

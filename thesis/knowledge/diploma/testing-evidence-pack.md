@@ -1,6 +1,6 @@
 # Testing Evidence Pack
 
-Дата актуализации: `2026-06-01`.
+Дата актуализации: `2026-06-07`.
 
 ## Назначение
 
@@ -263,8 +263,10 @@ enabled=1
 Это подтверждает:
 
 - managed webhook синхронизирован и активен;
-- rebuild contour формально подключен к `Strapi`;
-- локально доказан факт регистрации webhook, а не только наличие кода.
+- локальный publication contour уже доведен до route-owned entry point
+  `http://localhost:1337/api/rebuild`;
+- локально доказан факт регистрации webhook и наличия server-side rebuild route, а не
+  только наличие декларативного кода.
 
 Текущая строка `strapi_webhooks`:
 
@@ -422,7 +424,7 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 
 Дополнительно `2026-06-01` на внешнем стенде проекта подтвержден и внешний сценарий:
 
-- `Strapi publish/unpublish -> managed webhook -> Dokploy rebuild/redeploy -> обновление
+- `Strapi publish/unpublish -> managed webhook /api/rebuild -> Dokploy rebuild/redeploy -> обновление
   публичной Astro-витрины` воспроизведен как реальный `end-to-end` path.
 
 ## 5. What Is Ready For Chapter 2
@@ -432,6 +434,8 @@ curl -s -o /dev/null -w 'code=%{http_code} size=%{size_download} ttfb=%{time_sta
 - проект имеет не только реализованный код, но и воспроизводимую acceptance matrix;
 - public routes, preview, forms, sitemap и managed rebuild webhook подтверждены фактами;
 - testing contour отделяет automated, manual и external части;
+- publication contour уже разведен на локально доказанный route-owned rebuild entry point
+  и внешний `Dokploy` runtime segment;
 - основной локальный acceptance baseline закрыт без скрытых gaps, а внешний rebuild
   contour дополнительно подтвержден stand validation `2026-06-01`.
 

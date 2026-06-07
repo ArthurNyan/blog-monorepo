@@ -1,6 +1,6 @@
 # Acceptance Matrix
 
-Дата актуализации: `2026-06-01`.
+Дата актуализации: `2026-06-07`.
 
 ## Назначение
 
@@ -77,9 +77,9 @@
 | `LOC-02` | `articles/projects` locale-prefixed routes | `/:locale/articles/` и `/:locale/projects/` buildятся для `ru/en` | Automated | `Pass` | Проверено build output. |
 | `LOC-03` | `articles/projects` EN detail coverage | Наличие английских detail entries для representative `article/project` | Automated + Code/Build evidence | `Pass` | Versioned `seed-content.js` теперь публикует representative `en` article/project detail entries; runtime, build, sitemap и SQLite `2026-05-31` подтверждают `/en/articles/neea-llc/` и `/en/projects/project/`. |
 | `LOC-04` | Vacancies public locale boundary | Публичные вакансии живут вне `/:locale/...`, preview при этом locale-aware | Automated + Code/Build evidence | `Pass` | Подтверждено route helpers, runtime и build output. |
-| `PUBF-01` | Managed rebuild webhook exists | Активный `Frontend rebuild hook` есть в `strapi_webhooks` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
-| `PUBF-02` | Webhook events | Webhook подписан на `entry.publish` и `entry.unpublish` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite. |
-| `PUBF-03` | External rebuild trigger | Реальный внешний `Dokploy` rebuild/redeploy после publish/unpublish | Manual / external | `Pass` | Подтверждено на внешнем стенде проекта `2026-06-01`: publish/unpublish в `Strapi` инициирует webhook, `Dokploy` запускает rebuild/redeploy, а обновление отражается на публичной `Astro`-витрине без ручной сборки frontend. |
+| `PUBF-01` | Managed rebuild webhook exists | Активный `Frontend rebuild hook` есть в `strapi_webhooks` и указывает на `CMS /api/rebuild` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite: `url=http://localhost:1337/api/rebuild`, `enabled=1`. |
+| `PUBF-02` | Webhook events | Webhook подписан на `entry.publish` и `entry.unpublish` | Automated + DB evidence | `Pass` | Подтверждено прямым запросом к SQLite; событие ведет в versioned route-owned rebuild entry point CMS. |
+| `PUBF-03` | External rebuild trigger | Реальный внешний `Dokploy` rebuild/redeploy после publish/unpublish | Manual / external | `Pass` | Подтверждено на внешнем стенде проекта `2026-06-01`: publish/unpublish в `Strapi` инициирует managed webhook `/api/rebuild`, после чего `Dokploy` запускает rebuild/redeploy, а обновление отражается на публичной `Astro`-витрине без ручной сборки frontend. |
 
 ## Accessibility And Performance Baseline
 

@@ -1,6 +1,6 @@
 # Testing Runbook
 
-Дата актуализации: `2026-05-31`.
+Дата актуализации: `2026-06-07`.
 
 Этот runbook повторяет текущий testing baseline и дополнительный browser-level audit
 без внешнего SaaS.
@@ -275,7 +275,8 @@ sqlite3 apps/cms/.tmp/data.db "select id,full_name,email,source,hr_status from v
 
 Норма:
 
-- в `strapi_webhooks` есть `Frontend rebuild hook`;
+- в `strapi_webhooks` есть `Frontend rebuild hook` с URL вида
+  `http://localhost:1337/api/rebuild`;
 - после mutation smoke в `lead_submissions` и `vacancy_applications` появляются новые строки.
 
 ## 10. What Counts As Baseline

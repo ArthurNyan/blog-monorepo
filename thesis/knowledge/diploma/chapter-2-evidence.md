@@ -5,7 +5,7 @@
 Документ фиксирует подтвержденные по коду факты о текущем состоянии проекта, чтобы
 проектная глава ВКР опиралась на реальную реализацию, а не на абстрактный план.
 
-Дата актуализации: `2026-05-22`.
+Дата актуализации: `2026-06-07`.
 
 ## Методика фиксации фактов
 
@@ -24,6 +24,20 @@
 
 - [acceptance-matrix.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/acceptance-matrix.md)
 - [testing-evidence-pack.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/testing-evidence-pack.md)
+
+## Опорная карта практических контуров
+
+| Контур | Реализация | Способ подтверждения | Граница scope / доказанности |
+|---|---|---|---|
+| Storefront-core `ru/en` | `global`, `home-page`, `page`, locale-prefixed routes `/:locale/` и `/:locale/:slug/` | код `apps/front`, smoke/runtime, sitemap | карьерный модуль не переводится в общий locale-prefixed production contour |
+| Content collections `articles/projects` | locale-prefixed list/detail routes и shared fetch-layer поверх CMS | build output, sitemap, smoke/runtime, seeded representative entries | section list pages остаются route-owned по `SEO`, generated client не является единственным data-layer |
+| Career contour `vacancies` | отдельные публичные routes `/vacancies/` и `/vacancies/:slug/`, локализуемые `vacancy/industry/job-role`, locale-aware preview | код route/API слоя, smoke/runtime, SQLite form evidence | production UI осознанно вне `/:locale/...`; UI-copy карьерного модуля остается локальной |
+| Preview и draft access | `/api/preview`, `/preview/...`, preview-cookie, `x-preview-secret`, `enforce-published` | automated smoke, runtime checks, code inspection | доказан для `home-page`, `page`, `article`, `project`, `vacancy`; это server-side contour, а не публичный draft API |
+| `SEO` / `Open Graph` / `sitemap` | `shared.seo`, `buildSeoMetadata`, `MainLayout`, `@astrojs/sitemap` | runtime/build checks, sitemap files, browser audit | list pages `articles/projects/vacancies` остаются route-owned fallback-поверхностью |
+| Публичные формы | server-side `lead-submissions` и `vacancy-applications` с `honeypot`, consent, file validation и `CMS_API_TOKEN` | mutation smoke, HTTP checks, SQLite growth | нет `rate limit`, CRM/email automation и расширенного post-submit workflow |
+| Publication / deployment | managed webhook в `Strapi` указывает на `CMS /api/rebuild`, а контроллер уже серверно вызывает `Dokploy` deploy webhook | code inspection, SQLite `strapi_webhooks`, external stand validation `2026-06-01` | локально доказана регистрация и route-owned rebuild entry point; сам платформенный runtime `Dokploy` остается внешним сегментом |
+| Roles / security | versioned bootstrap sync admin roles и content API roles, route-level read-only contour, preview boundary | `security-model.ts`, bootstrap code, route configs | users, secrets и token values остаются manual environment/setup step |
+| Testing baseline | `pnpm smoke:front`, `SMOKE_ALLOW_MUTATIONS=true pnpm smoke:front`, `pnpm evidence:testing`, `pnpm audit:browser` | acceptance matrix, evidence pack, browser artifact | baseline основан на acceptance/browser evidence, а не на Lighthouse/Web Vitals или полном WCAG audit |
 
 ## 1. Текущее состояние `apps/cms`
 
@@ -55,11 +69,25 @@
   если запрос не содержит корректный `x-preview-secret`.
 - В [apps/cms/src/index.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/index.ts)
   `bootstrap` предупреждает об отсутствии `PUBLIC_URL` и `PREVIEW_SECRET`, а также
-  синхронизирует versioned security model.
+  синхронизирует versioned security model и publication contour.
 - В
   [apps/cms/src/utils/security-model.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/security-model.ts)
   зафиксирован source of truth для admin roles `Marketer / Content Manager`, `Editor`,
   `HR` и для content API roles `public` и `authenticated`.
+- В
+  [apps/cms/src/utils/publication-webhook.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/publication-webhook.ts)
+  managed webhook строится как versioned CMS-owned entry point `${PUBLIC_URL}/api/rebuild`
+  и активируется только при наличии `DOKPLOY_DEPLOY_WEBHOOK_URL`.
+- В
+  [apps/cms/src/api/rebuild/controllers/rebuild.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/rebuild/controllers/rebuild.ts)
+  и
+  [apps/cms/src/utils/dokploy-rebuild.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/utils/dokploy-rebuild.ts)
+  server-side rebuild route уже валидирует `x-rebuild-token` и передает trigger в
+  `Dokploy` через `DOKPLOY_DEPLOY_WEBHOOK_URL`, `DOKPLOY_DEPLOY_BRANCH` и
+  `DOKPLOY_DEPLOY_REPOSITORY`.
+- В [apps/cms/project.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/project.json)
+  `test` цель уже привязана к `pnpm evidence:testing`, а `lint` служит информационным
+  orchestration target, который отсылает к build/smoke/evidence contour.
 
 Вывод для главы 2:
 
@@ -68,7 +96,10 @@
 - в коде зафиксирована базовая конфигурация для схемы `CMS в Docker за proxy`
   и защищенного draft-preview;
 - backend уже дополнен versioned publication/deployment contour, включая rebuild hook и
-  Docker bundle.
+  Docker bundle;
+- publication contour уже реализован как двухшаговый путь
+  `Strapi entry.publish/unpublish -> managed webhook /api/rebuild -> Dokploy deploy webhook`,
+  а не как неформальная ручная связка CMS с платформой.
 
 ### 1.2. Существующие сущности CMS
 
@@ -166,6 +197,10 @@
 - Во frontend включена генерация типизированного API-клиента через
   [apps/front/openapi-ts.config.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/openapi-ts.config.ts),
   который берет схему из `CMS_URL/api/documentation/1.0.0/full_documentation`.
+- В [apps/front/project.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/project.json)
+  `test` цель уже привязана к `pnpm smoke:acceptance`, `audit:browser` оформлен как
+  отдельная reproducible evidence target, а `lint` остается информационным orchestration
+  target, а не отдельным static-analysis pipeline.
 
 Вывод для главы 2:
 
@@ -419,23 +454,28 @@
 - форму отклика на вакансию с валидацией, `honeypot`, consent и загрузкой резюме;
 - маркетинговую lead form с валидацией, `honeypot`, consent и Astro API route;
 - гибридный публикационный контур frontend: prerendered public routes + server-side preview.
-- versioned admin-managed webhook `publish/unpublish -> rebuild`;
-- versioned Docker contour CMS с `Dockerfile`, `compose.yml` и production-like env contract.
+- versioned admin-managed webhook
+  `publish/unpublish -> managed webhook /api/rebuild -> Dokploy deploy webhook`;
+- versioned Docker contour frontend и CMS с `Dockerfile`, `compose.yml` и production-like
+  env contract.
 
 ## 4. Ограничения текущего состояния проекта
 
-Для следующего этапа важно различать два класса ограничений:
+Для следующего этапа важно различать два класса инженерных границ:
 
-- незакрытые обязательные элементы финального результата;
+- уже закрытые обязательные элементы финального результата;
 - допустимые ограничения, которые по
   [final-scope.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/final-scope.md)
   не считаются провалом итоговой версии.
 
 ### 4.1. Что уже закрыто как обязательная часть final scope
 
-- production-oriented сценарий `publish/unpublish -> webhook -> rebuild` на стороне CMS;
-- versioned-конфигурация CMS в `Docker`;
-- формализованный env-contract для preview, rebuild hook и Docker contour.
+- production-oriented сценарий
+  `publish/unpublish -> managed webhook /api/rebuild -> Dokploy rebuild/redeploy`;
+- versioned deployment bundles для frontend и CMS;
+- формализованный `env`-contract для preview, rebuild path и `Docker`-контура;
+- versioned матрица ролей и прав;
+- воспроизводимая acceptance/evidence база с automated, DB/build и browser-level слоями.
 
 Подробный source of truth по этому участку вынесен в
 [publication-deployment-contour.md](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/knowledge/diploma/publication-deployment-contour.md).
@@ -449,19 +489,18 @@
 
 Отдельно от локального baseline подтверждено на внешнем стенде `2026-06-01`:
 
-- конечный внешний `Dokploy` rebuild/redeploy после production hook;
-- полный путь `Strapi -> webhook -> Dokploy -> обновленная публичная Astro-витрина`.
+- конечный внешний `Dokploy` rebuild/redeploy после server-side вызова
+  `DOKPLOY_DEPLOY_WEBHOOK_URL`;
+- полный путь
+  `Strapi -> managed webhook /api/rebuild -> Dokploy -> обновленная публичная Astro-витрина`.
 
-При этом отдельно остается ограничением:
+### 4.2. Что теперь важно удерживать как границу формулировок
 
-- полный `docker build` как завершенный результат текущей сессии, потому что проверка
-  уперлась во внешний сетевой сбой загрузки `pnpm` через `corepack`, а не в ошибку
-  versioned Docker bundle.
-
-### 4.2. Что пока не реализовано, но обязательно для финального результата
-
-- воспроизводимая тестовая матрица вместо заглушек `lint/test`, включая фиксацию метрик
-  `SEO`, `accessibility` и `performance`.
+- не подменять route-owned rebuild entry point тезисом о прямом вызове `Dokploy` из
+  `Strapi webhook settings`;
+- не описывать browser-level accessibility/performance baseline как `Lighthouse`,
+  `Web Vitals` или полный `WCAG` audit;
+- не расширять `ru/en` до тезиса о полном locale-prefixed охвате карьерного production UI.
 
 ### 4.3. Что уже является осознанным допустимым ограничением final scope
 
@@ -474,6 +513,8 @@
 - для `articles/projects/vacancies` допустим более простой meta-layer, строящийся в основном
   из самих контентных полей;
 - тестовый контур может оставаться преимущественно ручным;
+- acceptance contour уже воспроизводим и versioned, но не превращается в полный
+  product-grade unit/e2e stack;
 - публикация может оставаться rebuild-based без real-time обновлений;
 - формы могут оставаться без `rate limit`, CRM-интеграции и email automation.
 
@@ -483,30 +524,14 @@
   используют собственный shared fetch-layer, вакансии используют отдельный рукописный API-слой;
 - полная prerender-сборка публичной витрины по-прежнему зависит от доступности `Strapi`
   во время build;
-- часть production-path зависит от внешней инфраструктуры `Dokploy` и сетевой доступности
-  registry во время Docker build;
+- внешний `Dokploy` runtime, history deployment-ов и реальные platform secrets не
+  являются versioned состоянием репозитория;
 - secrets и фактические учетные записи пользователей остаются эксплуатационной настройкой,
   а не versioned артефактом репозитория;
 - значительная часть project chapter уже может писаться как описание завершенной
-  реализации, кроме блока финальных метрик.
+  реализации; точности требуют прежде всего границы доказанности и wording operational sections.
 
-## 5. Минимальный практический набор обязательных доработок
-
-На основании текущего кода и уже замороженного final scope обязательный остаток работ
-сводится к следующему:
-
-| Обязательная доработка | Почему это критично именно для главы 2 | Что уже есть в коде | Что нужно довести |
-|---|---|---|---|
-| Тестовая матрица и метрики | без нее диплом теряет доказательность результата | storefront-core, preview, sitemap и формы уже можно проверять по коду | оформить воспроизводимые проверки, зафиксировать `SEO`, `accessibility`, `performance` и rebuild |
-
-Почему именно этот набор минимален:
-
-- он покрывает все реально незакрытые обязательные элементы финального результата;
-- он не раздувает тему за пределы уже замороженного scope;
-- каждый пункт напрямую конвертируется в сильный подраздел главы 2: публикация, deployment,
-  безопасность и проверяемость.
-
-## 6. Что можно безопасно писать в черновике главы 2 уже сейчас
+## 5. Что можно безопасно усиливать в главе 2 уже сейчас
 
 На основе текущей доказательной базы уже можно писать:
 
@@ -525,15 +550,21 @@
 - централизованный рендер `lang`, `description`, `canonical`, `Open Graph`, `twitter:*`, `noindex`;
 - защищенный preview mode для `home-page`, `pages`, `articles`, `projects` и `vacancies`;
 - автоматическую генерацию `sitemap` на основе публичных prerendered маршрутов;
-- публикационный contour `publish/unpublish -> admin-managed webhook -> rebuild` как реализованный кодовый механизм;
+- публикационный contour
+  `publish/unpublish -> managed webhook /api/rebuild -> Dokploy deploy webhook -> rebuild/redeploy`
+  как реализованный кодовый механизм;
 - deployment-архитектуру `frontend и CMS как отдельных Docker`-приложений в `Dokploy` с versioned env contract;
 - versioned security model для `administrator`, `marketer/content-manager`, `editor`,
   `hr`, а также read-only public API contour и preview boundary;
 - публичные маршруты статей, проектов и вакансий как уже существующие content sections,
   с отдельной route-границей для карьерного модуля.
 - пользовательские сценарии вакансий/откликов и маркетинговых лидов;
-- ограничения текущего состояния проекта и перечень обязательных доработок.
+- browser-level testing baseline, build/static metrics и SQLite evidence как уже
+  зафиксированную доказательную базу.
 
 Пока рано писать как реализованный результат:
 
-- финальные измеренные метрики `SEO`, `accessibility` и `performance`.
+- `Lighthouse`-порог, production `Web Vitals` или полный `WCAG` audit;
+- полный locale-prefixed production UI для карьерного модуля;
+- прямой вызов `Dokploy` нативным webhook-URL из `Strapi` без промежуточного
+  server-side маршрута CMS.

@@ -1,6 +1,6 @@
 # Final Scope
 
-Дата фиксации: `2026-05-22`.
+Дата фиксации: `2026-06-07`.
 
 ## Назначение
 
@@ -31,10 +31,13 @@
 - `CMS-managed SEO/Open Graph` уже реализован для `home-page`, `page` и detail entities
   `article`, `project`, `vacancy`, при отдельном route-owned fallback-слое для list pages.
 - `@astrojs/sitemap` и `@astrojs/node` уже подключены.
-- В репозитории уже зафиксированы versioned `Docker`-файлы для CMS и оформленный
-  `webhook -> rebuild` contour; незакрытым обязательным блоком остается прежде всего
-  формальная матрица `roles/permissions` и reproducible verification pack.
-- `lint` и `test` цели в `apps/front` и `apps/cms` пока остаются заглушками.
+- В репозитории уже зафиксированы versioned `Docker`-файлы для frontend и CMS, а
+  publication contour реализован как
+  `Strapi -> managed webhook /api/rebuild -> Dokploy deploy webhook`.
+- Versioned матрица `roles/permissions`, acceptance matrix и evidence pack уже входят в
+  фактический финальный contour.
+- `lint` не выделен в отдельный строгий static-analysis pipeline, но `test` цели уже
+  привязаны к smoke/evidence-командам.
 
 ## 2. Final Scope
 
@@ -83,8 +86,8 @@
   сайте", включая карьерный модуль;
 - в следующих этапах последовательно описывать `ru/en` как storefront-core для `global`,
   `home-page`, `page` плюс locale-prefixed content collections `article/project`;
-- в тестовой матрице отдельно подтвердить работу `ru/en` для storefront-core,
-  `articles` и `projects`.
+- не размывать уже подтвержденную route-границу между storefront-core и отдельным
+  карьерным production contour.
 
 #### Останется допустимым ограничением
 
@@ -130,9 +133,10 @@
 
 - не расширять текст диплома до утверждения, что list pages `articles/projects/vacancies`
   получили отдельный CMS-managed `SEO` editing flow;
-- в проверках явно валидировать `SEO` для `home-page`, `page` и хотя бы одного detail entry
-  из `article/project/vacancy`;
-- в итоговом тексте разводить реализованную модель и fallback behavior.
+- в итоговом тексте разводить реализованную editor-managed модель и fallback behavior
+  route-owned/list-page layers;
+- не подменять browser/runtime validation `SEO` тезисом о наличии отдельного CMS-driven
+  editing flow для section list pages.
 
 #### Останется допустимым ограничением
 
@@ -161,13 +165,15 @@
   `Marketer / Content Manager`, `Editor`, `HR`;
 - `public` role уже приведена к read-only content API contour, а `authenticated`
   role оставлена без permissions;
-- в knowledge уже существуют отдельные документы `security-model.md` и
-  `editor-workflow.md`.
+- в knowledge уже существуют отдельные документы `security-model.md`,
+  `editor-workflow.md` и связанная acceptance/evidence база.
 
 #### Обязательно реализовать
 
-- описание ролей в knowledge и в тексте ВКР как части editor workflow;
-- привязку этих ролей к воспроизводимой test/evidence matrix.
+- в тексте главы 2 удерживать привязку ролей к editor workflow и к фактическим
+  versioned permissions, не вводя новые human roles вне source-of-truth;
+- в проверках и narrative явно отделять human roles от технических каналов
+  `CMS_API_TOKEN` и `PREVIEW_SECRET`.
 
 #### Останется допустимым ограничением
 
@@ -195,26 +201,29 @@
 
 #### Обязательные метрики и пороги
 
-- `accessibility`: зафиксировать результат для `/ru/` и для одной CMS-страницы `page`;
-  целевой порог для дипломной фиксации: не ниже `90` по Lighthouse.
-- `SEO`: зафиксировать результат для `/ru/` и для одной CMS-страницы `page`;
-  целевой порог для дипломной фиксации: не ниже `90` по Lighthouse.
-- `performance`: результат должен быть зафиксирован как доказательная метрика, но без
-  жесткого дипломного порога pass/fail.
-- `publication`: rebuild после публикации должен быть подтвержден как отдельный факт, а не
-  описан декларативно.
+- `accessibility`: зафиксировать browser-level baseline для `/ru/` и одной CMS-страницы
+  `page` через `html[lang]`, `h1`, форму и отсутствие unlabeled form controls.
+- `SEO`: зафиксировать route-level baseline для `/ru/` и одной CMS-страницы `page` через
+  `title`, `canonical`, `og:*`, `robots` и public indexability.
+- `performance`: фиксировать build/static показатели и browser navigation timings как
+  доказательную метрику, но без жесткого дипломного порога pass/fail.
+- `publication`: rebuild после публикации должен быть подтвержден как отдельный факт с
+  разделением локального route-owned evidence и внешнего `Dokploy` validation.
 
 #### Уже реализовано
 
 - build targets существуют для обоих приложений;
 - `preview`, `sitemap`, формы и базовые security checks по коду уже есть;
-- route-level архитектура позволяет снимать `SEO` и `accessibility` метрики со storefront-core.
+- route-level архитектура и versioned audit scripts уже снимают `SEO`,
+  `accessibility` и browser timing baseline со storefront-core;
+- acceptance matrix, testing evidence pack и browser audit artifact уже фиксируют
+  обязательные проверки и их границы доказанности.
 
 #### Обязательно реализовать
 
-- воспроизводимую тестовую матрицу и результаты проверок;
-- доказательство сценария `webhook -> rebuild`;
-- фиксацию измерений `accessibility`, `SEO` и `performance` в thesis-knowledge / приложениях.
+- при дальнейшем усилении главы 2 не подменять browser baseline тезисами о
+  `Lighthouse`, `Web Vitals` или полном `WCAG` audit;
+- в operational sections явно различать automated, DB/build и external evidence.
 
 #### Останется допустимым ограничением
 
@@ -235,15 +244,17 @@
   `article/project/vacancy`;
 - `sitemap` на стороне `Astro`;
 - versioned `webhook -> rebuild` contour;
-- versioned `Docker`-контур для `apps/cms`;
+- versioned `Docker`-контур для frontend и `apps/cms`;
 - маркетинговая lead form и форма отклика на вакансию с `consent` и `honeypot`;
 - `Node.js` adapter, frontend `Dockerfile` и environment contract для `SITE_URL`, `PUBLIC_URL`, `IS_PROXIED`,
-  `PREVIEW_SECRET`.
+  `PREVIEW_SECRET`;
+- versioned матрица `roles/permissions`, acceptance matrix, testing evidence pack и
+  browser audit baseline.
 
 ### Обязательно реализовать
 
-- формальную матрицу `roles/permissions`;
-- воспроизводимую матрицу проверок и набор итоговых метрик.
+- текстовую синхронизацию главы 2, conclusion и defense narrative с уже
+  зафиксированным scope и границами доказанности.
 
 ### Останется допустимым ограничением даже в финальной версии
 
