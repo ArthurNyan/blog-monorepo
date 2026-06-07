@@ -15,6 +15,20 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 
+\makeatletter
+\newcommand{\Needspace}[1]{%
+  \par
+  \begingroup
+    \@tempdima=#1\relax
+    \@tempdimb=\pagegoal
+    \advance\@tempdimb by -\pagetotal
+    \ifdim \@tempdima>\@tempdimb
+      \newpage
+    \fi
+  \endgroup
+}
+\makeatother
+
 \sisetup{
   output-decimal-marker={,},
   group-separator={\,},
