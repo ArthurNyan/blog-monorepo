@@ -163,8 +163,10 @@
 \vfuzz=10pt
 
 % Формат нумерации и заголовков главы/разделов.
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{2}
+% Нумеруем и включаем в TOC только главы и разделы; подразделы остаются
+% ненумеруемыми заголовками внутри текста.
+\setcounter{secnumdepth}{1}
+\setcounter{tocdepth}{1}
 \renewcommand{\chaptername}{Глава}
 \renewcommand{\thechapter}{\arabic{chapter}}
 \renewcommand{\thesection}{\thechapter.\arabic{section}}
@@ -175,9 +177,11 @@
 \titleformat{\chapter}[block]{\gostvkr@chapterfont\centering}{\MakeUppercase{\chaptername}\ \thechapter.}{0.5em}{\MakeUppercase}
 \titleformat{name=\chapter,numberless}[block]{\gostvkr@chapterfont\centering}{}{0pt}{\MakeUppercase}
 \titlespacing*{\chapter}{0pt}{0pt}{2\baselineskip}
-\titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{}
+\titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{\MakeUppercase}
+\titleformat{name=\section,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{\MakeUppercase}
 \titlespacing*{\section}{\parindent}{0.75\baselineskip}{1.25\baselineskip}
-\titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{\thesubsection}{1em}{}
+\titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
+\titleformat{name=\subsection,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titlespacing*{\subsection}{\parindent}{0.5\baselineskip}{0.35\baselineskip}
 \titleformat{\subsubsection}[block]{\normalfont\bfseries\normalsize}{\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{\parindent}{0.5\baselineskip}{0.25\baselineskip}

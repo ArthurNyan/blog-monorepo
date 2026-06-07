@@ -758,7 +758,10 @@ HTML-ответов и build-артефактов, но и в реальном �
 \Needspace{12\baselineskip}
 \begingroup
 \scriptsize
-\begin{longtable}{L{0.17\linewidth}L{0.21\linewidth}L{0.17\linewidth}L{0.31\linewidth}}
+\setlength{\tabcolsep}{4pt}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{@{}L{0.18\linewidth}L{0.22\linewidth}L{0.18\linewidth}L{0.34\linewidth}@{}}
   \caption{Трассировка требований, способов проверки и интерпретации результатов}\label{tab:chapter2-testing-results} \\
   \toprule
   \textbf{Контур / требование} & \textbf{Способ проверки} & \textbf{Результат} & \textbf{Корректная интерпретация} \\
@@ -797,7 +800,12 @@ HTML-ответов и build-артефактов, но и в реальном �
 или границы scope не подаются здесь как ``метрики''.
 
 \Needspace{12\baselineskip}
-\begin{longtable}{L{0.2\linewidth}L{0.2\linewidth}L{0.5\linewidth}}
+\begingroup
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{@{}L{0.21\linewidth}L{0.19\linewidth}L{0.53\linewidth}@{}}
   \caption{Ключевые показатели контрольной серии проверок}\label{tab:chapter2-testing-metrics} \\
   \toprule
   \textbf{Показатель} & \textbf{Значение} & \textbf{Граница интерпретации} \\
@@ -822,6 +830,7 @@ HTML-ответов и build-артефактов, но и в реальном �
   \midrule
   Объем \texttt{dist/client} & около \texttt{2.4 MB} & Зафиксирован размер build-артефакта публичной витрины; он описывает состояние контрольной сборки и не подменяет полноценное браузерное измерение производительности \\
 \end{longtable}
+\endgroup
 
 \subsection{Практическое значение результатов}
 

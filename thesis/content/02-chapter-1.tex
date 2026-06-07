@@ -59,7 +59,8 @@ frontend, а \texttt{CMS-first} система управления контен
   \centering
   \small
   \caption{Связь особенностей маркетингового сайта с инженерными требованиями к системе}\label{tab:marketing-domain-engineering-effects}
-  \begin{tabular}{L{0.34\linewidth}L{0.56\linewidth}}
+  \setlength{\tabcolsep}{5pt}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}L{0.35\linewidth}L{0.57\linewidth}@{}}
     \toprule
     \textbf{Особенность предметной области} & \textbf{Инженерное следствие для системы} \\
     \midrule
@@ -88,7 +89,7 @@ frontend, а \texttt{CMS-first} система управления контен
     Публикация должна рассматриваться как формализованный процесс обновления витрины, а
     не как набор ручных операций в кодовой базе и инфраструктуре. \\
     \bottomrule
-  \end{tabular}
+  \end{tabular*}
 \end{table}
 
 \subsection{Контентные сущности и редакторские сценарии}
@@ -199,7 +200,7 @@ runtime-сценарии. Для мультиязычных контентных
   \footnotesize
   \caption{Сравнение традиционной CMS и headless CMS по критериям маркетингового сайта}\label{tab:cms-vs-headless-marketing}
   \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{L{0.16\linewidth}L{0.20\linewidth}L{0.20\linewidth}L{0.26\linewidth}}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}L{0.17\linewidth}L{0.21\linewidth}L{0.21\linewidth}L{0.27\linewidth}@{}}
     \toprule
     \textbf{Критерий} & \textbf{Традиционная CMS} & \textbf{Headless CMS} & \textbf{Значение для задачи ВКР} \\
     \midrule
@@ -233,7 +234,7 @@ runtime-сценарии. Для мультиязычных контентных
     Контуры \texttt{CMS} и витрины разводятся, что требует интеграции, но упрощает versioned deployment и изоляцию публикации. &
     Для rebuild-based публикации важнее предсказуемый и воспроизводимый pipeline, чем минимальное число исполняемых компонентов. \\
     \bottomrule
-  \end{tabular}
+  \end{tabular*}
 \end{table}
 
 Матрица показывает, что традиционный подход сохраняет преимущество в стартовой простоте
@@ -264,7 +265,7 @@ runtime-сценарии. Для мультиязычных контентных
   \footnotesize
   \caption{Критерии выбора стека для \texttt{CMS-first} маркетинговой платформы}\label{tab:stack-selection-criteria}
   \setlength{\tabcolsep}{4pt}
-  \begin{tabular}{L{0.24\linewidth}L{0.28\linewidth}L{0.38\linewidth}}
+  \begin{tabular*}{\linewidth}{@{\extracolsep{\fill}}L{0.24\linewidth}L{0.28\linewidth}L{0.38\linewidth}@{}}
     \toprule
     \textbf{Критерий выбора} & \textbf{Почему он важен} & \textbf{Как его закрывает выбранный стек} \\
     \midrule
@@ -304,7 +305,7 @@ runtime-сценарии. Для мультиязычных контентных
     выполнять атомарные изменения, использовать единый набор зависимостей и согласованные
     команды сборки, что особенно важно для общего контентного контракта~\cite{nx-monorepos}. \\
     \bottomrule
-  \end{tabular}
+  \end{tabular*}
 \end{table}
 
 Решающим аргументом в пользу \texttt{Strapi} является не абстрактная популярность
@@ -381,7 +382,10 @@ frontend-рендеринг и публикационный процесс. Сл
 \Needspace{12\baselineskip}
 \begingroup
 \footnotesize
-\begin{longtable}{L{0.22\linewidth}L{0.22\linewidth}L{0.46\linewidth}}
+\setlength{\tabcolsep}{4pt}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{@{}L{0.23\linewidth}L{0.23\linewidth}L{0.47\linewidth}@{}}
   \caption{Трассировка функциональных требований к системе}\label{tab:functional-requirements-traceability} \\
   \toprule
   \textbf{Требование} & \textbf{Источник требования} & \textbf{Контур реализации и верификации} \\
@@ -479,7 +483,10 @@ frontend-рендеринг и публикационный процесс. Сл
 \Needspace{12\baselineskip}
 \begingroup
 \footnotesize
-\begin{longtable}{L{0.22\linewidth}L{0.22\linewidth}L{0.46\linewidth}}
+\setlength{\tabcolsep}{4pt}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{@{}L{0.23\linewidth}L{0.23\linewidth}L{0.47\linewidth}@{}}
   \caption{Трассировка нефункциональных требований к системе}\label{tab:nonfunctional-requirements-traceability} \\
   \toprule
   \textbf{Требование} & \textbf{Источник требования} & \textbf{Контур реализации и верификации} \\
