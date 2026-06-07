@@ -182,7 +182,7 @@
 \titlespacing*{\section}{\parindent}{0.75\baselineskip}{0.55\baselineskip}
 \titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titleformat{name=\subsection,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
-\titlespacing*{\subsection}{\parindent}{0.5\baselineskip}{0.35\baselineskip}
+\titlespacing*{\subsection}{\parindent}{0.25\baselineskip}{0.1\baselineskip}
 \titleformat{\subsubsection}[block]{\normalfont\bfseries\normalsize}{\thesubsubsection}{1em}{}
 \titlespacing*{\subsubsection}{\parindent}{0.5\baselineskip}{0.25\baselineskip}
 
@@ -221,6 +221,7 @@
 \captionsetup{font=small,labelfont=normalfont,singlelinecheck=false}
 \captionsetup[figure]{name=Рисунок,labelsep=endash,justification=centering}
 \captionsetup[table]{name=Таблица,labelsep=endash,justification=raggedright,singlelinecheck=false,position=top,indention=\parindent}
+\setlength{\LTpre}{0.75\baselineskip}
 
 \hypersetup{
   unicode=true,
@@ -309,7 +310,7 @@
 
 % Публичная команда: компактный ненумеруемый заголовок для введения/заключения.
 \NewDocumentCommand{\frontsection}{m}{%
-  \subsection*{\MakeUppercase{#1}}%
+  \subsection*{#1}%
 }
 
 % Публичные семантические обертки для структуры ВКР.
@@ -424,12 +425,20 @@
   #1
 }
 
+\newcommand{\gostvkr@listsubtitle}[1]{%
+  \par
+  \addvspace{0.35\baselineskip}%
+  {\noindent\normalfont\bfseries\normalsize #1\par}%
+  \vspace{0.2\baselineskip}%
+}
+
 \NewDocumentCommand{\makeillustrationslist}{}{%
   \gostvkr@unnumberedchapter{Список иллюстративного материала}
   \begingroup
-  \let\clearpage\relax
-  \listoffigures
-  \listoftables
+  \gostvkr@listsubtitle{\listfigurename}
+  \@starttoc{lof}
+  \gostvkr@listsubtitle{\listtablename}
+  \@starttoc{lot}
   \endgroup
 }
 
@@ -437,11 +446,11 @@
 \newcommand{\gostvkr@appendixchaptertitle}[2]{%
   \phantomsection
   \addcontentsline{toc}{chapter}{Приложение #1. #2}
-  \vspace{\baselineskip}
+  \addvspace{0.35\baselineskip}
   \begin{center}
     \normalfont\bfseries\normalsize Приложение #1. #2
   \end{center}
-  \vspace{0.75\baselineskip}
+  \vspace{0.4\baselineskip}
 }
 
 \NewDocumentCommand{\makeappendicesblock}{}{%
