@@ -13,6 +13,8 @@
 - `chapter-2-evidence.md` — доказательная база по текущему состоянию `apps/cms` и `apps/front` для проектной главы.
 - `reference-theses-analysis.md` — сравнительный анализ похожих дипломов и выводы для собственной ВКР.
 - `chapter-1-restructure-plan.md` — исторический plan/rationale по переделке аналитической главы без блока про “исходное состояние проекта”; не основной active guidance source.
+- `chapter-1-analytical-enhancement-plan.md` — active plan по усилению аналитической главы через более формальную аналитическую оптику, критерии выбора и трассировку требований.
+- `chapter-2-practical-enhancement-plan.md` — active plan по усилению практической главы через синхронизацию factual base, усиление operational/testing contour и готовые автономные промпты для агентов.
 - `iteration-roadmaps.md` — несколько дорожных карт для итерационной реализации максимального варианта и готовые промпты для агентов.
 - `improvement-prompts.md` — актуальный backlog доработок по проекту и диплому с приоритетами и готовыми промптами для агентов.
 
@@ -26,5 +28,10 @@
 6. При доработке проекта и сборе материалов отмечать прогресс по `checkpoints.md`.
 7. Для любой агентной работы над дипломом или фронтендом соблюдать `agent-rules.md`.
 8. Для активной структуры главы 1 и новых prompts опираться на `thesis-structure.md`,
-   `final-thesis-outline.md`, `agent-rules.md` и `decision-log.md`, а
-   `chapter-1-restructure-plan.md` читать как history note перехода.
+   `final-thesis-outline.md`, `agent-rules.md`, `decision-log.md` и
+   `chapter-1-analytical-enhancement-plan.md`, а `chapter-1-restructure-plan.md` читать
+   как history note перехода.
+9. Для крупных agent-задач по усилению главы 2 использовать
+   `chapter-2-practical-enhancement-plan.md` как основную рабочую рамку, а
+   `chapter-2-evidence.md`, `final-scope.md`, `acceptance-matrix.md` и
+   `testing-evidence-pack.md` как factual/evidence base.

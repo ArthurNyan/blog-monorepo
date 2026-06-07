@@ -103,14 +103,15 @@ frontend-коде, публикация изменений требует уча
 \texttt{lead-submission} и \texttt{vacancy-application}. Для главной страницы и CMS-страниц
 реализован конструктор контента на основе \texttt{Dynamic Zone}.
 
-На стороне frontend реализован locale-prefixed маршрутный контур для storefront-core:
-\texttt{/:locale/}, \texttt{/:locale/:slug/}, \texttt{/:locale/articles/...},
-\texttt{/:locale/projects/...}. Это позволяет публиковать локализованный контент в обеих
-локалях и централизованно управлять навигацией, \texttt{SEO} и страницами. Карьерный
+На стороне frontend реализован locale-prefixed маршрутный контур для storefront-core,
+охватывающий главную витрину, \texttt{CMS}-страницы, а также разделы
+\texttt{articles/projects} в локалях \texttt{ru/en}. Это позволяет публиковать
+локализованный контент в обеих локалях и централизованно управлять навигацией,
+\texttt{SEO} и страницами. Карьерный
 модуль при этом сохраняет отдельный прикладной публичный контур с маршрутами
-\texttt{/vacancies/...}: локализуемые записи и \texttt{preview} входят в общую
+\texttt{/vacancies/*}: локализуемые записи и \texttt{preview} входят в общую
 \texttt{CMS}-модель, но production-адресация осознанно не переводится в
-\texttt{/:locale/...}.
+\texttt{/:locale/*}.
 
 \section*{4. Реализованный функциональный результат}
 
@@ -135,12 +136,12 @@ frontend-коде, публикация изменений требует уча
 Для проекта подготовлена воспроизводимая матрица приемки, разделяющая автоматизированные,
 ручные и внешне ограниченные проверки.
 
-В контрольной серии проверок на локальном baseline 31 мая 2026 года и во внешней
+В контрольной серии проверок в локальном контуре от 31 мая 2026 года и во внешней
 стендовой валидации 1 июня 2026 года подтверждено:
 \begin{itemize}
   \item публичные маршруты \texttt{/ru/}, \texttt{/en/}, representative
-  \texttt{page/article/project} и \texttt{/vacancies/...} открываются корректно, а legacy
-  \texttt{/articles/...} и \texttt{/projects/...} редиректят в locale-prefixed контур;
+  \texttt{page/article/project} и \texttt{/vacancies/*} открываются корректно, а legacy
+  \texttt{/articles/*} и \texttt{/projects/*} редиректят в locale-prefixed контур;
   \item \texttt{/api/preview} с неверным секретом возвращает \texttt{401}, а draft-preview
   корректно устанавливает preview-cookie и отдает страницы с \texttt{noindex} для
   \texttt{home-page/page/article/project/vacancy};
@@ -150,9 +151,8 @@ frontend-коде, публикация изменений требует уча
   \item frontend-сборка проходит успешно и формирует \texttt{37} prerendered static routes;
   \item после сборки генерируются \texttt{sitemap-index.xml} и \texttt{sitemap-0.xml} с
   \texttt{31} публичным \texttt{URL};
-  \item в БД подтвержден активный \texttt{Frontend rebuild hook} на события
-  \texttt{entry.publish} и \texttt{entry.unpublish}, а 1 июня 2026 года на внешнем стенде
-  подтвержден полный путь \texttt{Strapi -> webhook -> Dokploy rebuild/redeploy};
+  \item в БД подтвержден активный \texttt{Frontend rebuild hook}, а 1 июня 2026 года на
+  внешнем стенде подтвержден полный путь \texttt{Strapi -> webhook -> Dokploy rebuild/redeploy};
   \item browser-level аудит четырех репрезентативных маршрутов завершился с
   \texttt{0} failures; размер клиентского build output составляет около \texttt{2.4 МБ}.
 \end{itemize}
@@ -192,9 +192,9 @@ locale-aware \texttt{preview} уже входят в реализованный 
 тогда как списковые страницы \texttt{articles/projects/vacancies} используют route-owned
 metadata layer.
 
-В-третьих, тестовый контур является воспроизводимым acceptance- и integration-baseline,
-но не полным набором unit- и \texttt{end-to-end} тестов; конфигурация \texttt{Dokploy}
-при этом остается внешним platform state, хотя сквозной \texttt{rebuild/redeploy}
+В-третьих, тестовый контур является воспроизводимым приемочным и интеграционным набором
+проверок, но не полным набором unit- и \texttt{end-to-end} тестов; конфигурация
+\texttt{Dokploy} при этом остается внешним платформенным сегментом, хотя сквозной \texttt{rebuild/redeploy}
 подтвержден на стенде 1 июня 2026 года.
 
 В качестве направлений дальнейшего развития можно выделить:

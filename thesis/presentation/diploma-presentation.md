@@ -285,11 +285,11 @@ description: Презентация к выпускной квалификаци
 </div>
 <div class="card">
 
-### Текущие ограничения
+### Ограничения решения
 
 - Публичный `ru/en` контур охватывает storefront-core, статьи и проекты; карьерный модуль осознанно остается под `/vacancies/*`, хотя `CMS`-данные и `preview` для него локализованы.
 - `CMS-managed SEO` доведен до `home-page`, `page`, `article`, `project`, `vacancy`; list pages `articles/projects/vacancies` используют route-owned metadata layer.
-- Контур проверки воспроизводим на smoke/build/browser/DB-уровне, но не подменяет полный `WCAG`/`Lighthouse` аудит; `Dokploy` остается внешним platform state, хотя `rebuild/redeploy` уже подтвержден на стенде 1 июня 2026 года.
+- Контур проверки воспроизводим на smoke/build/browser/DB-уровне, но не подменяет полный `WCAG`/`Lighthouse` аудит; `Dokploy` остается внешним платформенным сегментом, хотя `rebuild/redeploy` уже подтвержден на стенде 1 июня 2026 года.
 
 </div>
 </div>

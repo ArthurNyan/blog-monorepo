@@ -120,6 +120,7 @@ check: build
 		grep -En 'LaTeX Error|Undefined control sequence|Reference .* undefined|Citation .* undefined|There were undefined references|There were undefined citations|Please \(re\)run Biber|Emergency stop|Fatal error' $(MAIN).log; \
 		exit 1; \
 	fi
+	@rm -f $(HBOX_REPORT)
 	@if grep -Eq 'Overfull|Underfull' $(MAIN).log; then \
 		grep -En 'Overfull|Underfull' $(MAIN).log > $(HBOX_REPORT); \
 		echo "Проверка check: найдены неблокирующие типографские предупреждения; см. $(HBOX_REPORT)"; \
