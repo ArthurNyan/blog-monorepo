@@ -179,7 +179,7 @@
 \titlespacing*{\chapter}{0pt}{0pt}{2\baselineskip}
 \titleformat{\section}[block]{\normalfont\bfseries\normalsize}{\thesection}{1em}{\MakeUppercase}
 \titleformat{name=\section,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{\MakeUppercase}
-\titlespacing*{\section}{\parindent}{0.75\baselineskip}{1.25\baselineskip}
+\titlespacing*{\section}{\parindent}{0.75\baselineskip}{0.55\baselineskip}
 \titleformat{\subsection}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titleformat{name=\subsection,numberless}[block]{\normalfont\bfseries\normalsize}{}{0pt}{}
 \titlespacing*{\subsection}{\parindent}{0.5\baselineskip}{0.35\baselineskip}
@@ -305,6 +305,11 @@
 % Публичная команда: ненумеруемый крупный раздел уровня главы.
 \NewDocumentCommand{\frontchapter}{m}{%
   \gostvkr@unnumberedchapter{#1}
+}
+
+% Публичная команда: компактный ненумеруемый заголовок для введения/заключения.
+\NewDocumentCommand{\frontsection}{m}{%
+  \subsection*{\MakeUppercase{#1}}%
 }
 
 % Публичные семантические обертки для структуры ВКР.
