@@ -92,6 +92,19 @@
 \floatname{algorithm}{Алгоритм}
 \renewcommand{\listalgorithmname}{Список алгоритмов}
 
+\newcommand{\appendixdiagram}[3]{%
+  \begin{center}
+    \rotatebox{90}{%
+      \begin{minipage}{0.82\textheight}
+        \centering
+        \includegraphics[width=\linewidth]{#1}
+        \captionsetup{hypcap=false}
+        \captionof{figure}{#2}\label{#3}
+      \end{minipage}%
+    }
+  \end{center}
+}
+
 \input{config/metadata.tex}
 
 \addbibresource{references.bib}
