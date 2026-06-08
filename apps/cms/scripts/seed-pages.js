@@ -32,7 +32,7 @@ const pagesSeed = {
 				description:
 					"Структура страницы задается в Strapi через Dynamic Zone, а Astro рендерит блоки без ручной раскладки секций в route-файле.",
 				primaryButtonLabel: "Открыть вакансии",
-				primaryButtonUrl: "/vacancies",
+				primaryButtonUrl: localizedCollectionPath("ru-RU", "vacancies"),
 				secondaryButtonLabel: "Смотреть статьи",
 				secondaryButtonUrl: localizedCollectionPath("ru-RU", "articles"),
 			},
@@ -78,7 +78,7 @@ const pagesSeed = {
 				__component: "blocks.rich-text",
 				heading: "Зачем нужен отдельный маршрут pages",
 				body:
-					"Страница `pages` нужна для того, чтобы **маркетинговый контент** собирался в CMS как самостоятельная сущность, а не оставался набором жестко заданных Astro-страниц.\n\nВ этой реализации **Astro route не задает структуру страницы вручную**. Он получает массив `blocks` из Strapi и последовательно рендерит их через единый `DynamicZoneRenderer`.\n\nПервая очередь уже перевела главную, шапку и футер в CMS-контур, но полная locale-prefixed схема пока не доведена для всех публичных разделов.",
+					"Страница `pages` нужна для того, чтобы **маркетинговый контент** собирался в CMS как самостоятельная сущность, а не оставался набором жестко заданных Astro-страниц.\n\nВ этой реализации **Astro route не задает структуру страницы вручную**. Он получает массив `blocks` из Strapi и последовательно рендерит их через единый `DynamicZoneRenderer`.\n\nПервая очередь уже перевела главную, шапку и футер в CMS-контур, а публичные разделы `articles`, `projects` и `vacancies` теперь публикуются по locale-prefixed маршрутам. Следующий слой работы связан уже не с routing, а с углублением CMS-driven сценариев.",
 			},
 			{
 				__component: "blocks.quote",
@@ -186,7 +186,7 @@ const pagesSeed = {
 					{
 						title: "Что еще не стоит считать завершенным",
 						body:
-							"- locale-prefixed public routes для `articles/projects` уже есть, но стабильный `EN` detail dataset пока не versioned\n- вакансии осознанно остаются вне `/:locale/...` public boundary\n- media seed для визуальных блоков пока минимален\n- preview mode и rebuild pipeline остаются следующими шагами",
+							"- двуязычный dataset для `articles`, `projects` и `vacancies` теперь versioned, но его еще нужно поддерживать синхронным\n- media seed для визуальных блоков пока минимален\n- preview mode и rebuild pipeline остаются следующими шагами\n- полная CMS-миграция остальных витринных сценариев еще продолжается",
 					},
 				],
 			},
@@ -198,7 +198,7 @@ const pagesSeed = {
 				source: "vacancies",
 				limit: 3,
 				ctaLabel: "Все вакансии",
-				ctaUrl: "/vacancies",
+				ctaUrl: localizedCollectionPath("ru-RU", "vacancies"),
 			},
 			{
 				__component: "blocks.testimonials",
@@ -259,14 +259,14 @@ const pagesSeed = {
 					"Информационные блоки нужны не сами по себе, а как следующий слой управляемой маркетинговой структуры.",
 				items: [
 					{
-						title: "Стабилизировать EN detail coverage",
+						title: "Поддерживать двуязычный detail baseline",
 						description:
-							"Locale-prefixed routes для `articles/projects` уже реализованы, но versioned dataset пока не гарантирует английские detail entries.",
+							"Нужно держать `articles`, `projects` и `vacancies` синхронизированными в `ru` и `en`, чтобы build, smoke и sitemap-проверки оставались воспроизводимыми.",
 					},
 					{
-						title: "Довести публичный i18n-контур",
+						title: "Расширять библиотеку CMS-страниц",
 						description:
-							"Нужно синхронизировать locale-aware ссылки, canonical и sitemap для всех публичных разделов.",
+							"После демонстрационной страницы можно выносить дополнительные маркетинговые сценарии в ту же block-driven модель.",
 					},
 					{
 						title: "Добавить preview flow",
@@ -329,7 +329,7 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Следующий шаг",
 				description:
-					"Зафиксировать стабильное `EN` detail-наполнение для `articles/projects`, затем довести preview mode, sitemap и rebuild-публикацию.",
+					"Поддерживать двуязычный detail baseline для `articles`, `projects` и `vacancies`, затем довести preview mode, sitemap и rebuild-публикацию.",
 				primaryButtonLabel: "Перейти к проектам",
 				primaryButtonUrl: localizedCollectionPath("ru-RU", "projects"),
 				secondaryButtonLabel: "Читать статьи",
@@ -357,7 +357,7 @@ const pagesSeed = {
 				description:
 					"Page structure lives in Strapi Dynamic Zone, while Astro renders the blocks without hand-coded section ordering in the route file.",
 				primaryButtonLabel: "Open vacancies",
-				primaryButtonUrl: "/vacancies",
+				primaryButtonUrl: localizedCollectionPath("en", "vacancies"),
 				secondaryButtonLabel: "Read articles",
 				secondaryButtonUrl: localizedCollectionPath("en", "articles"),
 			},
@@ -403,7 +403,7 @@ const pagesSeed = {
 				__component: "blocks.rich-text",
 				heading: "Why a dedicated pages route matters",
 				body:
-					"The `pages` collection is needed so that **marketing content** becomes a first-class CMS entity rather than a set of fixed Astro routes.\n\nIn this implementation, the **Astro route does not define the page structure manually**. It receives the `blocks` array from Strapi and renders it through a single `DynamicZoneRenderer`.\n\nThe first queue already moved the homepage, header, and footer into the CMS contour, but the full locale-prefixed scheme still does not cover every public section.",
+					"The `pages` collection is needed so that **marketing content** becomes a first-class CMS entity rather than a set of fixed Astro routes.\n\nIn this implementation, the **Astro route does not define the page structure manually**. It receives the `blocks` array from Strapi and renders it through a single `DynamicZoneRenderer`.\n\nThe first queue already moved the homepage, header, and footer into the CMS contour, while `articles`, `projects`, and `vacancies` now publish through locale-prefixed public routes. The next layer of work is no longer routing, but deeper CMS-driven editorial scenarios.",
 			},
 			{
 				__component: "blocks.quote",
@@ -511,7 +511,7 @@ const pagesSeed = {
 					{
 						title: "What should not be treated as finished yet",
 						body:
-							"- locale-prefixed public routes for `articles/projects` already exist, but the versioned dataset still lacks a stable `EN` detail baseline\n- vacancies intentionally remain outside the `/:locale/...` public boundary\n- media seed for visual blocks stays minimal\n- preview mode and rebuild pipeline remain the next steps",
+							"- the bilingual dataset for `articles`, `projects`, and `vacancies` is now versioned, but it still has to stay synchronized\n- media seed for visual blocks stays minimal\n- preview mode and rebuild pipeline remain the next steps\n- full CMS migration of the remaining storefront scenarios is still in progress",
 					},
 				],
 			},
@@ -523,7 +523,7 @@ const pagesSeed = {
 				source: "vacancies",
 				limit: 3,
 				ctaLabel: "All vacancies",
-				ctaUrl: "/vacancies",
+				ctaUrl: localizedCollectionPath("en", "vacancies"),
 			},
 			{
 				__component: "blocks.testimonials",
@@ -584,14 +584,14 @@ const pagesSeed = {
 					"These informational blocks matter as the next layer of controlled marketing structure, not as decoration.",
 				items: [
 					{
-						title: "Stabilize EN detail coverage",
+						title: "Maintain the bilingual detail baseline",
 						description:
-							"Locale-prefixed `articles/projects` routes are already implemented, but the versioned dataset still does not guarantee English detail entries.",
+							"`articles`, `projects`, and `vacancies` now need to stay synchronized across `ru` and `en` so build, smoke, and sitemap checks remain reproducible.",
 					},
 					{
-						title: "Finish the public i18n contour",
+						title: "Expand the CMS page library",
 						description:
-							"Locale-aware links, canonicals, and sitemap still need to be aligned across all public sections.",
+							"After the demo page, more marketing scenarios can move into the same block-driven model.",
 					},
 					{
 						title: "Add preview flow",
@@ -654,7 +654,7 @@ const pagesSeed = {
 				__component: "blocks.cta",
 				title: "Next step",
 				description:
-					"Lock a stable `EN` detail baseline for `articles/projects`, then finish preview mode, sitemap, and rebuild publication.",
+					"Maintain the bilingual detail baseline for `articles`, `projects`, and `vacancies`, then finish preview mode, sitemap, and rebuild publication.",
 				primaryButtonLabel: "Go to projects",
 				primaryButtonUrl: localizedCollectionPath("en", "projects"),
 				secondaryButtonLabel: "Read articles",

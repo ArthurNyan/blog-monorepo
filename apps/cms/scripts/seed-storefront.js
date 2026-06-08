@@ -59,7 +59,7 @@ const globalSeed = {
 			},
 			{
 				label: "Вакансии",
-				href: "/vacancies",
+				href: localizedCollectionPath("ru-RU", "vacancies"),
 			},
 		],
 		headerPrimaryCta: {
@@ -86,7 +86,7 @@ const globalSeed = {
 				links: [
 					{ label: "Статьи", href: localizedCollectionPath("ru-RU", "articles") },
 					{ label: "Проекты", href: localizedCollectionPath("ru-RU", "projects") },
-					{ label: "Вакансии", href: "/vacancies" },
+					{ label: "Вакансии", href: localizedCollectionPath("ru-RU", "vacancies") },
 				],
 			},
 			{
@@ -141,7 +141,7 @@ const globalSeed = {
 			},
 			{
 				label: "Vacancies",
-				href: "/vacancies",
+				href: localizedCollectionPath("en", "vacancies"),
 			},
 		],
 		headerPrimaryCta: {
@@ -168,7 +168,7 @@ const globalSeed = {
 				links: [
 					{ label: "Articles", href: localizedCollectionPath("en", "articles") },
 					{ label: "Projects", href: localizedCollectionPath("en", "projects") },
-					{ label: "Vacancies", href: "/vacancies" },
+					{ label: "Vacancies", href: localizedCollectionPath("en", "vacancies") },
 				],
 			},
 			{
@@ -207,7 +207,7 @@ const homePageSeed = {
 				primaryButtonLabel: "Открыть CMS-first страницу",
 				primaryButtonUrl: localizedPath("ru-RU", "cms-first-platform"),
 				secondaryButtonLabel: "Смотреть вакансии",
-				secondaryButtonUrl: "/vacancies",
+				secondaryButtonUrl: localizedCollectionPath("ru-RU", "vacancies"),
 			},
 			{
 				__component: "blocks.logo-cloud",
@@ -246,7 +246,7 @@ const homePageSeed = {
 				description:
 					"Это не маркетинговые цифры, а компактная форма инженерных фактов о текущем контуре.",
 				items: [
-					{ value: "2", label: "Локали", description: "Публично доступны `ru` и `en` для главной и `pages`." },
+					{ value: "2", label: "Локали", description: "Публично доступны `ru` и `en` для главной, `pages` и коллекций контента." },
 					{ value: "3", label: "Single / collections", description: "`global`, `home-page` и `page` работают в одном delivery flow." },
 					{ value: "1", label: "Layout source", description: "Шапка и футер получают данные из CMS через единый frontend data-layer." },
 					{ value: "3", label: "Preview lists", description: "Главная может показывать статьи, проекты и вакансии как CMS-driven анонсы." },
@@ -255,11 +255,11 @@ const homePageSeed = {
 			{
 				__component: "blocks.preview-list",
 				heading: "Открытые вакансии",
-				description: "После восстановления seed этот блок снова показывает живые анонсы из `vacancies`.",
+				description: "Блок показывает живые анонсы из `vacancies` внутри locale-aware публичного контура.",
 				source: "vacancies",
 				limit: 3,
 				ctaLabel: "Все вакансии",
-				ctaUrl: "/vacancies",
+				ctaUrl: localizedCollectionPath("ru-RU", "vacancies"),
 			},
 			{
 				__component: "blocks.preview-list",
@@ -285,9 +285,9 @@ const homePageSeed = {
 			},
 			{
 				__component: "blocks.cta",
-				title: "Следующий слой после восстановления данных",
+				title: "Следующий слой после синхронизации seed-данных",
 				description:
-					"Зафиксировать стабильное англоязычное detail-наполнение для `articles/projects`, затем довести `preview mode`, `sitemap` и `webhook -> rebuild`.",
+					"Поддерживать двуязычные seed-данные для `articles`, `projects` и `vacancies`, затем довести `preview mode`, `sitemap` и `webhook -> rebuild`.",
 				primaryButtonLabel: "Открыть демо",
 				primaryButtonUrl: localizedPath("ru-RU", "cms-first-demo"),
 				secondaryButtonLabel: "Смотреть проекты",
@@ -318,7 +318,7 @@ const homePageSeed = {
 				primaryButtonLabel: "Open the CMS-first page",
 				primaryButtonUrl: localizedPath("en", "cms-first-platform"),
 				secondaryButtonLabel: "View vacancies",
-				secondaryButtonUrl: "/vacancies",
+				secondaryButtonUrl: localizedCollectionPath("en", "vacancies"),
 			},
 			{
 				__component: "blocks.logo-cloud",
@@ -357,7 +357,7 @@ const homePageSeed = {
 				description:
 					"These are engineering facts about the contour, not decorative marketing numbers.",
 				items: [
-					{ value: "2", label: "Locales", description: "`ru` and `en` are publicly exposed for the homepage and `pages`." },
+					{ value: "2", label: "Locales", description: "`ru` and `en` are publicly exposed for the homepage, `pages`, and content collections." },
 					{ value: "3", label: "Single / collections", description: "`global`, `home-page`, and `page` operate in one delivery flow." },
 					{ value: "1", label: "Layout source", description: "Header and footer receive data from CMS through one frontend data-layer." },
 					{ value: "3", label: "Preview lists", description: "The homepage can preview articles, projects, and vacancies as CMS-driven sections." },
@@ -366,11 +366,11 @@ const homePageSeed = {
 			{
 				__component: "blocks.preview-list",
 				heading: "Open vacancies",
-				description: "Once the seed is restored, this block again shows live previews from `vacancies`.",
+				description: "This block shows live previews from `vacancies` inside the locale-aware public contour.",
 				source: "vacancies",
 				limit: 3,
 				ctaLabel: "All vacancies",
-				ctaUrl: "/vacancies",
+				ctaUrl: localizedCollectionPath("en", "vacancies"),
 			},
 			{
 				__component: "blocks.preview-list",
@@ -396,9 +396,9 @@ const homePageSeed = {
 			},
 			{
 				__component: "blocks.cta",
-				title: "The next layer after data recovery",
+				title: "The next layer after seed alignment",
 				description:
-					"Lock a stable English detail baseline for `articles/projects`, then finish `preview mode`, `sitemap`, and `webhook -> rebuild`.",
+					"Keep bilingual seed data aligned for `articles`, `projects`, and `vacancies`, then finish `preview mode`, `sitemap`, and `webhook -> rebuild`.",
 				primaryButtonLabel: "Open the demo",
 				primaryButtonUrl: localizedPath("en", "cms-first-demo"),
 				secondaryButtonLabel: "Explore projects",

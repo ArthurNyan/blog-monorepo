@@ -18,7 +18,7 @@ rectangle "Monorepo Nx + pnpm" {
 
   package "apps/front\nAstro 6" as FrontApp {
     component "Localized public routes\n/ru/, /en/, /:locale/:slug/" as PublicRoutes
-    component "Content routes\n/:locale/articles, /:locale/projects,\n/vacancies, /vacancies/:slug/" as CollectionRoutes
+    component "Content routes\n/:locale/articles, /:locale/projects,\n/:locale/vacancies, /:locale/vacancies/:slug/" as CollectionRoutes
     component "Preview routes\n/api/preview, /preview/..." as PreviewRoutes
     component "Layout + SEO rendering\nmain.astro" as LayoutSeo
     component "Generated SDK + custom data layer" as FrontData
@@ -56,12 +56,10 @@ Visitor --> CollectionRoutes : открывает контентные разд�
 Editor --> PreviewRoutes : открывает ссылку preview
 
 note right of CollectionRoutes
-articles and projects use
+articles, projects, and vacancies use
 locale-prefixed public routes.
-legacy /articles and /projects
+legacy /articles, /projects, and /vacancies
 redirect to the default locale.
-vacancies remain standalone
-outside the /:locale/... contour.
 end note
 
 note bottom of PreviewRoutes
