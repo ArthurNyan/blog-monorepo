@@ -225,6 +225,18 @@ await expectRedirectBehaviour(
 	`/projects/${config.projectSlug}/`,
 	`/ru/projects/${config.projectSlug}/`
 );
+await expectRedirectBehaviour(
+	GROUPS.runtime,
+	"Legacy redirect /vacancies/ -> /ru/vacancies/...",
+	"/vacancies/",
+	"/ru/vacancies/"
+);
+await expectRedirectBehaviour(
+	GROUPS.runtime,
+	"Legacy redirect /vacancies/... -> /ru/vacancies/...",
+	`/vacancies/${config.vacancySlug}/`,
+	`/ru/vacancies/${config.vacancySlug}/`
+);
 
 const pageChecks = [
 	{
@@ -296,16 +308,30 @@ const pageChecks = [
 		expectedCanonical: `${config.baseUrl}/en/projects/${config.projectSlug}/`,
 	},
 	{
-		name: "Vacancies list",
-		path: "/vacancies/",
+		name: "RU vacancies list",
+		path: "/ru/vacancies/",
+		expectedTitle: "Вакансии",
 		expectedLang: "ru",
-		expectedCanonical: `${config.baseUrl}/vacancies/`,
+		expectedCanonical: `${config.baseUrl}/ru/vacancies/`,
 	},
 	{
-		name: "Vacancy detail",
-		path: `/vacancies/${config.vacancySlug}/`,
+		name: "EN vacancies list",
+		path: "/en/vacancies/",
+		expectedTitle: "Vacancies",
+		expectedLang: "en",
+		expectedCanonical: `${config.baseUrl}/en/vacancies/`,
+	},
+	{
+		name: "RU vacancy detail",
+		path: `/ru/vacancies/${config.vacancySlug}/`,
 		expectedLang: "ru",
-		expectedCanonical: `${config.baseUrl}/vacancies/${config.vacancySlug}/`,
+		expectedCanonical: `${config.baseUrl}/ru/vacancies/${config.vacancySlug}/`,
+	},
+	{
+		name: "EN vacancy detail",
+		path: `/en/vacancies/${config.vacancySlug}/`,
+		expectedLang: "en",
+		expectedCanonical: `${config.baseUrl}/en/vacancies/${config.vacancySlug}/`,
 	},
 ];
 
@@ -493,7 +519,7 @@ if (!config.previewSecret) {
 		name: "Preview vacancy detail",
 		type: "vacancy",
 		slug: config.vacancySlug,
-		publishedLocation: `/vacancies/${config.vacancySlug}/`,
+		publishedLocation: `/ru/vacancies/${config.vacancySlug}/`,
 		draftLocation: `/preview/ru/vacancies/${config.vacancySlug}/`,
 	});
 }
@@ -519,11 +545,14 @@ if (!existsSync(resolve(distClientDir, "sitemap-index.xml"))) {
 			`${config.baseUrl}/en/articles/${config.articleSlug}/`,
 			`${config.baseUrl}/ru/projects/${config.projectSlug}/`,
 			`${config.baseUrl}/en/projects/${config.projectSlug}/`,
-			`${config.baseUrl}/vacancies/${config.vacancySlug}/`,
+			`${config.baseUrl}/ru/vacancies/${config.vacancySlug}/`,
+			`${config.baseUrl}/en/vacancies/${config.vacancySlug}/`,
 		];
 		const forbiddenEntries = [
 			`${config.baseUrl}/articles/`,
 			`${config.baseUrl}/projects/`,
+			`${config.baseUrl}/vacancies/`,
+			`${config.baseUrl}/vacancies/${config.vacancySlug}/`,
 		];
 
 		if (!sitemapIndex.includes(`${config.baseUrl}/sitemap-0.xml`)) {
@@ -641,6 +670,7 @@ if (!config.allowMutations) {
 	try {
 		const invalidVacancyForm = new FormData();
 		invalidVacancyForm.set("data[vacancy]", config.vacancyId);
+		invalidVacancyForm.set("locale", "ru");
 		invalidVacancyForm.set("data[fullName]", "Codex Vacancy Smoke");
 		invalidVacancyForm.set("data[email]", "codex-vacancy@example.com");
 		invalidVacancyForm.set("data[phone]", "+79990000001");
@@ -658,13 +688,13 @@ if (!config.allowMutations) {
 		const invalidVacancy = await fetch(
 			new URL("/api/vacancy-applications", config.baseUrl),
 			{
-				method: "POST",
-				headers: {
-					Origin: config.baseUrl,
-					Referer: `${config.baseUrl}/vacancies/${config.vacancySlug}/`,
-				},
-				body: invalidVacancyForm,
-			}
+					method: "POST",
+					headers: {
+						Origin: config.baseUrl,
+						Referer: `${config.baseUrl}/ru/vacancies/${config.vacancySlug}/`,
+					},
+					body: invalidVacancyForm,
+				}
 		);
 
 		if (invalidVacancy.status !== 400) {
@@ -689,6 +719,7 @@ if (!config.allowMutations) {
 	try {
 		const validVacancyForm = new FormData();
 		validVacancyForm.set("data[vacancy]", config.vacancyId);
+		validVacancyForm.set("locale", "ru");
 		validVacancyForm.set("data[fullName]", "Codex Vacancy Smoke");
 		validVacancyForm.set(
 			"data[email]",
@@ -709,13 +740,13 @@ if (!config.allowMutations) {
 		const validVacancy = await fetch(
 			new URL("/api/vacancy-applications", config.baseUrl),
 			{
-				method: "POST",
-				headers: {
-					Origin: config.baseUrl,
-					Referer: `${config.baseUrl}/vacancies/${config.vacancySlug}/`,
-				},
-				body: validVacancyForm,
-			}
+					method: "POST",
+					headers: {
+						Origin: config.baseUrl,
+						Referer: `${config.baseUrl}/ru/vacancies/${config.vacancySlug}/`,
+					},
+					body: validVacancyForm,
+				}
 		);
 
 		if (validVacancy.status !== 201) {

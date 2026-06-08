@@ -4,25 +4,28 @@ import {
 	buildServerCmsUrl,
 	createServerCmsHeaders,
 } from "@/shared/api/strapi-server";
+import { toCmsLocale, toSiteLocale } from "@/shared/i18n/config";
 import {
 	isHoneypotFilled,
 	normalizeOptionalText,
 } from "@/shared/lib/form-security";
-import { vacancyApplicationFormSchema } from "@/widgets/VacancyApplicationForm/model/schema";
+import { getVacancyApplicationFormCopy } from "@/widgets/VacancyApplicationForm/model/copy";
+import { createVacancyApplicationFormSchema } from "@/widgets/VacancyApplicationForm/model/schema";
 
 export const prerender = false;
 
-const invalidPayloadMessage =
-	"Не удалось проверить данные формы. Проверьте поля и попробуйте снова.";
-
 export const POST: APIRoute = async ({ request }) => {
 	let formData: FormData;
+	let locale = toSiteLocale();
+	let copy = getVacancyApplicationFormCopy(locale);
 
 	try {
 		formData = await request.formData();
+		locale = toSiteLocale(String(formData.get("locale") || ""));
+		copy = getVacancyApplicationFormCopy(locale);
 	} catch {
 		return Response.json(
-			{ message: invalidPayloadMessage },
+			{ message: copy.invalidPayloadMessage },
 			{ status: 400 }
 		);
 	}
@@ -38,12 +41,12 @@ export const POST: APIRoute = async ({ request }) => {
 		honeypot: String(formData.get("honeypot") || ""),
 	};
 
-	const parsedPayload = vacancyApplicationFormSchema.safeParse(rawValues);
+	const parsedPayload = createVacancyApplicationFormSchema(locale).safeParse(rawValues);
 
 	if (!parsedPayload.success) {
 		return Response.json(
 			{
-				message: invalidPayloadMessage,
+				message: copy.invalidPayloadMessage,
 				fieldErrors: parsedPayload.error.flatten().fieldErrors,
 			},
 			{ status: 400 }
@@ -58,7 +61,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 	if (!vacancyId) {
 		return Response.json(
-			{ message: "Vacancy id is required." },
+			{ message: copy.vacancyIdRequiredMessage },
 			{ status: 400 }
 		);
 	}
@@ -82,14 +85,14 @@ export const POST: APIRoute = async ({ request }) => {
 		cmsFormData.append("data[submittedAt]", new Date().toISOString());
 		cmsFormData.append("files.resumeFile", parsedPayload.data.resumeFile);
 
-		const cmsResponse = await fetch(
-			buildServerCmsUrl("/vacancy-applications").toString(),
-			{
-				method: "POST",
-				headers: createServerCmsHeaders(),
-				body: cmsFormData,
-			}
-		);
+		const cmsUrl = buildServerCmsUrl("/vacancy-applications");
+		cmsUrl.searchParams.set("locale", toCmsLocale(locale));
+
+		const cmsResponse = await fetch(cmsUrl.toString(), {
+			method: "POST",
+			headers: createServerCmsHeaders(),
+			body: cmsFormData,
+		});
 
 		if (!cmsResponse.ok) {
 			return Response.json(
@@ -107,7 +110,7 @@ export const POST: APIRoute = async ({ request }) => {
 				message:
 					error instanceof Error
 						? error.message
-						: "Не удалось отправить отклик. Попробуйте позже.",
+						: copy.defaultSubmitErrorMessage,
 			},
 			{ status: 500 }
 		);

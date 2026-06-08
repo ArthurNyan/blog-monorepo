@@ -7,26 +7,28 @@ import {
 	normalizeOptionalText,
 } from "@/shared/lib/form-security";
 import {
+	createVacancyApplicationFormSchema,
 	vacancyApplicationDefaultValues,
-	vacancyApplicationFormSchema,
 	type VacancyApplicationFormValues,
 } from "./schema";
+import { getVacancyApplicationFormCopy } from "./copy";
+import type { VacancyApplicationFormProps } from "./types";
 
-type UseVacancyApplicationRHFParams = {
-	vacancyId: string | number;
-};
-
-const successMessage =
-	"Отклик отправлен. Спасибо! Мы свяжемся с вами после рассмотрения.";
+type UseVacancyApplicationRHFParams = Pick<
+	VacancyApplicationFormProps,
+	"vacancyId" | "siteLocale"
+>;
 
 export const useVacancyApplicationRHF = ({
 	vacancyId,
+	siteLocale,
 }: UseVacancyApplicationRHFParams) => {
+	const copy = getVacancyApplicationFormCopy(siteLocale);
 	const [submitError, setSubmitError] = useState<string | null>(null);
 	const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
 	const form = useForm<VacancyApplicationFormValues>({
-		resolver: zodResolver(vacancyApplicationFormSchema),
+		resolver: zodResolver(createVacancyApplicationFormSchema(siteLocale)),
 		mode: "onBlur",
 		reValidateMode: "onChange",
 		defaultValues: vacancyApplicationDefaultValues,
@@ -37,7 +39,7 @@ export const useVacancyApplicationRHF = ({
 		setSubmitSuccess(null);
 
 		if (isHoneypotFilled(values.honeypot)) {
-			setSubmitSuccess(successMessage);
+			setSubmitSuccess(copy.successMessage);
 			form.reset(vacancyApplicationDefaultValues);
 			return;
 		}
@@ -45,6 +47,7 @@ export const useVacancyApplicationRHF = ({
 		try {
 			await submitVacancyApplication({
 				vacancyId,
+				locale: siteLocale,
 				fullName: values.fullName.trim(),
 				email: values.email.trim(),
 				phone: values.phone.trim(),
@@ -55,18 +58,19 @@ export const useVacancyApplicationRHF = ({
 				honeypot: values.honeypot || "",
 			});
 
-			setSubmitSuccess(successMessage);
+			setSubmitSuccess(copy.successMessage);
 			form.reset(vacancyApplicationDefaultValues);
 		} catch (error) {
 			setSubmitError(
 				error instanceof Error
 					? error.message
-					: "Не удалось отправить отклик. Попробуйте позже."
+					: copy.defaultSubmitErrorMessage
 			);
 		}
 	});
 
 	return {
+		copy,
 		form,
 		onSubmit,
 		submitError,

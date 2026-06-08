@@ -66,7 +66,7 @@ const vacancies =
 		{block.source === "vacancies" && vacancies.length > 0 && (
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
 				{vacancies.map((vacancy) => (
-					<VacancyCard vacancy={vacancy} client:load />
+					<VacancyCard vacancy={vacancy} locale={siteLocale} client:load />
 				))}
 			</div>
 		)}

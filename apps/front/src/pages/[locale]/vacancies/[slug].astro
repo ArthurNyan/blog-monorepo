@@ -2,79 +2,84 @@
 import MainLayout from "@/layouts/main.astro";
 import { Badge } from "@/shared/components/ui/badge";
 import { MarkdownContent } from "@/shared/components/MarkdownContent";
-import { fetchCmsVacancyBySlug } from "@/shared/api/vacancies-cms";
 import {
-	buildPublicCollectionPath,
-	getPreviewCmsRequestOptions,
-	hasValidPreviewCookie,
-} from "@/shared/preview/session";
-import { buildSeoMetadata } from "@/shared/seo/metadata";
-import { isSiteLocale, toCmsLocale } from "@/shared/i18n/config";
+	fetchCmsVacancyBySlug,
+	fetchCmsVacancySlugs,
+} from "@/shared/api/vacancies-cms";
+import {
+	buildLocalizedCollectionPath,
+	isSiteLocale,
+	siteLocales,
+	toCmsLocale,
+} from "@/shared/i18n/config";
 import {
 	formatVacancySalary,
 	getVacancyUiCopy,
 } from "@/shared/i18n/vacancies";
+import { buildSeoMetadata } from "@/shared/seo/metadata";
 import { VacancyApplicationForm } from "@/widgets/VacancyApplicationForm";
 
-export const prerender = false;
+export const getStaticPaths = async () => {
+	const localizedPaths = await Promise.all(
+		siteLocales.map(async (locale) => {
+			const slugs = await fetchCmsVacancySlugs(toCmsLocale(locale));
+
+			return slugs.map((slug) => ({
+				params: { locale, slug },
+			}));
+		})
+	);
+
+	return localizedPaths.flat();
+};
 
 const locale = Astro.params.locale;
 const { slug } = Astro.params;
 
 if (!isSiteLocale(locale)) {
-	return Astro.redirect(buildPublicCollectionPath("vacancy", undefined, "ru"));
+	throw new Error(`Unsupported locale: ${locale}`);
 }
 
 if (!slug) {
-	return new Response("Preview vacancy slug is required.", { status: 400 });
-}
-
-if (!hasValidPreviewCookie(Astro.cookies)) {
-	return Astro.redirect(buildPublicCollectionPath("vacancy", slug, locale));
+	throw new Error("Vacancy slug is required");
 }
 
 const copy = getVacancyUiCopy(locale);
-const pathname = buildPublicCollectionPath("vacancy", slug, locale);
 const vacancy = await fetchCmsVacancyBySlug(slug, {
-	...getPreviewCmsRequestOptions(),
 	locale: toCmsLocale(locale),
-	includeInactive: true,
 });
 
 if (!vacancy) {
 	return new Response(copy.notFoundMessage, { status: 404 });
 }
 
+const pathname = buildLocalizedCollectionPath(locale, "vacancies", slug);
 const seo = buildSeoMetadata({
 	seo: vacancy.seo,
-	title: vacancy.title,
+	title: vacancy.title || copy.detailFallbackTitle,
 	description:
 		vacancy.description || vacancy.location || copy.detailFallbackDescription,
 	pathname,
-	noIndex: true,
-	status: "draft",
 });
-
 const salary = formatVacancySalary(vacancy, locale);
 ---
 
 <MainLayout
 	content={{
-		title: vacancy.title,
+		title: vacancy.title || copy.detailFallbackTitle,
 		description:
 			vacancy.description || vacancy.location || copy.detailFallbackDescription,
 		seo,
 		pathname,
 		locale,
 		lang: locale,
-		previewMode: true,
-		cmsStatus: "draft",
+		cmsStatus: "published",
 	}}
 	className="flex flex-col"
 >
 	<section class="container mx-auto px-4 py-10 md:py-14">
 		<a
-			href={buildPublicCollectionPath("vacancy", undefined, locale)}
+			href={buildLocalizedCollectionPath(locale, "vacancies")}
 			class="inline-flex text-sm text-primary mb-6 hover:underline"
 		>
 			← {copy.backToListLabel}

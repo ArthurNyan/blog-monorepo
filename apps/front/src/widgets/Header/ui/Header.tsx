@@ -7,14 +7,16 @@ import { useScrollDirection } from '@/shared/hooks/use-scroll-direction';
 import type { HeaderProps } from '../model';
 import {
 	DEFAULT_BRAND,
-	DEFAULT_NAVIGATION,
 	DEFAULT_PRIMARY_ACTION,
 	DEFAULT_SECONDARY_ACTION,
+	getDefaultBrand,
+	getDefaultNavigation,
 } from '../model';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
 
 export const Header = ({
+	siteLocale = "ru",
 	navigationItems,
 	brand,
 	primaryAction,
@@ -25,8 +27,8 @@ export const Header = ({
 	const scrolled = useScroll(10);
 	const { isVisible } = useScrollDirection(50);
 
-	const navigation = navigationItems || DEFAULT_NAVIGATION;
-	const brandLink = brand || DEFAULT_BRAND;
+	const navigation = navigationItems || getDefaultNavigation(siteLocale);
+	const brandLink = brand || getDefaultBrand(siteLocale) || DEFAULT_BRAND;
 	const primaryButton = primaryAction || DEFAULT_PRIMARY_ACTION;
 	const secondaryButton = secondaryAction || DEFAULT_SECONDARY_ACTION;
 

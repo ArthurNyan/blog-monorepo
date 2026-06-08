@@ -200,6 +200,31 @@ export const fetchCmsVacancyBySlug = async (
 	return vacancy ? mapVacancy(vacancy) : null;
 };
 
+export const fetchCmsVacancySlugs = async (
+	locale = defaultCmsLocale,
+	options?: CmsRequestOptions
+) => {
+	const url = applyRequestOptions(buildServerCmsUrl("/vacancies"), options);
+	url.searchParams.set("locale", locale);
+	url.searchParams.set("fields[0]", "slug");
+	url.searchParams.set("pagination[pageSize]", "100");
+	url.searchParams.set("sort[0]", "slug:asc");
+	url.searchParams.set("filters[isActive][$eq]", "true");
+
+	const response = await fetch(url.toString(), {
+		headers: createOptionalServerCmsHeaders(options?.headers),
+	});
+
+	if (!response.ok) {
+		throw new Error(await parseCmsErrorMessage(response));
+	}
+
+	const json = (await response.json()) as StrapiListResponse<{ slug?: string }>;
+	return (json.data || [])
+		.map((item) => item.slug)
+		.filter((slug): slug is string => Boolean(slug));
+};
+
 export const fetchCmsIndustries = async (
 	locale = defaultCmsLocale,
 	options?: CmsRequestOptions

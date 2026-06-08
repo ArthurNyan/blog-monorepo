@@ -12,6 +12,8 @@ import {
 	type VacancyLevel,
 	type WorkFormat,
 } from "@/shared/api/vacancies";
+import { toCmsLocale, type SiteLocale } from "@/shared/i18n/config";
+import { getVacancyUiCopy } from "@/shared/i18n/vacancies";
 import { VacancyCard } from "@/widgets/VacancyCard";
 
 type Filters = {
@@ -43,39 +45,7 @@ const defaultFilters: Filters = {
 type VacancyExplorerProps = {
 	initialFilters?: Partial<Filters>;
 	initialPage?: number;
-};
-
-const WORK_FORMAT_OPTIONS = [
-	{ value: "", label: "Любой формат" },
-	{ value: "remote", label: "Удаленно" },
-	{ value: "hybrid", label: "Гибрид" },
-	{ value: "office", label: "Офис" },
-];
-
-const EMPLOYMENT_TYPE_OPTIONS = [
-	{ value: "", label: "Любой тип" },
-	{ value: "full_time", label: "Полная занятость" },
-	{ value: "contract", label: "Контракт" },
-	{ value: "internship", label: "Стажировка" },
-];
-
-const LEVEL_OPTIONS = [
-	{ value: "", label: "Любой уровень" },
-	{ value: "intern", label: "Intern" },
-	{ value: "junior", label: "Junior" },
-	{ value: "middle", label: "Middle" },
-	{ value: "senior", label: "Senior" },
-	{ value: "lead", label: "Lead" },
-];
-
-const FILTER_LABELS: Record<keyof Filters, string> = {
-	q: "Поиск",
-	industry: "Отрасль",
-	role: "Роль",
-	location: "Локация",
-	workFormat: "Формат",
-	employmentType: "Занятость",
-	level: "Уровень",
+	siteLocale?: SiteLocale;
 };
 
 const normalizeFilters = (filters?: Partial<Filters>): Filters => ({
@@ -112,33 +82,58 @@ const FilterControls = ({
 	filters,
 	industries,
 	roles,
+	copy,
 	onChange,
 }: {
 	filters: Filters;
 	industries: TaxonomyItem[];
 	roles: TaxonomyItem[];
+	copy: ReturnType<typeof getVacancyUiCopy>;
 	onChange: (key: keyof Filters, value: string) => void;
 }) => {
+	const workFormatOptions = [
+		{ value: "", label: copy.explorer.anyWorkFormatLabel },
+		{ value: "remote", label: copy.workFormats.remote },
+		{ value: "hybrid", label: copy.workFormats.hybrid },
+		{ value: "office", label: copy.workFormats.office },
+	];
+
+	const employmentTypeOptions = [
+		{ value: "", label: copy.explorer.anyEmploymentTypeLabel },
+		{ value: "full_time", label: copy.employmentTypes.full_time },
+		{ value: "contract", label: copy.employmentTypes.contract },
+		{ value: "internship", label: copy.employmentTypes.internship },
+	];
+
+	const levelOptions = [
+		{ value: "", label: copy.explorer.anyLevelLabel },
+		{ value: "intern", label: copy.levels.intern },
+		{ value: "junior", label: copy.levels.junior },
+		{ value: "middle", label: copy.levels.middle },
+		{ value: "senior", label: copy.levels.senior },
+		{ value: "lead", label: copy.levels.lead },
+	];
+
 	return (
 		<div className="space-y-4">
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Поиск</span>
+				<span className="text-muted-foreground">{copy.explorer.searchLabel}</span>
 				<input
 					value={filters.q}
 					onChange={(event) => onChange("q", event.target.value)}
-					placeholder="Название вакансии или ключевое слово"
+					placeholder={copy.explorer.searchPlaceholder}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				/>
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Отрасль</span>
+				<span className="text-muted-foreground">{copy.explorer.industryLabel}</span>
 				<select
 					value={filters.industry}
 					onChange={(event) => onChange("industry", event.target.value)}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				>
-					<option value="">Все отрасли</option>
+					<option value="">{copy.explorer.allIndustriesLabel}</option>
 					{industries.map((industry) => (
 						<option key={industry.slug} value={industry.slug}>
 							{industry.name}
@@ -148,13 +143,13 @@ const FilterControls = ({
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Роль</span>
+				<span className="text-muted-foreground">{copy.explorer.roleLabel}</span>
 				<select
 					value={filters.role}
 					onChange={(event) => onChange("role", event.target.value)}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				>
-					<option value="">Все роли</option>
+					<option value="">{copy.explorer.allRolesLabel}</option>
 					{roles.map((role) => (
 						<option key={role.slug} value={role.slug}>
 							{role.name}
@@ -164,23 +159,23 @@ const FilterControls = ({
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Локация</span>
+				<span className="text-muted-foreground">{copy.explorer.locationLabel}</span>
 				<input
 					value={filters.location}
 					onChange={(event) => onChange("location", event.target.value)}
-					placeholder="Москва, Санкт-Петербург..."
+					placeholder={copy.explorer.locationPlaceholder}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				/>
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Формат работы</span>
+				<span className="text-muted-foreground">{copy.explorer.workFormatLabel}</span>
 				<select
 					value={filters.workFormat}
 					onChange={(event) => onChange("workFormat", event.target.value)}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				>
-					{WORK_FORMAT_OPTIONS.map((option) => (
+					{workFormatOptions.map((option) => (
 						<option key={option.value} value={option.value}>
 							{option.label}
 						</option>
@@ -189,13 +184,15 @@ const FilterControls = ({
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Тип занятости</span>
+				<span className="text-muted-foreground">
+					{copy.explorer.employmentTypeLabel}
+				</span>
 				<select
 					value={filters.employmentType}
 					onChange={(event) => onChange("employmentType", event.target.value)}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				>
-					{EMPLOYMENT_TYPE_OPTIONS.map((option) => (
+					{employmentTypeOptions.map((option) => (
 						<option key={option.value} value={option.value}>
 							{option.label}
 						</option>
@@ -204,13 +201,13 @@ const FilterControls = ({
 			</label>
 
 			<label className="block space-y-2 text-sm">
-				<span className="text-muted-foreground">Уровень</span>
+				<span className="text-muted-foreground">{copy.explorer.levelLabel}</span>
 				<select
 					value={filters.level}
 					onChange={(event) => onChange("level", event.target.value)}
 					className="w-full rounded-md border border-input bg-background px-3 py-2"
 				>
-					{LEVEL_OPTIONS.map((option) => (
+					{levelOptions.map((option) => (
 						<option key={option.value} value={option.value}>
 							{option.label}
 						</option>
@@ -224,7 +221,10 @@ const FilterControls = ({
 export const VacancyExplorer = ({
 	initialFilters,
 	initialPage = 1,
+	siteLocale = "ru",
 }: VacancyExplorerProps) => {
+	const copy = getVacancyUiCopy(siteLocale);
+	const cmsLocale = toCmsLocale(siteLocale);
 	const [{ filters, page }, setQueryState] = useState(() => ({
 		filters: normalizeFilters(initialFilters),
 		page: Math.max(1, initialPage),
@@ -247,6 +247,30 @@ export const VacancyExplorer = ({
 			),
 		[filters]
 	);
+
+	const getActiveFilterValueLabel = (key: keyof Filters, value: string) => {
+		if (key === "industry") {
+			return industries.find((industry) => industry.slug === value)?.name || value;
+		}
+
+		if (key === "role") {
+			return roles.find((role) => role.slug === value)?.name || value;
+		}
+
+		if (key === "workFormat") {
+			return copy.workFormats[value as WorkFormat] || value;
+		}
+
+		if (key === "employmentType") {
+			return copy.employmentTypes[value as EmploymentType] || value;
+		}
+
+		if (key === "level") {
+			return copy.levels[value as VacancyLevel] || value;
+		}
+
+		return value;
+	};
 
 	useEffect(() => {
 		const onPopState = () => {
@@ -287,6 +311,7 @@ export const VacancyExplorer = ({
 					page,
 					pageSize: 9,
 					sort: "publishedAt:desc",
+					locale: cmsLocale,
 				});
 				if (isCancelled) return;
 
@@ -296,13 +321,9 @@ export const VacancyExplorer = ({
 					pageCount: result.pagination.pageCount,
 					total: result.pagination.total,
 				});
-			} catch (requestError) {
+			} catch {
 				if (isCancelled) return;
-				const message =
-					requestError instanceof Error
-						? requestError.message
-						: "Ошибка загрузки вакансий";
-				setError(message);
+				setError(copy.explorer.loadingError);
 			} finally {
 				if (!isCancelled) {
 					setIsLoading(false);
@@ -315,15 +336,15 @@ export const VacancyExplorer = ({
 		return () => {
 			isCancelled = true;
 		};
-	}, [filters, page]);
+	}, [cmsLocale, copy.explorer.loadingError, filters, page]);
 
 	useEffect(() => {
 		let isCancelled = false;
 		const loadTaxonomy = async () => {
 			try {
 				const [industriesList, rolesList] = await Promise.all([
-					fetchIndustries(),
-					fetchJobRoles(),
+					fetchIndustries(cmsLocale),
+					fetchJobRoles(cmsLocale),
 				]);
 				if (isCancelled) return;
 				setIndustries(industriesList);
@@ -337,7 +358,7 @@ export const VacancyExplorer = ({
 		return () => {
 			isCancelled = true;
 		};
-	}, []);
+	}, [cmsLocale]);
 
 	const onFilterChange = (key: keyof Filters, value: string) => {
 		setQueryState((prev) => ({
@@ -360,12 +381,15 @@ export const VacancyExplorer = ({
 	return (
 		<div className="space-y-6">
 			<details className="md:hidden rounded-xl border border-border bg-card/60 p-4">
-				<summary className="cursor-pointer font-medium">Фильтры вакансий</summary>
+				<summary className="cursor-pointer font-medium">
+					{copy.explorer.mobileFiltersLabel}
+				</summary>
 				<div className="mt-4">
 					<FilterControls
 						filters={filters}
 						industries={industries}
 						roles={roles}
+						copy={copy}
 						onChange={onFilterChange}
 					/>
 				</div>
@@ -374,10 +398,10 @@ export const VacancyExplorer = ({
 			<div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6">
 				<aside className="hidden md:block rounded-2xl border border-border bg-card/60 p-5 h-max sticky top-24">
 					<div className="flex items-center justify-between mb-4">
-						<h2 className="text-lg font-semibold">Фильтры</h2>
+						<h2 className="text-lg font-semibold">{copy.explorer.filtersTitle}</h2>
 						{activeFilters.length > 0 && (
 							<button className="text-sm text-primary cursor-pointer" onClick={clearFilters}>
-								Сбросить
+								{copy.explorer.resetLabel}
 							</button>
 						)}
 					</div>
@@ -385,6 +409,7 @@ export const VacancyExplorer = ({
 						filters={filters}
 						industries={industries}
 						roles={roles}
+						copy={copy}
 						onChange={onFilterChange}
 					/>
 				</aside>
@@ -399,13 +424,17 @@ export const VacancyExplorer = ({
 									className="cursor-pointer"
 								>
 									<Badge variant="outline">
-										{`${FILTER_LABELS[key as keyof Filters]}: ${value} ×`}
+										{`${copy.explorer.activeFilterLabels[key as keyof Filters]}: ${getActiveFilterValueLabel(
+											key as keyof Filters,
+											value
+										)} ×`}
 									</Badge>
 								</button>
 							))}
 						</div>
 						<div className="text-sm text-muted-foreground">
-							Найдено вакансий: <span className="font-semibold text-foreground">{pagination.total}</span>
+							{copy.explorer.foundLabel}:{" "}
+							<span className="font-semibold text-foreground">{pagination.total}</span>
 						</div>
 					</div>
 
@@ -425,15 +454,19 @@ export const VacancyExplorer = ({
 					) : vacancies.length === 0 ? (
 						<div className="mt-6">
 							<EmptyState
-								title="Вакансии не найдены"
-								description="Попробуйте изменить фильтры или вернитесь позже."
+								title={copy.explorer.emptyTitle}
+								description={copy.explorer.emptyDescription}
 							/>
 						</div>
 					) : (
 						<>
 							<div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
 								{vacancies.map((vacancy) => (
-									<VacancyCard key={vacancy.documentId || vacancy.slug} vacancy={vacancy} />
+									<VacancyCard
+										key={vacancy.documentId || vacancy.slug}
+										vacancy={vacancy}
+										locale={siteLocale}
+									/>
 								))}
 							</div>
 							<div className="mt-6 flex items-center justify-center gap-3">
@@ -442,17 +475,17 @@ export const VacancyExplorer = ({
 									disabled={page <= 1}
 									onClick={() => setQueryState((prev) => ({ ...prev, page: prev.page - 1 }))}
 								>
-									Назад
+									{copy.explorer.previousPageLabel}
 								</Button>
 								<span className="text-sm text-muted-foreground">
-									Страница {page} из {Math.max(1, pagination.pageCount)}
+									{copy.explorer.pageLabel(page, Math.max(1, pagination.pageCount))}
 								</span>
 								<Button
 									variant="outline"
 									disabled={page >= pagination.pageCount}
 									onClick={() => setQueryState((prev) => ({ ...prev, page: prev.page + 1 }))}
 								>
-									Далее
+									{copy.explorer.nextPageLabel}
 								</Button>
 							</div>
 						</>

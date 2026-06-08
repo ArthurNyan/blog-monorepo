@@ -1,5 +1,6 @@
 import type { CmsRequestOptions } from "@/shared/api/cms";
 import type { PageSeo } from "@/shared/api/pages";
+import type { SiteLocale } from "@/shared/i18n/config";
 
 const defaultLocale = "ru-RU";
 
@@ -54,6 +55,7 @@ export type VacancyListResult = {
 
 export type VacancyApplicationPayload = {
 	vacancyId: string | number;
+	locale: SiteLocale;
 	fullName: string;
 	email: string;
 	phone: string;
@@ -205,6 +207,7 @@ export const submitVacancyApplication = async (
 
 	const formData = new FormData();
 	formData.append("data[vacancy]", String(payload.vacancyId));
+	formData.append("locale", payload.locale);
 	formData.append("data[fullName]", payload.fullName);
 	formData.append("data[email]", payload.email);
 	formData.append("data[phone]", payload.phone);

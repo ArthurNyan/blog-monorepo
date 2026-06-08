@@ -7,6 +7,7 @@ import {
 } from "@/shared/api/cms";
 import type { CmsMedia, PageBlock, PageSeo } from "@/shared/api/pages";
 import {
+	buildLocalizedCollectionPath,
 	buildLocalizedPath,
 	defaultSiteLocale,
 	toCmsLocale,
@@ -121,7 +122,55 @@ const fetchCmsSingle = async <T>(
 	return json.data ?? null;
 };
 
-const mapLink = (link?: CmsLinkRaw | null): SiteLink | undefined => {
+const localizeKnownInternalHref = (
+	href: string,
+	locale: SiteLocale
+) => {
+	if (!href.startsWith("/")) {
+		return href;
+	}
+
+	if (/^\/(ru|en)(\/|$)/.test(href)) {
+		return href;
+	}
+
+	const normalizedHref = href.replace(/\/+$/, "");
+
+	if (!normalizedHref || normalizedHref === "/") {
+		return buildLocalizedPath(locale);
+	}
+
+	if (normalizedHref === "/articles" || normalizedHref.startsWith("/articles/")) {
+		return buildLocalizedCollectionPath(
+			locale,
+			"articles",
+			normalizedHref.slice("/articles/".length)
+		);
+	}
+
+	if (normalizedHref === "/projects" || normalizedHref.startsWith("/projects/")) {
+		return buildLocalizedCollectionPath(
+			locale,
+			"projects",
+			normalizedHref.slice("/projects/".length)
+		);
+	}
+
+	if (normalizedHref === "/vacancies" || normalizedHref.startsWith("/vacancies/")) {
+		return buildLocalizedCollectionPath(
+			locale,
+			"vacancies",
+			normalizedHref.slice("/vacancies/".length)
+		);
+	}
+
+	return href;
+};
+
+const mapLink = (
+	link: CmsLinkRaw | null | undefined,
+	locale: SiteLocale
+): SiteLink | undefined => {
 	const title = link?.label?.trim();
 	const href = link?.href?.trim();
 
@@ -131,7 +180,7 @@ const mapLink = (link?: CmsLinkRaw | null): SiteLink | undefined => {
 
 	return {
 		title,
-		href,
+		href: localizeKnownInternalHref(href, locale),
 		description: link?.description?.trim() || undefined,
 	};
 };
@@ -203,14 +252,14 @@ export const fetchGlobalContent = async (
 
 					const submenuItems =
 						item.items
-							?.map((subItem) => mapLink(subItem))
+							?.map((subItem) => mapLink(subItem, locale))
 							.filter((subItem): subItem is SiteLink => Boolean(subItem)) || [];
-					const featured = mapLink(item.featured);
+					const featured = mapLink(item.featured, locale);
 					const href = item.href?.trim();
 
 					return {
 						label,
-						href: href || undefined,
+						href: href ? localizeKnownInternalHref(href, locale) : undefined,
 						submenu:
 							featured || submenuItems.length > 0
 								? {
@@ -224,15 +273,15 @@ export const fetchGlobalContent = async (
 					(item): item is SiteNavigationItem =>
 						Boolean(item && (item.href || item.submenu))
 				) || [],
-		headerPrimaryCta: mapLink(global?.headerPrimaryCta),
-		headerSecondaryCta: mapLink(global?.headerSecondaryCta),
+		headerPrimaryCta: mapLink(global?.headerPrimaryCta, locale),
+		headerSecondaryCta: mapLink(global?.headerSecondaryCta, locale),
 		footerColumns:
 			global?.footerColumns
 				?.map((column) => {
 					const heading = column.heading?.trim();
 					const links =
 						column.links
-							?.map((link) => mapLink(link))
+							?.map((link) => mapLink(link, locale))
 							.filter((link): link is SiteLink => Boolean(link)) || [];
 
 					if (!heading || links.length === 0) {

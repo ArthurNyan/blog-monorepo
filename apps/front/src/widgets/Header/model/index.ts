@@ -3,6 +3,8 @@ export {
 	DEFAULT_NAVIGATION,
 	DEFAULT_PRIMARY_ACTION,
 	DEFAULT_SECONDARY_ACTION,
+	getDefaultBrand,
+	getDefaultNavigation,
 } from './const';
 export type {
 	HeaderBrand,

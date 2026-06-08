@@ -6,9 +6,11 @@ import { useVacancyApplicationRHF } from "../model/useVacancyApplicationRHF";
 export const VacancyApplicationForm = ({
 	vacancyId,
 	vacancyTitle,
+	siteLocale,
 }: VacancyApplicationFormProps) => {
-	const { form, onSubmit, submitError, submitSuccess } = useVacancyApplicationRHF({
+	const { copy, form, onSubmit, submitError, submitSuccess } = useVacancyApplicationRHF({
 		vacancyId,
+		siteLocale,
 	});
 	const {
 		register,
@@ -19,22 +21,22 @@ export const VacancyApplicationForm = ({
 
 	const coverLetterValue = watch("coverLetter") || "";
 
-	return (
+		return (
 		<form onSubmit={onSubmit} className="space-y-6">
 			<div className="space-y-2">
-				<h3 className="text-2xl font-semibold leading-tight">Отклик на «{vacancyTitle}»</h3>
+				<h3 className="text-2xl font-semibold leading-tight">{copy.title(vacancyTitle)}</h3>
 				<p className="text-sm text-muted-foreground">
-					Заполните форму, и мы вернемся с ответом как можно скорее.
+					{copy.description}
 				</p>
 			</div>
 
 			<div className="space-y-4">
 				<label className="space-y-2 text-sm block">
-					<span>Имя и фамилия *</span>
+					<span>{copy.fullNameLabel}</span>
 					<input
 						{...register("fullName")}
 						className="w-full min-h-11 rounded-md border border-input bg-background px-3 py-2 text-sm"
-						placeholder="Иван Петров"
+						placeholder={copy.fullNamePlaceholder}
 						required
 					/>
 					{errors.fullName && (
@@ -43,35 +45,35 @@ export const VacancyApplicationForm = ({
 				</label>
 
 				<label className="space-y-2 text-sm block">
-					<span>Email *</span>
+					<span>{copy.emailLabel}</span>
 					<input
 						{...register("email")}
 						type="email"
 						className="w-full min-h-11 rounded-md border border-input bg-background px-3 py-2 text-sm"
-						placeholder="name@example.com"
+						placeholder={copy.emailPlaceholder}
 						required
 					/>
 					{errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
 				</label>
 
 				<label className="space-y-2 text-sm block">
-					<span>Телефон *</span>
+					<span>{copy.phoneLabel}</span>
 					<input
 						{...register("phone")}
 						type="tel"
 						className="w-full min-h-11 rounded-md border border-input bg-background px-3 py-2 text-sm"
-						placeholder="+7 900 000-00-00"
+						placeholder={copy.phonePlaceholder}
 						required
 					/>
 					{errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
 				</label>
 
 				<label className="space-y-2 text-sm block">
-					<span>Город</span>
+					<span>{copy.cityLabel}</span>
 					<input
 						{...register("city")}
 						className="w-full min-h-11 rounded-md border border-input bg-background px-3 py-2 text-sm"
-						placeholder="Москва"
+						placeholder={copy.cityPlaceholder}
 						autoComplete="address-level2"
 					/>
 					{errors.city && <p className="text-xs text-destructive">{errors.city.message}</p>}
@@ -79,14 +81,14 @@ export const VacancyApplicationForm = ({
 			</div>
 
 			<label className="space-y-2 text-sm block">
-				<span>Сопроводительное письмо</span>
+				<span>{copy.coverLetterLabel}</span>
 				<textarea
 					{...register("coverLetter")}
 					className="w-full min-h-36 rounded-md border border-input bg-background px-3 py-2 text-sm"
-					placeholder="Почему вам интересна эта позиция?"
+					placeholder={copy.coverLetterPlaceholder}
 				/>
 				<div className="flex items-center justify-between text-xs text-muted-foreground">
-					<span>До 3000 символов</span>
+					<span>{copy.coverLetterHint}</span>
 					<span>{coverLetterValue.length}/3000</span>
 				</div>
 				{errors.coverLetter && (
@@ -95,7 +97,7 @@ export const VacancyApplicationForm = ({
 			</label>
 
 			<label className="space-y-2 text-sm block">
-				<span>Резюме (PDF/DOC/DOCX, до 10MB) *</span>
+				<span>{copy.resumeLabel}</span>
 				<input
 					type="file"
 					accept=".pdf,.doc,.docx"
@@ -126,7 +128,7 @@ export const VacancyApplicationForm = ({
 			<label className="flex items-start gap-2 text-sm">
 				<input {...register("consent")} type="checkbox" className="mt-1" required />
 				<span>
-					Согласен(а) на обработку персональных данных для рассмотрения отклика *
+					{copy.consentLabel}
 				</span>
 			</label>
 			{errors.consent && <p className="text-xs text-destructive">{errors.consent.message}</p>}
@@ -135,7 +137,7 @@ export const VacancyApplicationForm = ({
 			{submitSuccess && <p className="text-sm text-green-500">{submitSuccess}</p>}
 
 			<Button type="submit" disabled={isSubmitting} className="w-full">
-				{isSubmitting ? "Отправляем..." : "Отправить отклик"}
+				{isSubmitting ? copy.submittingLabel : copy.submitLabel}
 			</Button>
 		</form>
 	);

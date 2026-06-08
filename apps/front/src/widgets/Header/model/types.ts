@@ -1,3 +1,5 @@
+import type { SiteLocale } from "@/shared/i18n/config";
+
 /**
  * Типы для структуры навигации Header
  * Эти типы соответствуют структуре данных из Strapi
@@ -43,6 +45,7 @@ export interface NavigationItem {
  * Пропсы для Header компонента
  */
 export interface HeaderProps {
+	siteLocale?: SiteLocale;
 	navigationItems?: NavigationItem[];
 	brand?: HeaderBrand;
 	primaryAction?: NavigationLinkItem;

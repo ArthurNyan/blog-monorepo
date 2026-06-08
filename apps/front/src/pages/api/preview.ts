@@ -126,7 +126,7 @@ export const GET: APIRoute = async ({ url, cookies }) => {
 	if (type === "vacancy" && slug) {
 		if (!useDraftPreview) {
 			clearPreviewCookie(cookies, url.protocol);
-			return redirect(buildPublicCollectionPath("vacancy", slug));
+			return redirect(buildPublicCollectionPath("vacancy", slug, locale));
 		}
 
 		const vacancy = await fetchCmsVacancyBySlug(slug, {

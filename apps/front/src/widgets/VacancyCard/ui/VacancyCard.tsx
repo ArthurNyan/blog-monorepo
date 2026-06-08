@@ -8,49 +8,31 @@ import {
 	CardTitle,
 } from "@/shared/components/ui/card";
 import type { Vacancy } from "@/shared/api/vacancies";
+import {
+	buildLocalizedCollectionPath,
+	type SiteLocale,
+} from "@/shared/i18n/config";
+import {
+	formatVacancySalary,
+	getVacancyUiCopy,
+} from "@/shared/i18n/vacancies";
 
 interface VacancyCardProps {
 	vacancy: Vacancy;
+	locale?: SiteLocale;
 }
 
-const WORK_FORMAT_LABELS: Record<string, string> = {
-	remote: "Удаленно",
-	hybrid: "Гибрид",
-	office: "Офис",
-};
+export const VacancyCard = ({
+	vacancy,
+	locale = "ru",
+}: VacancyCardProps) => {
+	const copy = getVacancyUiCopy(locale);
 
-const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
-	full_time: "Полная занятость",
-	contract: "Контракт",
-	internship: "Стажировка",
-};
-
-const LEVEL_LABELS: Record<string, string> = {
-	intern: "Intern",
-	junior: "Junior",
-	middle: "Middle",
-	senior: "Senior",
-	lead: "Lead",
-};
-
-const formatSalary = (vacancy: Vacancy) => {
-	if (!vacancy.salaryFrom && !vacancy.salaryTo) {
-		return "По договоренности";
-	}
-
-	const currency = vacancy.currency || "RUB";
-	const formatter = new Intl.NumberFormat("ru-RU");
-	const from = vacancy.salaryFrom ? formatter.format(vacancy.salaryFrom) : null;
-	const to = vacancy.salaryTo ? formatter.format(vacancy.salaryTo) : null;
-
-	if (from && to) return `${from} - ${to} ${currency}`;
-	if (from) return `от ${from} ${currency}`;
-	return `до ${to} ${currency}`;
-};
-
-export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
 	return (
-		<a href={`/vacancies/${vacancy.slug}`} className="block group h-full">
+		<a
+			href={buildLocalizedCollectionPath(locale, "vacancies", vacancy.slug)}
+			className="block group h-full"
+		>
 			<Card className="h-full flex flex-col border-border/70 hover:border-primary/60 bg-card/80 backdrop-blur-sm">
 				<CardHeader className="space-y-3">
 					<div className="flex flex-wrap gap-2">
@@ -73,18 +55,29 @@ export const VacancyCard = ({ vacancy }: VacancyCardProps) => {
 					</CardDescription>
 				</CardHeader>
 				<CardContent className="flex-1 pt-0">
-					<div className="text-lg font-semibold">{formatSalary(vacancy)}</div>
+					<div className="text-lg font-semibold">
+						{formatVacancySalary(vacancy, locale)}
+					</div>
 					<div className="mt-4 flex flex-wrap gap-2 text-xs">
-						<Badge variant="outline">{WORK_FORMAT_LABELS[vacancy.workFormat] || vacancy.workFormat}</Badge>
 						<Badge variant="outline">
-							{EMPLOYMENT_TYPE_LABELS[vacancy.employmentType] || vacancy.employmentType}
+							{copy.workFormats[vacancy.workFormat as keyof typeof copy.workFormats] ||
+								vacancy.workFormat}
 						</Badge>
-						<Badge variant="outline">{LEVEL_LABELS[vacancy.level] || vacancy.level}</Badge>
+						<Badge variant="outline">
+							{copy.employmentTypes[
+								vacancy.employmentType as keyof typeof copy.employmentTypes
+							] ||
+								vacancy.employmentType}
+						</Badge>
+						<Badge variant="outline">
+							{copy.levels[vacancy.level as keyof typeof copy.levels] ||
+								vacancy.level}
+						</Badge>
 					</div>
 				</CardContent>
 				<CardFooter>
 					<span className="text-sm text-primary font-medium group-hover:translate-x-0.5 transition-transform">
-						Открыть вакансию →
+						{copy.cardOpenLabel} →
 					</span>
 				</CardFooter>
 			</Card>

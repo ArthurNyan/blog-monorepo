@@ -1,7 +1,7 @@
 export const siteLocales = ["ru", "en"] as const;
 
 export type SiteLocale = (typeof siteLocales)[number];
-export const localizedCollectionRoutes = ["articles", "projects"] as const;
+export const localizedCollectionRoutes = ["articles", "projects", "vacancies"] as const;
 export type LocalizedCollectionRoute =
 	(typeof localizedCollectionRoutes)[number];
 

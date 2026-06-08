@@ -103,20 +103,16 @@ export const buildPublicCollectionPath = (
 	locale?: SiteLocale
 ) => {
 	const normalizedSlug = slug?.replace(/^\/+|\/+$/g, "");
-	const segment = previewCollectionSegments[type];
+	const route =
+		type === "article"
+			? "articles"
+			: type === "project"
+				? "projects"
+				: "vacancies";
 
-	if (type === "article" || type === "project") {
-		const route = type === "article" ? "articles" : "projects";
-		return buildLocalizedCollectionPath(
-			locale || defaultSiteLocale,
-			route,
-			normalizedSlug || ""
-		);
-	}
-
-	if (!normalizedSlug) {
-		return `/${segment}/`;
-	}
-
-	return `/${segment}/${normalizedSlug}/`;
+	return buildLocalizedCollectionPath(
+		locale || defaultSiteLocale,
+		route,
+		normalizedSlug || ""
+	);
 };

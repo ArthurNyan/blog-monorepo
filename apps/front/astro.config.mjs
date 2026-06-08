@@ -8,7 +8,7 @@ import node from '@astrojs/node';
 import react from '@astrojs/react';
 
 const isLegacyCollectionPath = (pathname) =>
-	/^\/(articles|projects)(\/|$)/.test(pathname);
+	/^\/(articles|projects|vacancies)(\/|$)/.test(pathname);
 
 // https://astro.build/config
 export default defineConfig({
