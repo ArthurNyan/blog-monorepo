@@ -45,7 +45,7 @@
 
 - public detail route `/:locale/articles/:slug/`;
 - public detail route `/:locale/projects/:slug/`;
-- public detail route `/vacancies/:slug/`;
+- public detail route `/:locale/vacancies/:slug/`;
 - preview detail route `/preview/:locale/articles/:slug/`;
 - preview detail route `/preview/:locale/projects/:slug/`;
 - preview detail route `/preview/:locale/vacancies/:slug/`.
@@ -67,7 +67,7 @@
 - если `ogTitle` или `ogDescription` не заданы, они наследуются от итоговых `title/description`;
 - для `article` и `project`, если `ogImage` не задан, frontend использует `cover` как fallback `og:image`;
 - preview routes всегда получают `noindex`, даже если редактор не включал его вручную;
-- section list pages `/:locale/articles/`, `/:locale/projects/`, `/vacancies/` остаются
+- section list pages `/:locale/articles/`, `/:locale/projects/`, `/:locale/vacancies/` остаются
   route-owned SEO-поверхностью и не получают отдельную CMS-управляемую SEO-схему.
 
 ## 4. Граница результата для диплома
@@ -82,5 +82,6 @@
 Нельзя формулировать результат шире, чем он реализован:
 
 - list pages не стали полностью CMS-managed SEO surface;
-- карьерный модуль не получил locale-prefixed production routes;
-- `vacancy` detail page использует editor-managed SEO внутри отдельного карьерного URL-контура.
+- list pages `articles/projects/vacancies` остаются route-owned поверхностью;
+- legacy `/vacancies/*` используется только как compatibility redirect, а `vacancy`
+  detail page использует editor-managed SEO внутри locale-prefixed URL-контура.

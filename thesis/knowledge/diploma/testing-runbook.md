@@ -115,7 +115,7 @@ curl -I http://localhost:4321/ru/articles/neea-llc/
 curl -I http://localhost:4321/en/articles/neea-llc/
 curl -I http://localhost:4321/ru/projects/project/
 curl -I http://localhost:4321/en/projects/project/
-curl -I http://localhost:4321/vacancies/test-vacancy/
+curl -I http://localhost:4321/ru/vacancies/test-vacancy/
 curl -I http://localhost:4322/
 ```
 
@@ -262,8 +262,8 @@ sed -n '1,260p' apps/front/dist/client/sitemap-0.xml
 Норма:
 
 - есть `sitemap-index.xml` и `sitemap-0.xml`;
-- в sitemap есть `/ru/`, `/en/`, `ru` detail routes и `/vacancies/...`;
-- legacy `/articles` и `/projects` без locale отсутствуют.
+- в sitemap есть `/ru/`, `/en/`, `ru/en` detail routes и `/:locale/vacancies/...`;
+- legacy `/articles`, `/projects` и `/vacancies` без locale отсутствуют.
 
 SQLite evidence:
 

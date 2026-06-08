@@ -100,7 +100,7 @@ Expected result:
 
 Шаг:
 
-- открыть `http://localhost:4321/vacancies/test-vacancy/`
+- открыть `http://localhost:4321/ru/vacancies/test-vacancy/`
 
 Expected result:
 
@@ -152,7 +152,7 @@ Expected result:
 3. `/en/`
 4. `/ru/cms-first-platform/`
 5. preview flow
-6. `/vacancies/test-vacancy/`
+6. `/ru/vacancies/test-vacancy/`
 7. lead form invalid input
 8. vacancy form invalid input
 

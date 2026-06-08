@@ -421,9 +421,10 @@ Source of truth:
 
 Остается осознанным ограничением:
 
-- list pages `/:locale/articles/`, `/:locale/projects/`, `/vacancies/` не получили
+- list pages `/:locale/articles/`, `/:locale/projects/`, `/:locale/vacancies/` не получили
   отдельный CMS-managed `SEO` schema и остаются route-owned слоем;
-- карьерный модуль по-прежнему не переведен на locale-prefixed production routes.
+- legacy `/articles/*`, `/projects/*`, `/vacancies/*` сохраняются как compatibility
+  redirects и не входят в canonical `sitemap`.
 
 ### Артефакты для защиты
 

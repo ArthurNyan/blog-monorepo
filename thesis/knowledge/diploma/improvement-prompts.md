@@ -102,7 +102,7 @@
 - [apps/cms/src/api/vacancy/content-types/vacancy/schema.json](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/cms/src/api/vacancy/content-types/vacancy/schema.json)
 - [apps/front/src/pages/[locale]/articles/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/articles/[slug].astro)
 - [apps/front/src/pages/[locale]/projects/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/projects/[slug].astro)
-- [apps/front/src/pages/vacancies/[slug]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/vacancies/[slug]/index.astro)
+- [apps/front/src/pages/[locale]/vacancies/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/vacancies/[slug].astro)
 
 ### Критерий завершения
 
@@ -135,7 +135,7 @@
 - apps/cms/src/api/vacancy/content-types/vacancy/schema.json
 - apps/front/src/pages/[locale]/articles/[slug].astro
 - apps/front/src/pages/[locale]/projects/[slug].astro
-- apps/front/src/pages/vacancies/[slug]/index.astro
+- apps/front/src/pages/[locale]/vacancies/[slug].astro
 
 Ограничения:
 - Не придумывать несуществующие list-page SEO схемы, если их нет.
@@ -244,60 +244,57 @@
 
 ## `P1-2` Закрыть или формально ограничить мультиязычность карьерного модуля
 
-### Проблема
+### Статус
 
-Маркетинговые страницы, статьи и проекты уже живут в locale-prefixed контуре, а карьерный модуль публично остается отдельным маршрутом `/vacancies/*`. Это самый заметный функциональный разрыв в единой multilingual-истории проекта.
+Задача закрыта. Маркетинговые страницы, статьи, проекты и вакансии теперь живут в общем
+locale-prefixed публичном контуре, а legacy `/vacancies/*` оставлен только как
+compatibility redirect в default locale.
 
-### Почему это важно
+### Что было сделано
 
-Этот вопрос легко задается на защите: почему часть системы fully bilingual, а карьерный контур нет? Нужно либо довести его до той же модели, либо очень четко оформить как осознанное ограничение scope.
-
-### Что нужно изменить
-
-Нужно выбрать один из двух путей:
-
-1. Реализационный путь:
-   - довести вакансии до locale-prefixed публичной модели;
-   - обновить маршруты, `sitemap`, `preview`, тексты, вывод.
-2. Академический путь:
-   - оставить как есть;
-   - усилить текст ограничения в главе 2, заключении и final scope;
-   - объяснить, почему карьерный модуль сознательно оставлен отдельным контуром.
+1. Реализационный путь завершен:
+   - вакансии переведены в locale-prefixed публичную модель;
+   - обновлены маршруты, `sitemap`, `preview`, тексты и testing/docs-артефакты.
+2. Академическая формулировка синхронизирована:
+   - глава 2, conclusion, handout, presentation и knowledge больше не трактуют
+     карьерный модуль как отдельный production-контур;
+   - граница scope теперь проходит по route-owned `SEO` list pages и нелокализуемым
+     прикладным сущностям.
 
 ### Основные файлы
 
+- [apps/front/src/pages/[locale]/vacancies/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/vacancies/index.astro)
+- [apps/front/src/pages/[locale]/vacancies/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/vacancies/[slug].astro)
 - [apps/front/src/pages/vacancies/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/vacancies/index.astro)
 - [apps/front/src/pages/vacancies/[slug]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/vacancies/[slug]/index.astro)
-- [apps/front/src/pages/preview/[locale]/vacancies/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/preview/[locale]/vacancies/[slug].astro)
 - [thesis/content/03-chapter-2.tex](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/content/03-chapter-2.tex)
 - [thesis/content/04-conclusion.tex](/Users/arthur/Documents/projects/Диплом/app-monorepo/thesis/content/04-conclusion.tex)
 
 ### Критерий завершения
 
-Либо вакансии становятся частью единой multilingual-модели, либо в тексте больше нет двусмысленности и разрыв подан как допустимое ограничение.
+Выполнен: вакансии входят в единую multilingual-модель, а в тексте больше нет
+двусмысленности про отдельный career production contour.
 
-### Промпт для агента
+### Исторический промпт
 
 ```text
-Нужно разобраться с мультиязычностью карьерного модуля и довести это до защищаемого состояния.
+Нужно проверить consistency после перевода карьерного модуля в locale-prefixed публичный контур.
 
 Контекст:
 - Репозиторий: /Users/arthur/Documents/projects/Диплом/app-monorepo
-- Сейчас marketing/storefront-core, pages, articles и projects уже живут в locale-prefixed контуре.
-- Вакансии публично остаются отдельным маршрутом /vacancies/*.
-- Для диплома это либо надо довести до единой модели, либо очень четко оформить как ограничение scope.
+- Marketing/storefront-core, pages, articles, projects и vacancies уже живут в locale-prefixed контуре.
+- Legacy `/vacancies/*` используется только как redirect в default locale.
+- Для диплома нужно удержать единую трактовку во frontend-коде, `sitemap`, testing evidence и тексте.
 
 Задача:
-1. Проанализировать текущий карьерный контур и определить, насколько реалистично довести его до locale-prefixed модели без ломки проекта.
-2. Выбрать один путь:
-   - либо реализовать bilingual public contour для vacancies;
-   - либо оставить текущую архитектуру, но усилить и синхронизировать текстовые ограничения диплома.
-3. Если выбран реализационный путь:
-   - обновить маршруты, SEO/canonical, preview, sitemap-coverage и релевантный текст диплома.
-4. Если выбран академический путь:
-   - обновить главу 2, conclusion и final scope так, чтобы ограничение было сформулировано честно и убедительно.
+1. Проверить, что canonical public contour для vacancies использует `/:locale/vacancies/*`.
+2. Подтвердить, что legacy `/vacancies/*` работает только как compatibility redirect.
+3. Сверить `SEO/canonical`, preview, sitemap-coverage и релевантный текст диплома.
+4. Убрать любые остаточные формулировки про отдельный vacancy production contour.
 
 Файлы:
+- apps/front/src/pages/[locale]/vacancies/index.astro
+- apps/front/src/pages/[locale]/vacancies/[slug].astro
 - apps/front/src/pages/vacancies/index.astro
 - apps/front/src/pages/vacancies/[slug]/index.astro
 - apps/front/src/pages/preview/[locale]/vacancies/[slug].astro
@@ -307,7 +304,7 @@
 
 Ограничения:
 - Не делать частичную переделку без обновления текста диплома.
-- Не вводить фиктивную bilingual-модель только на бумаге.
+- Не путать canonical locale-prefixed URLs с legacy redirect pages.
 
 Результат:
 - либо реализованный locale-aware карьерный контур и обновленный текст;

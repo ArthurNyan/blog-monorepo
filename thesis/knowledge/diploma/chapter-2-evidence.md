@@ -29,9 +29,9 @@
 
 | Контур | Реализация | Способ подтверждения | Граница scope / доказанности |
 |---|---|---|---|
-| Storefront-core `ru/en` | `global`, `home-page`, `page`, locale-prefixed routes `/:locale/` и `/:locale/:slug/` | код `apps/front`, smoke/runtime, sitemap | карьерный модуль не переводится в общий locale-prefixed production contour |
+| Storefront-core `ru/en` | `global`, `home-page`, `page`, locale-prefixed routes `/:locale/` и `/:locale/:slug/` | код `apps/front`, smoke/runtime, sitemap | карьерный модуль использует тот же locale-prefixed production contour, но сохраняет отдельный vacancy-application workflow |
 | Content collections `articles/projects` | locale-prefixed list/detail routes и shared fetch-layer поверх CMS | build output, sitemap, smoke/runtime, seeded representative entries | section list pages остаются route-owned по `SEO`, generated client не является единственным data-layer |
-| Career contour `vacancies` | отдельные публичные routes `/vacancies/` и `/vacancies/:slug/`, локализуемые `vacancy/industry/job-role`, locale-aware preview | код route/API слоя, smoke/runtime, SQLite form evidence | production UI осознанно вне `/:locale/...`; UI-copy карьерного модуля остается локальной |
+| Career contour `vacancies` | locale-prefixed public routes `/:locale/vacancies/` и `/:locale/vacancies/:slug/`, локализуемые `vacancy/industry/job-role`, locale-aware preview | код route/API слоя, smoke/runtime, SQLite form evidence | legacy `/vacancies/*` работает как compatibility redirect; list-page `SEO` остается route-owned |
 | Preview и draft access | `/api/preview`, `/preview/...`, preview-cookie, `x-preview-secret`, `enforce-published` | automated smoke, runtime checks, code inspection | доказан для `home-page`, `page`, `article`, `project`, `vacancy`; это server-side contour, а не публичный draft API |
 | `SEO` / `Open Graph` / `sitemap` | `shared.seo`, `buildSeoMetadata`, `MainLayout`, `@astrojs/sitemap` | runtime/build checks, sitemap files, browser audit | list pages `articles/projects/vacancies` остаются route-owned fallback-поверхностью |
 | Публичные формы | server-side `lead-submissions` и `vacancy-applications` с `honeypot`, consent, file validation и `CMS_API_TOKEN` | mutation smoke, HTTP checks, SQLite growth | нет `rate limit`, CRM/email automation и расширенного post-submit workflow |
@@ -233,12 +233,14 @@
 | `/[locale]/articles/[slug]` | `src/pages/[locale]/articles/[slug].astro` | `fetchArticleSlugs()`, `fetchArticleBySlug()` | реализован для `ru/en` |
 | `/[locale]/projects` | `src/pages/[locale]/projects/index.astro` | `fetchProjectPreviews()` | реализован для `ru/en` |
 | `/[locale]/projects/[slug]` | `src/pages/[locale]/projects/[slug].astro` | `fetchProjectSlugs()`, `fetchProjectBySlug()` | реализован для `ru/en` |
+| `/[locale]/vacancies` | `src/pages/[locale]/vacancies/index.astro` | клиентский `VacancyExplorer` | реализован для `ru/en` |
+| `/[locale]/vacancies/[slug]` | `src/pages/[locale]/vacancies/[slug].astro` | `fetchCmsVacancySlugs()`, `fetchCmsVacancyBySlug()` | реализован для `ru/en` |
 | `/articles` | `src/pages/articles/index.astro` | redirect на `/ru/articles/` | реализован как legacy compatibility route |
 | `/articles/[slug]` | `src/pages/articles/[slug]/index.astro` | redirect на `/ru/articles/[slug]/` | реализован как legacy compatibility route |
 | `/projects` | `src/pages/projects/index.astro` | redirect на `/ru/projects/` | реализован как legacy compatibility route |
 | `/projects/[slug]` | `src/pages/projects/[slug]/index.astro` | redirect на `/ru/projects/[slug]/` | реализован как legacy compatibility route |
-| `/vacancies` | `src/pages/vacancies/index.astro` | клиентский `VacancyExplorer` | реализован |
-| `/vacancies/[slug]` | `src/pages/vacancies/[slug]/index.astro` | `fetchVacancies()`, `fetchVacancyBySlug()` | реализован |
+| `/vacancies` | `src/pages/vacancies/index.astro` | redirect на `/ru/vacancies/` | реализован как legacy compatibility route |
+| `/vacancies/[slug]` | `src/pages/vacancies/[slug]/index.astro` | redirect на `/ru/vacancies/[slug]/` | реализован как legacy compatibility route |
 
 Маршрутная матрица локалей:
 
@@ -248,7 +250,7 @@
 | `page` | `ru/en` | `ru-RU/en` | `/:locale/:slug/` | `/preview/:locale/:slug/` | входит в общий `ru/en` contour |
 | `article` | `ru/en` | `ru-RU/en` | `/:locale/articles/:slug/` | `/preview/:locale/articles/:slug/` | входит в общий `ru/en` contour |
 | `project` | `ru/en` | `ru-RU/en` | `/:locale/projects/:slug/` | `/preview/:locale/projects/:slug/` | входит в общий `ru/en` contour |
-| `vacancy` | `ru/en` в CMS/preview | `ru-RU/en` | `/vacancies/:slug/` | `/preview/:locale/vacancies/:slug/` | осознанное ограничение production UI |
+| `vacancy` | `ru/en` | `ru-RU/en` | `/:locale/vacancies/:slug/` | `/preview/:locale/vacancies/:slug/` | входит в общий `ru/en` contour; legacy `/vacancies/*` редиректят в `ru` |
 
 Что это реально подтверждает:
 

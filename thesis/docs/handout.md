@@ -78,7 +78,7 @@
 - `/:locale/:slug/`;
 - `/:locale/articles/...`;
 - `/:locale/projects/...`;
-- отдельный карьерный контур `/vacancies/...`;
+- `/:locale/vacancies/...`;
 - серверные `preview`-маршруты `/preview/...`.
 
 ## 5. Реализованный функциональный результат

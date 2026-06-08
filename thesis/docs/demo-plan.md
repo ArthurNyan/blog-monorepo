@@ -39,7 +39,7 @@
    - `/ru/`;
    - `/en/`;
    - representative `page`;
-   - `/vacancies/`;
+   - `/ru/vacancies/`;
    - admin panel `Strapi`;
 6. при необходимости заранее подготовлен раздел `Settings -> Webhooks`.
 

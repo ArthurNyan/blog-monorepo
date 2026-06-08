@@ -209,7 +209,7 @@
     },
     {
       "name": "Vacancy detail",
-      "url": "http://localhost:4321/vacancies/test-vacancy/",
+      "url": "http://localhost:4321/ru/vacancies/test-vacancy/",
       "status": "pass",
       "failures": [],
       "consoleErrors": [],

@@ -76,25 +76,25 @@
 - `articles` и `projects` уже используют locale-aware route helpers и локализованные
   public list/detail pages.
 - карьерный модуль уже использует локализуемые записи `vacancy/industry/job-role`,
-  locale-aware `preview` и отдельные production routes `/vacancies/` и
-  `/vacancies/:slug/`.
+  locale-aware `preview` и locale-prefixed production routes
+  `/:locale/vacancies/` и `/:locale/vacancies/:slug/`.
 - `preview` уже принимает локаль для всех ключевых сущностей.
 
-#### Обязательно реализовать
+#### Обязательно зафиксировать в итоговой формулировке
 
-- не расширять дипломную формулировку до тезиса о "полностью локализованном всем публичном
-  сайте", включая карьерный модуль;
-- в следующих этапах последовательно описывать `ru/en` как storefront-core для `global`,
-  `home-page`, `page` плюс locale-prefixed content collections `article/project`;
-- не размывать уже подтвержденную route-границу между storefront-core и отдельным
-  карьерным production contour.
+- описывать `ru/en` как storefront-core для `global`, `home-page`, `page` плюс
+  locale-prefixed content collections `article/project/vacancy`;
+- не смешивать canonical locale-prefixed маршруты с legacy compatibility redirects
+  `/articles/*`, `/projects/*`, `/vacancies/*`;
+- сохранять границу между локализованным публичным контуром и нелокализуемыми
+  прикладными записями `vacancy-application`/`lead-submission`.
 
 #### Останется допустимым ограничением
 
-- `vacancies` остаются вне locale-prefixed production routes и фиксируются как отдельный
-  прикладной публичный контур;
-- для карьерного модуля итоговый scope включает локализованные записи в `Strapi` и
-  localized preview, но не требует переноса публичных URL на `/:locale/...`;
+- section list pages `/:locale/articles/`, `/:locale/projects/`, `/:locale/vacancies/`
+  остаются route-owned SEO-поверхностью без отдельного `seo` component;
+- legacy `/articles/*`, `/projects/*`, `/vacancies/*` сохраняются как compatibility
+  redirects в default locale и не считаются canonical production URLs;
 - `vacancy-application` и `lead-submission` не входят в `ru/en` как локализуемые прикладные
   записи и остаются нелокализованными.
 
@@ -140,12 +140,12 @@
 
 #### Останется допустимым ограничением
 
-- section list pages `/:locale/articles/`, `/:locale/projects/`, `/vacancies/` могут
+- section list pages `/:locale/articles/`, `/:locale/projects/`, `/:locale/vacancies/` могут
   оставаться route-owned SEO-поверхностью без отдельного `seo` component;
 - для `article`, `project`, `vacancy` допустим fallback из собственных полей сущности,
   если `seo` component не заполнен полностью;
-- `sitemap` не обязан отражать карьерный модуль как двуязычный набор URL и может
-  публиковать `vacancies` как отдельный публичный раздел.
+- legacy compatibility routes не должны попадать в `sitemap` и canonical URLs, даже если
+  остаются доступными для редиректа в default locale.
 
 ### 2.3. Обязательные роли
 
@@ -236,9 +236,9 @@
 
 - `pages`, `Dynamic Zone` и page builder для `home-page/page`;
 - storefront-core `ru/en` для `global`, `home-page`, `page`;
-- locale-prefixed public routes `ru/en` для `articles` и `projects`;
-- отдельный career contour `/vacancies/` и `/vacancies/:slug/` при сохранении
-  localized CMS data и locale-aware preview;
+- locale-prefixed public routes `ru/en` для `articles`, `projects`, `vacancies`;
+- legacy `/articles/*`, `/projects/*`, `/vacancies/*` redirects в default locale при
+  сохранении localized CMS data и locale-aware preview;
 - `preview mode` для `home-page`, `page`, `article`, `project`, `vacancy`;
 - CMS-managed `SEO/Open Graph` для `home-page`, `page` и detail entities
   `article/project/vacancy`;

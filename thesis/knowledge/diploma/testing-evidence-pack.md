@@ -176,8 +176,10 @@ Smoke script специально сделан без `Playwright`, `Lighthouse`
 - `/ru/cms-first-platform/` и `/en/cms-first-platform/` доступны;
 - `/ru/articles/`, `/ru/articles/neea-llc/`, `/en/articles/neea-llc/`,
   `/ru/projects/`, `/ru/projects/project/`, `/en/projects/project/`,
-  `/vacancies/`, `/vacancies/test-vacancy/` доступны;
-- legacy `/articles/...` и `/projects/...` редиректят в locale-prefixed `ru`.
+  `/ru/vacancies/`, `/en/vacancies/`, `/ru/vacancies/test-vacancy/`,
+  `/en/vacancies/test-vacancy/` доступны;
+- legacy `/articles/...`, `/projects/...` и `/vacancies/...` редиректят в
+  locale-prefixed `ru`.
 
 ### 2.3. Preview contour
 
@@ -244,8 +246,9 @@ pnpm --dir apps/front build
 Подтверждено по `sitemap-0.xml`:
 
 - `sitemap-0.xml` содержит `31` публичный URL;
-- присутствуют `/ru/`, `/en/`, `/ru/articles/...`, `/ru/projects/...`, `/vacancies/...`;
-- отсутствуют legacy `/articles/` и `/projects/` без locale;
+- присутствуют `/ru/`, `/en/`, `/ru/articles/...`, `/ru/projects/...`,
+  `/ru/vacancies/...`, `/en/vacancies/...`;
+- отсутствуют legacy `/articles/`, `/projects/`, `/vacancies/...` без locale;
 - присутствуют `/en/articles/`, `/en/articles/neea-llc/`, `/en/projects/`,
   `/en/projects/project/`.
 
@@ -346,7 +349,7 @@ Playwright browser audit.
 - storefront `ru` и `en`;
 - representative CMS page `/ru/cms-first-platform/`;
 - preview flow через `/preview/...`;
-- vacancy detail `/vacancies/test-vacancy/`;
+- vacancy detail `/ru/vacancies/test-vacancy/`;
 - invalid input paths для lead form и vacancy form.
 
 Эти пункты уже сохранены как отдельный артефакт и не повышают статусы сверх того,
@@ -377,7 +380,7 @@ Performance baseline снят на build/static и browser timing уровне, 
 - local static timings на `astro preview` (`http://localhost:4322`) для build output:
   - `/ru/` — `size=52336`, `ttfb=0.003352`, `total=0.003383`;
   - `/en/articles/neea-llc/` — `size=27682`, `ttfb=0.002340`, `total=0.002364`;
-  - `/vacancies/test-vacancy/` — `size=31826`, `ttfb=0.001025`, `total=0.001047`.
+  - `/ru/vacancies/test-vacancy/` — `size=31826`, `ttfb=0.001025`, `total=0.001047`.
 - browser timing из `browser-baseline-audit.json`:
   - `RU home` — `domContentLoaded=249.2`, `loadEventEnd=254.8`, `FCP=260`;
   - `EN home` — `domContentLoaded=75.7`, `loadEventEnd=78.1`, `FCP=84`;
@@ -455,7 +458,7 @@ curl -I http://localhost:4321/ru/articles/neea-llc/
 curl -I http://localhost:4321/en/articles/neea-llc/
 curl -I http://localhost:4321/ru/projects/project/
 curl -I http://localhost:4321/en/projects/project/
-curl -I http://localhost:4321/vacancies/test-vacancy/
+curl -I http://localhost:4321/ru/vacancies/test-vacancy/
 ```
 
 ### Preview checks

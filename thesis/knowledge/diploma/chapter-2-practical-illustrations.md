@@ -170,7 +170,7 @@ preview для черновиков.
 
 **На какие текущие файлы опирается**
 
-- [apps/front/src/pages/vacancies/[slug]/index.astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/vacancies/[slug]/index.astro:63)
+- [apps/front/src/pages/[locale]/vacancies/[slug].astro](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/pages/[locale]/vacancies/[slug].astro:56)
 - [apps/front/src/widgets/VacancyApplicationForm/ui/VacancyApplicationForm.tsx](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/widgets/VacancyApplicationForm/ui/VacancyApplicationForm.tsx:1)
 - [apps/front/src/shared/api/vacancies.ts](/Users/arthur/Documents/projects/Диплом/app-monorepo/apps/front/src/shared/api/vacancies.ts:307)
 

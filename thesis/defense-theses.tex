@@ -108,10 +108,10 @@ frontend-коде, публикация изменений требует уча
 \texttt{articles/projects} в локалях \texttt{ru/en}. Это позволяет публиковать
 локализованный контент в обеих локалях и централизованно управлять навигацией,
 \texttt{SEO} и страницами. Карьерный
-модуль при этом сохраняет отдельный прикладной публичный контур с маршрутами
-\texttt{/vacancies/*}: локализуемые записи и \texttt{preview} входят в общую
-\texttt{CMS}-модель, но адресация опубликованной версии осознанно не переводится в
-\texttt{/:locale/*}.
+модуль при этом входит в тот же прикладной публичный контур с маршрутами
+\texttt{/:locale/vacancies/*}: локализуемые записи и \texttt{preview} входят в общую
+\texttt{CMS}-модель, а legacy \texttt{/vacancies/*} сохраняются только как compatibility
+redirect в default locale.
 
 \section*{4. Реализованный функциональный результат}
 
@@ -140,8 +140,9 @@ frontend-коде, публикация изменений требует уча
 стендовой валидации 1 июня 2026 года подтверждено:
 \begin{itemize}
   \item публичные маршруты \texttt{/ru/}, \texttt{/en/}, репрезентативные
-  \texttt{page/article/project} и \texttt{/vacancies/*} открываются корректно, а старые
-  \texttt{/articles/*} и \texttt{/projects/*} редиректят в контур с языковым префиксом;
+  \texttt{page/article/project} и \texttt{/:locale/vacancies/*} открываются корректно, а
+  старые \texttt{/articles/*}, \texttt{/projects/*} и \texttt{/vacancies/*} редиректят в
+  контур с языковым префиксом;
   \item \texttt{/api/preview} с неверным секретом возвращает \texttt{401}, а draft-preview
   корректно устанавливает preview-cookie и отдает страницы с \texttt{noindex} для
   \texttt{home-page/page/article/project/vacancy};
@@ -182,10 +183,10 @@ frontend-коде, публикация изменений требует уча
 Наряду с подтвержденными результатами для системы сохраняются и осознанные ограничения.
 
 Во-первых, публичный двуязычный контур охватывает основную витрину, маркетинговые
-страницы, статьи и проекты, тогда как карьерный модуль сохраняется как отдельный
-прикладной публичный контур с маршрутами \texttt{/vacancies/*}. При этом локализуемая
-\texttt{CMS}-модель для \texttt{vacancy}, \texttt{industry} и \texttt{job-role}, а также
-локализованный \texttt{preview} уже входят в реализованный результат.
+страницы, статьи, проекты и вакансии. При этом \texttt{CMS}-управляемые метаданные в
+обязательном объеме доведены до \texttt{home-page}, \texttt{page} и детальных страниц
+сущностей, тогда как списковые маршруты \texttt{articles/projects/vacancies} остаются
+route-owned \texttt{SEO}-поверхностью.
 
 Во-вторых, \texttt{CMS}-управляемый \texttt{SEO}/\texttt{Open Graph} доведен до
 \texttt{home-page}, \texttt{page} и детальных страниц \texttt{article/project/vacancy},

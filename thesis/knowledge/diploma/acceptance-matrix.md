@@ -37,9 +37,9 @@
 | `PUB-07` | Article detail `ru` | `/ru/articles/neea-llc/` возвращает `200`, canonical/OG присутствуют | Automated | `Pass` | Проверено live runtime и static build. |
 | `PUB-08` | Projects list `ru` | `/ru/projects/` возвращает `200` и рендерит list page | Automated | `Pass` | Проверено live runtime и static build. |
 | `PUB-09` | Project detail `ru` | `/ru/projects/project/` возвращает `200`, canonical/OG присутствуют | Automated | `Pass` | Проверено live runtime и static build. |
-| `PUB-10` | Vacancies list | `/vacancies/` возвращает `200`, список фильтруемых вакансий доступен | Automated | `Pass` | Проверено live runtime и static build. |
-| `PUB-11` | Vacancy detail | `/vacancies/test-vacancy/` возвращает `200`, форма отклика подключена | Automated | `Pass` | Проверено live runtime, static build и form submit. |
-| `PUB-12` | Legacy redirects `articles/projects` | `/articles/...` и `/projects/...` редиректят на locale-prefixed `ru` | Automated | `Pass` | Проверено live runtime и включено в smoke contour. |
+| `PUB-10` | Vacancies list `ru` | `/ru/vacancies/` возвращает `200`, список фильтруемых вакансий доступен | Automated | `Pass` | Проверено live runtime и static build. |
+| `PUB-11` | Vacancy detail `ru` | `/ru/vacancies/test-vacancy/` возвращает `200`, форма отклика подключена | Automated | `Pass` | Проверено live runtime, static build и form submit. |
+| `PUB-12` | Legacy redirects `articles/projects/vacancies` | `/articles/...`, `/projects/...` и `/vacancies/...` редиректят на locale-prefixed `ru` | Automated | `Pass` | Проверено live runtime и включено в smoke contour. |
 
 ## Editor And Preview Scenarios
 
@@ -71,8 +71,8 @@
 | `SEO-03` | Editor-managed detail SEO | `home-page`, `page`, `article`, `project`, `vacancy` используют CMS SEO/fallback layer | Code/Build evidence + runtime sample | `Pass` | Подтверждено кодом layout/metadata и representative pages. |
 | `SEO-04` | Public page indexability | Публичные `home-page` и `page` не должны нести `robots=noindex` | Automated | `Pass` | Versioned `seed-storefront.js` / `seed-pages.js` нормализованы, затем `pnpm smoke:front` на baseline `2026-05-31` подтвердил отсутствие public `noindex` на `/ru/`, `/en/`, `/ru/cms-first-platform/`, `/en/cms-first-platform/`. |
 | `SM-01` | Sitemap generation in build | `apps/front/dist/client/sitemap-index.xml` и `sitemap-0.xml` генерируются после build | Automated | `Pass` | Повторно подтверждено build output `2026-05-31`. |
-| `SM-02` | Sitemap contains storefront routes | В sitemap входят `/ru/`, `/en/`, `ru` detail routes и `/vacancies/...` | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml`. |
-| `SM-03` | Sitemap excludes legacy routes | Legacy `/articles` и `/projects` без locale отсутствуют в sitemap | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml` и `astro.config.mjs`. |
+| `SM-02` | Sitemap contains storefront routes | В sitemap входят `/ru/`, `/en/`, locale-prefixed detail routes и `/:locale/vacancies/...` | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml`. |
+| `SM-03` | Sitemap excludes legacy routes | Legacy `/articles`, `/projects` и `/vacancies` без locale отсутствуют в sitemap | Automated | `Pass` | Проверено по `dist/client/sitemap-0.xml` и `astro.config.mjs`. |
 | `LOC-01` | Storefront-core `ru/en` | `home-page` и `page` доступны и собираются в обеих локалях | Automated | `Pass` | Проверено live runtime и build output. |
 | `LOC-02` | `articles/projects` locale-prefixed routes | `/:locale/articles/` и `/:locale/projects/` buildятся для `ru/en` | Automated | `Pass` | Проверено build output. |
 | `LOC-03` | `articles/projects` EN detail coverage | Наличие английских detail entries для representative `article/project` | Automated + Code/Build evidence | `Pass` | Versioned `seed-content.js` теперь публикует representative `en` article/project detail entries; runtime, build, sitemap и SQLite `2026-05-31` подтверждают `/en/articles/neea-llc/` и `/en/projects/project/`. |
