@@ -328,8 +328,9 @@
 	color: rgb(96 165 250);
 }
 
-.dark .prose :where(code):not(:where([class~="not-prose"] *)) {
+.dark .prose :where(:not(pre) > code):not(:where([class~="not-prose"] *)) {
 	color: rgb(243 244 246);
+	background-color: rgb(31 41 55);
 }
 
 .dark .prose :where(blockquote):not(:where([class~="not-prose"] *)) {
